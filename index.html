@@ -5,24 +5,130 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TNN Dashboard Hub</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+
+<!-- Firebase SDK -->
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.0/firebase-app.js";
+  import { getAuth, signInWithEmailAndPassword, signOut, onAuthStateChanged }
+    from "https://www.gstatic.com/firebasejs/11.6.0/firebase-auth.js";
+
+  const firebaseConfig = {
+    apiKey: "AIzaSyDKhUKuWtvRm3y8EInaoHhFn3FuJa3XJN0",
+    authDomain: "tnndashboard.firebaseapp.com",
+    projectId: "tnndashboard",
+    storageBucket: "tnndashboard.firebasestorage.app",
+    messagingSenderId: "326797472104",
+    appId: "1:326797472104:web:e10bd40b8000eee0b7e6dd",
+    measurementId: "G-V51EKG4TMH"
+  };
+
+  const app  = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+
+  // ── Auth State ──
+  onAuthStateChanged(auth, (user) => {
+    if (user) {
+      showDashboard(user);
+    } else {
+      showLogin();
+    }
+  });
+
+  // ── Sign In with Email/Password ──
+  window.emailSignIn = async () => {
+    const email    = document.getElementById('input-email').value.trim();
+    const password = document.getElementById('input-password').value;
+    const btn      = document.getElementById('signin-btn');
+
+    if (!email || !password) {
+      showError('กรุณากรอก Email และ Password');
+      return;
+    }
+
+    btn.disabled = true;
+    btn.innerHTML = `<span class="btn-spinner"></span> กำลังเข้าสู่ระบบ...`;
+
+    try {
+      await signInWithEmailAndPassword(auth, email, password);
+    } catch (e) {
+      btn.disabled = false;
+      btn.innerHTML = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg> เข้าสู่ระบบ`;
+      showError(e.code);
+    }
+  };
+
+  // ── Enter key submit ──
+  window.handleKey = (e) => { if (e.key === 'Enter') emailSignIn(); };
+
+  // ── Sign Out ──
+  window.doSignOut = () => signOut(auth);
+
+  // ── Toggle password visibility ──
+  window.togglePwd = () => {
+    const inp  = document.getElementById('input-password');
+    const icon = document.getElementById('pwd-eye');
+    if (inp.type === 'password') {
+      inp.type = 'text';
+      icon.innerHTML = `<path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/>`;
+    } else {
+      inp.type = 'password';
+      icon.innerHTML = `<path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>`;
+    }
+  };
+
+  function showLogin() {
+    document.getElementById('login-screen').style.display = 'flex';
+    document.getElementById('main-app').style.display    = 'none';
+  }
+
+  function showDashboard(user) {
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('main-app').style.display    = 'block';
+    document.getElementById('user-name').textContent  = user.displayName || user.email;
+    document.getElementById('user-email').textContent = user.email;
+    document.getElementById('user-initials').textContent =
+      (user.displayName || user.email)[0].toUpperCase();
+    if (user.photoURL) {
+      document.getElementById('user-avatar').src = user.photoURL;
+      document.getElementById('user-avatar').style.display = 'block';
+      document.getElementById('user-initials').style.display = 'none';
+    }
+  }
+
+  function showError(code) {
+    const msgs = {
+      'auth/invalid-email':          'รูปแบบ Email ไม่ถูกต้อง',
+      'auth/user-not-found':         'ไม่พบ Email นี้ในระบบ',
+      'auth/wrong-password':         'Password ไม่ถูกต้อง',
+      'auth/invalid-credential':     'Email หรือ Password ไม่ถูกต้อง',
+      'auth/too-many-requests':      'ลองหลายครั้งเกินไป กรุณารอสักครู่',
+      'auth/network-request-failed': 'ไม่มีการเชื่อมต่ออินเทอร์เน็ต',
+    };
+    const el  = document.getElementById('login-error');
+    const msg = msgs[code] || code || 'เกิดข้อผิดพลาด กรุณาลองใหม่';
+    el.querySelector('span').textContent = msg;
+    el.style.display = 'flex';
+    setTimeout(() => el.style.display = 'none', 5000);
+  }
+</script>
+
 <style>
   *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
   :root {
-    --orange: #EC5F27;
+    --orange:      #EC5F27;
     --orange-dark: #c94d1e;
-    --orange-light: #f07340;
-    --orange-glow: rgba(236,95,39,0.25);
-    --black: #0a0a0b;
-    --dark: #111114;
-    --dark2: #1a1a1f;
-    --dark3: #242429;
-    --gray: #2e2e35;
-    --gray2: #3d3d45;
-    --gray3: #6b6b78;
-    --gray4: #9090a0;
-    --light: #c8c8d8;
-    --white: #f0f0f5;
+    --orange-light:#f07340;
+    --black:  #0a0a0b;
+    --dark:   #111114;
+    --dark2:  #1a1a1f;
+    --dark3:  #242429;
+    --gray:   #2e2e35;
+    --gray2:  #3d3d45;
+    --gray3:  #6b6b78;
+    --gray4:  #9090a0;
+    --light:  #c8c8d8;
+    --white:  #f0f0f5;
   }
 
   html { scroll-behavior: smooth; }
@@ -35,11 +141,248 @@
     overflow-x: hidden;
   }
 
-  /* ── Background Grid ── */
-  .bg-grid {
+  /* ─────────────────────────────────────
+     LOGIN SCREEN
+  ───────────────────────────────────── */
+  #login-screen {
     position: fixed;
     inset: 0;
-    z-index: 0;
+    z-index: 1000;
+    background: var(--black);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+  }
+
+  .login-bg-grid {
+    position: absolute;
+    inset: 0;
+    background-image:
+      linear-gradient(rgba(236,95,39,0.05) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(236,95,39,0.05) 1px, transparent 1px);
+    background-size: 60px 60px;
+    pointer-events: none;
+  }
+  .login-bg-glow {
+    position: absolute;
+    top: -200px; left: 50%;
+    transform: translateX(-50%);
+    width: 800px; height: 600px;
+    background: radial-gradient(ellipse, rgba(236,95,39,0.14) 0%, transparent 65%);
+    pointer-events: none;
+  }
+
+  .login-card {
+    position: relative;
+    z-index: 1;
+    background: var(--dark2);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 28px;
+    padding: 52px 48px 44px;
+    width: 100%;
+    max-width: 480px;
+    text-align: center;
+    box-shadow: 0 40px 120px rgba(0,0,0,0.6), 0 0 0 1px rgba(255,255,255,0.04);
+  }
+  @media (max-width: 540px) {
+    .login-card { padding: 40px 28px 36px; border-radius: 20px; }
+  }
+
+  /* top accent line */
+  .login-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 12%; right: 12%;
+    height: 1px;
+    background: linear-gradient(to right, transparent, rgba(236,95,39,0.7), transparent);
+    border-radius: 1px;
+  }
+
+  .login-logo {
+    width: 72px; height: 72px;
+    border-radius: 18px;
+    background: var(--orange);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 28px;
+    box-shadow: 0 8px 32px rgba(236,95,39,0.45), 0 0 0 1px rgba(236,95,39,0.3);
+    position: relative;
+    overflow: hidden;
+  }
+  .login-logo::before {
+    content: '';
+    position: absolute;
+    top: -25%; left: -15%;
+    width: 55%; height: 55%;
+    background: rgba(255,255,255,0.15);
+    border-radius: 50%;
+    filter: blur(16px);
+  }
+  .login-logo svg { position: relative; z-index: 1; }
+
+  .login-card h2 {
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: -0.02em;
+    color: var(--white);
+    margin-bottom: 8px;
+  }
+  .login-card h2 span { color: var(--orange); }
+
+  .login-card > p {
+    font-size: 13px;
+    color: var(--gray4);
+    line-height: 1.6;
+    margin-bottom: 28px;
+  }
+
+  .divider {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+  }
+  .divider::before, .divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: rgba(255,255,255,0.07);
+  }
+  .divider span {
+    font-size: 11px;
+    color: var(--gray3);
+    font-weight: 500;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+
+  /* ── Input fields ── */
+  .input-group {
+    margin-bottom: 16px;
+    text-align: left;
+  }
+  .input-label {
+    display: block;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray4);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+  .input-icon {
+    position: absolute;
+    left: 14px;
+    color: var(--gray3);
+    pointer-events: none;
+    flex-shrink: 0;
+  }
+  .input-wrap input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 12px;
+    padding: 13px 44px 13px 42px;
+    font-size: 14px;
+    font-weight: 400;
+    color: var(--white);
+    font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+    transition: all 0.2s ease;
+    outline: none;
+  }
+  .input-wrap input::placeholder { color: var(--gray3); }
+  .input-wrap input:focus {
+    border-color: rgba(236,95,39,0.5);
+    background: rgba(236,95,39,0.05);
+    box-shadow: 0 0 0 3px rgba(236,95,39,0.1);
+  }
+  .pwd-toggle {
+    position: absolute;
+    right: 12px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--gray3);
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    transition: color 0.2s;
+  }
+  .pwd-toggle:hover { color: var(--gray4); }
+
+  #signin-btn {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    background: linear-gradient(135deg, #EC5F27, #c94d1e);
+    color: #fff;
+    border: none;
+    border-radius: 14px;
+    padding: 14px 24px;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+    font-family: 'Inter', 'Noto Sans Thai', sans-serif;
+    letter-spacing: 0.01em;
+    box-shadow: 0 4px 20px rgba(236,95,39,0.4);
+    margin-top: 8px;
+  }
+  #signin-btn:hover:not(:disabled) {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 28px rgba(236,95,39,0.5);
+  }
+  #signin-btn:active:not(:disabled) { transform: translateY(0); }
+  #signin-btn:disabled { opacity: 0.65; cursor: not-allowed; }
+
+  .btn-spinner {
+    width: 18px; height: 18px;
+    border: 2.5px solid rgba(26,26,31,0.2);
+    border-top-color: #1a1a1f;
+    border-radius: 50%;
+    display: inline-block;
+    animation: spin 0.7s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  #login-error {
+    display: none;
+    align-items: center;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 10px 14px;
+    background: rgba(224,53,53,0.1);
+    border: 1px solid rgba(224,53,53,0.25);
+    border-radius: 10px;
+    font-size: 13px;
+    color: #f87171;
+    text-align: left;
+  }
+
+  .login-note {
+    margin-top: 28px;
+    font-size: 12px;
+    color: var(--gray3);
+    line-height: 1.6;
+  }
+
+  /* ─────────────────────────────────────
+     MAIN APP (hidden until login)
+  ───────────────────────────────────── */
+  #main-app { display: none; }
+
+  /* ── Background Grid ── */
+  .bg-grid {
+    position: fixed; inset: 0; z-index: 0;
     background-image:
       linear-gradient(rgba(236,95,39,0.04) 1px, transparent 1px),
       linear-gradient(90deg, rgba(236,95,39,0.04) 1px, transparent 1px);
@@ -47,53 +390,116 @@
     pointer-events: none;
   }
   .bg-glow-1 {
-    position: fixed;
-    top: -200px;
-    left: 50%;
+    position: fixed; top: -200px; left: 50%;
     transform: translateX(-50%);
-    width: 800px;
-    height: 500px;
+    width: 800px; height: 500px;
     background: radial-gradient(ellipse, rgba(236,95,39,0.12) 0%, transparent 70%);
-    pointer-events: none;
-    z-index: 0;
+    pointer-events: none; z-index: 0;
   }
   .bg-glow-2 {
-    position: fixed;
-    bottom: -100px;
-    right: -100px;
-    width: 600px;
-    height: 400px;
+    position: fixed; bottom: -100px; right: -100px;
+    width: 600px; height: 400px;
     background: radial-gradient(ellipse, rgba(236,95,39,0.06) 0%, transparent 70%);
+    pointer-events: none; z-index: 0;
+  }
+  .scanlines {
+    position: fixed; inset: 0; z-index: 0;
+    background: repeating-linear-gradient(
+      0deg, transparent, transparent 3px,
+      rgba(0,0,0,0.015) 3px, rgba(0,0,0,0.015) 4px
+    );
     pointer-events: none;
-    z-index: 0;
   }
 
   /* ── Wrapper ── */
   .wrapper {
-    position: relative;
-    z-index: 1;
+    position: relative; z-index: 1;
     max-width: 1200px;
     margin: 0 auto;
     padding: 0 32px;
   }
 
-  /* ── Header ── */
-  header {
-    position: relative;
-    padding: 56px 0 0;
-    text-align: center;
+  /* ── Top Bar (user info) ── */
+  .top-bar {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    padding: 20px 0 0;
+    gap: 12px;
   }
 
+  .user-chip {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.07);
+    border-radius: 100px;
+    padding: 6px 14px 6px 6px;
+  }
+
+  .user-avatar-wrap {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    overflow: hidden;
+    background: var(--orange);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 13px;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+  }
+  .user-avatar-wrap img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    display: none;
+  }
+
+  .user-info { line-height: 1.2; }
+  .user-info .uname {
+    font-size: 13px; font-weight: 600;
+    color: var(--white); display: block;
+  }
+  .user-info .uemail {
+    font-size: 11px; color: var(--gray4); display: block;
+  }
+
+  .signout-btn {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid rgba(255,255,255,0.09);
+    border-radius: 100px;
+    padding: 8px 16px;
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--gray4);
+    cursor: pointer;
+    transition: all 0.2s ease;
+    font-family: inherit;
+  }
+  .signout-btn:hover {
+    color: var(--white);
+    border-color: rgba(236,95,39,0.3);
+    background: rgba(236,95,39,0.07);
+  }
+
+  /* ── Header ── */
+  header {
+    padding: 40px 0 0;
+    text-align: center;
+  }
   .logo-wrap {
     display: inline-flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 32px;
   }
-
   .tnn-logo {
-    width: 88px;
-    height: 88px;
+    width: 88px; height: 88px;
     border-radius: 20px;
     background: var(--orange);
     display: flex;
@@ -109,18 +515,13 @@
   .tnn-logo::before {
     content: '';
     position: absolute;
-    top: -30%;
-    left: -20%;
-    width: 60%;
-    height: 60%;
+    top: -30%; left: -20%;
+    width: 60%; height: 60%;
     background: rgba(255,255,255,0.12);
     border-radius: 50%;
     filter: blur(20px);
   }
-  .tnn-logo svg {
-    position: relative;
-    z-index: 1;
-  }
+  .tnn-logo svg { position: relative; z-index: 1; }
 
   .header-badge {
     display: inline-flex;
@@ -156,9 +557,7 @@
     color: var(--white);
     margin-bottom: 16px;
   }
-  header h1 span {
-    color: var(--orange);
-  }
+  header h1 span { color: var(--orange); }
 
   header p {
     font-size: 16px;
@@ -166,7 +565,6 @@
     max-width: 480px;
     margin: 0 auto 48px;
     line-height: 1.6;
-    font-weight: 400;
   }
 
   /* ── Nav Bar ── */
@@ -184,7 +582,6 @@
     margin: 0 auto 72px;
     flex-wrap: wrap;
   }
-
   .nav-item {
     display: flex;
     align-items: center;
@@ -204,11 +601,6 @@
     color: var(--white);
     background: rgba(255,255,255,0.06);
   }
-  .nav-item.active {
-    background: var(--orange);
-    color: #fff;
-    box-shadow: 0 4px 16px rgba(236,95,39,0.4);
-  }
 
   /* ── Section Title ── */
   .section-title {
@@ -225,9 +617,7 @@
     letter-spacing: 0.12em;
   }
   .section-title::after {
-    content: '';
-    flex: 1;
-    height: 1px;
+    content: ''; flex: 1; height: 1px;
     background: linear-gradient(to right, rgba(255,255,255,0.06), transparent);
   }
 
@@ -239,7 +629,6 @@
     margin-bottom: 28px;
   }
 
-  /* ── Dashboard Card ── */
   .dash-card {
     position: relative;
     background: var(--dark2);
@@ -254,22 +643,15 @@
     display: block;
   }
   .dash-card::before {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 20px;
+    content: ''; position: absolute; inset: 0; border-radius: 20px;
     background: linear-gradient(135deg, rgba(236,95,39,0.08) 0%, transparent 60%);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    opacity: 0; transition: opacity 0.3s ease;
   }
   .dash-card::after {
-    content: '';
-    position: absolute;
-    top: 0; left: 0; right: 0;
-    height: 1px;
+    content: ''; position: absolute;
+    top: 0; left: 0; right: 0; height: 1px;
     background: linear-gradient(to right, transparent, rgba(236,95,39,0.5), transparent);
-    opacity: 0;
-    transition: opacity 0.3s ease;
+    opacity: 0; transition: opacity 0.3s ease;
   }
   .dash-card:hover {
     border-color: rgba(236,95,39,0.35);
@@ -277,7 +659,7 @@
     box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 0 1px rgba(236,95,39,0.15);
   }
   .dash-card:hover::before { opacity: 1; }
-  .dash-card:hover::after { opacity: 1; }
+  .dash-card:hover::after  { opacity: 1; }
 
   .dash-card.featured {
     grid-column: span 2;
@@ -289,84 +671,35 @@
   }
 
   .card-icon {
-    width: 48px;
-    height: 48px;
+    width: 48px; height: 48px;
     border-radius: 14px;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-    font-size: 22px;
-    position: relative;
   }
-  .icon-orange {
-    background: linear-gradient(135deg, rgba(236,95,39,0.2), rgba(236,95,39,0.08));
-    border: 1px solid rgba(236,95,39,0.25);
-    color: var(--orange);
-  }
-  .icon-blue {
-    background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.08));
-    border: 1px solid rgba(59,130,246,0.25);
-    color: #60a5fa;
-  }
-  .icon-green {
-    background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.08));
-    border: 1px solid rgba(16,185,129,0.25);
-    color: #34d399;
-  }
-  .icon-purple {
-    background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.08));
-    border: 1px solid rgba(139,92,246,0.25);
-    color: #a78bfa;
-  }
+  .icon-orange { background: linear-gradient(135deg, rgba(236,95,39,0.2), rgba(236,95,39,0.08)); border: 1px solid rgba(236,95,39,0.25); color: var(--orange); }
+  .icon-blue   { background: linear-gradient(135deg, rgba(59,130,246,0.2), rgba(59,130,246,0.08)); border: 1px solid rgba(59,130,246,0.25); color: #60a5fa; }
+  .icon-green  { background: linear-gradient(135deg, rgba(16,185,129,0.2), rgba(16,185,129,0.08)); border: 1px solid rgba(16,185,129,0.25); color: #34d399; }
+  .icon-purple { background: linear-gradient(135deg, rgba(139,92,246,0.2), rgba(139,92,246,0.08)); border: 1px solid rgba(139,92,246,0.25); color: #a78bfa; }
 
-  .card-label {
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.1em;
-    color: var(--orange);
-    margin-bottom: 8px;
-  }
+  .card-label { font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--orange); margin-bottom: 8px; }
+  .card-title { font-size: 20px; font-weight: 700; color: var(--white); letter-spacing: -0.02em; margin-bottom: 10px; }
+  .card-desc  { font-size: 13px; color: var(--gray4); line-height: 1.6; margin-bottom: 24px; }
 
-  .card-title {
-    font-size: 20px;
-    font-weight: 700;
-    color: var(--white);
-    letter-spacing: -0.02em;
-    margin-bottom: 10px;
-  }
-
-  .card-desc {
-    font-size: 13px;
-    color: var(--gray4);
-    line-height: 1.6;
-    margin-bottom: 24px;
-  }
-
-  .card-tags {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 6px;
-    margin-bottom: 24px;
-  }
+  .card-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 24px; }
   .tag {
     padding: 3px 10px;
     border-radius: 100px;
-    font-size: 11px;
-    font-weight: 500;
+    font-size: 11px; font-weight: 500;
     background: rgba(255,255,255,0.05);
     border: 1px solid rgba(255,255,255,0.08);
     color: var(--gray4);
   }
 
   .card-cta {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 13px;
-    font-weight: 600;
-    color: var(--orange);
+    display: inline-flex; align-items: center; gap: 8px;
+    font-size: 13px; font-weight: 600; color: var(--orange);
     transition: gap 0.2s ease;
   }
   .dash-card:hover .card-cta { gap: 12px; }
@@ -374,15 +707,10 @@
   .dash-card:hover .card-cta svg { transform: translateX(2px); }
 
   .card-soon {
-    position: absolute;
-    top: 20px;
-    right: 20px;
-    padding: 4px 10px;
-    border-radius: 100px;
-    font-size: 10px;
-    font-weight: 700;
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
+    position: absolute; top: 20px; right: 20px;
+    padding: 4px 10px; border-radius: 100px;
+    font-size: 10px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: 0.08em;
     background: rgba(255,255,255,0.06);
     border: 1px solid rgba(255,255,255,0.1);
     color: var(--gray4);
@@ -403,240 +731,281 @@
     background: rgba(255,255,255,0.025);
     border: 1px solid rgba(255,255,255,0.06);
     border-radius: 16px;
-    padding: 20px;
-    text-align: center;
+    padding: 20px; text-align: center;
   }
   .stat-num {
-    font-size: 28px;
-    font-weight: 800;
-    color: var(--white);
-    letter-spacing: -0.03em;
-    margin-bottom: 4px;
+    font-size: 28px; font-weight: 800;
+    color: var(--white); letter-spacing: -0.03em; margin-bottom: 4px;
   }
   .stat-num span { color: var(--orange); }
-  .stat-label {
-    font-size: 11px;
-    color: var(--gray4);
-    text-transform: uppercase;
-    letter-spacing: 0.08em;
-    font-weight: 500;
-  }
+  .stat-label { font-size: 11px; color: var(--gray4); text-transform: uppercase; letter-spacing: 0.08em; font-weight: 500; }
 
   /* ── Footer ── */
   footer {
     border-top: 1px solid rgba(255,255,255,0.06);
-    padding: 40px 0;
-    text-align: center;
-    margin-top: 48px;
+    padding: 40px 0; text-align: center; margin-top: 48px;
   }
-  footer p {
-    font-size: 13px;
-    color: var(--gray3);
-  }
+  footer p { font-size: 13px; color: var(--gray3); }
   footer strong { color: var(--gray4); }
 
-  /* ── Scan line overlay ── */
-  .scanlines {
-    position: fixed;
-    inset: 0;
-    z-index: 0;
-    background: repeating-linear-gradient(
-      0deg,
-      transparent,
-      transparent 3px,
-      rgba(0,0,0,0.015) 3px,
-      rgba(0,0,0,0.015) 4px
-    );
-    pointer-events: none;
-  }
-
-  /* ── Responsive nav ── */
   @media (max-width: 680px) {
-    .nav-bar {
-      border-radius: 16px;
-      padding: 4px;
-    }
-    .nav-item {
-      padding: 8px 14px;
-      font-size: 12px;
-    }
-    .wrapper { padding: 0 20px; }
+    .nav-bar { border-radius: 16px; padding: 4px; }
+    .nav-item { padding: 8px 14px; font-size: 12px; }
+    .wrapper  { padding: 0 20px; }
+    .top-bar  { flex-wrap: wrap; }
   }
 </style>
 </head>
 <body>
 
-<!-- Background layers -->
-<div class="bg-grid"></div>
-<div class="bg-glow-1"></div>
-<div class="bg-glow-2"></div>
-<div class="scanlines"></div>
+<!-- ══════════════════════════════════
+     LOGIN SCREEN
+══════════════════════════════════ -->
+<div id="login-screen">
+  <div class="login-bg-grid"></div>
+  <div class="login-bg-glow"></div>
 
-<div class="wrapper">
+  <div class="login-card">
+    <!-- Logo -->
+    <div class="login-logo">
+      <svg width="50" height="23" viewBox="0 0 90 38" fill="none">
+        <rect x="0" y="0" width="26" height="7" rx="3.5" fill="white"/>
+        <rect x="9.5" y="0" width="7" height="38" rx="3.5" fill="white"/>
+        <rect x="32" y="0" width="7" height="38" rx="3.5" fill="white"/>
+        <path d="M39 3.5 L53 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
+        <rect x="53" y="0" width="7" height="38" rx="3.5" fill="white"/>
+        <rect x="66" y="0" width="7" height="38" rx="3.5" fill="white"/>
+        <path d="M73 3.5 L87 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
+        <rect x="83" y="0" width="7" height="38" rx="3.5" fill="white"/>
+      </svg>
+    </div>
 
-  <!-- ── Header ── -->
-  <header>
-    <div class="logo-wrap">
-      <div class="tnn-logo">
-        <!-- TNN SVG Logo -->
-        <svg width="60" height="28" viewBox="0 0 90 38" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <!-- T -->
-          <rect x="0" y="0" width="26" height="7" rx="3.5" fill="white"/>
-          <rect x="9.5" y="0" width="7" height="38" rx="3.5" fill="white"/>
-          <!-- N (first) -->
-          <rect x="32" y="0" width="7" height="38" rx="3.5" fill="white"/>
-          <path d="M39 3.5 L53 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
-          <rect x="53" y="0" width="7" height="38" rx="3.5" fill="white"/>
-          <!-- N (second) -->
-          <rect x="66" y="0" width="7" height="38" rx="3.5" fill="white"/>
-          <path d="M73 3.5 L87 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
-          <rect x="83" y="0" width="7" height="38" rx="3.5" fill="white"/>
-        </svg>
+    <h2>TNN <span>Dashboard</span></h2>
+    <p>ลงชื่อเข้าใช้เพื่อเข้าถึง Intelligence Dashboard</p>
+
+    <div class="divider"><span>เข้าสู่ระบบ</span></div>
+
+    <!-- Email field -->
+    <div class="input-group">
+      <label class="input-label">Email</label>
+      <div class="input-wrap">
+        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+        <input id="input-email" type="email" placeholder="your@email.com" onkeydown="handleKey(event)" autocomplete="email">
       </div>
     </div>
 
-    <div>
-      <div class="header-badge">
-        <span class="dot"></span>
-        Live Dashboard Hub
+    <!-- Password field -->
+    <div class="input-group">
+      <label class="input-label">Password</label>
+      <div class="input-wrap">
+        <svg class="input-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <input id="input-password" type="password" placeholder="••••••••" onkeydown="handleKey(event)" autocomplete="current-password">
+        <button class="pwd-toggle" type="button" onclick="togglePwd()" tabindex="-1">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" id="pwd-eye">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/>
+          </svg>
+        </button>
       </div>
     </div>
 
-    <h1>TNN <span>Intelligence</span><br>Dashboard</h1>
-    <p>ศูนย์กลางข้อมูลและ AI Analytics สำหรับทีม TNN · ออกแบบมาเพื่อการตัดสินใจที่รวดเร็ว</p>
+    <!-- Submit button -->
+    <button id="signin-btn" onclick="emailSignIn()">
+      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"/><polyline points="10 17 15 12 10 7"/><line x1="15" y1="12" x2="3" y2="12"/></svg>
+      เข้าสู่ระบบ
+    </button>
 
-    <!-- Nav -->
-    <nav class="nav-bar">
-      <a href="web_performance_dashboard_2026.html" class="nav-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-        WEB PERFORMANCE
-      </a>
-      <a href="#team" class="nav-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
-        TEAM PERFORMANCE
-      </a>
-      <a href="tnn_review_q1.html" class="nav-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
-        REVIEWS
-      </a>
-      <a href="tnn_training2026_v1.html" class="nav-item">
-        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
-        TRAINING 2026
-      </a>
-    </nav>
-  </header>
+    <div id="login-error">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
+      <span></span>
+    </div>
 
-  <!-- ── Stats ── -->
-  <div class="stats-row">
-    <div class="stat-card">
-      <div class="stat-num"><span>4</span></div>
-      <div class="stat-label">Dashboards</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">Q<span>1</span></div>
-      <div class="stat-label">Current Quarter</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num">20<span>26</span></div>
-      <div class="stat-label">Year</div>
-    </div>
-    <div class="stat-card">
-      <div class="stat-num"><span>AI</span></div>
-      <div class="stat-label">Powered</div>
-    </div>
+    <p class="login-note">สำหรับทีมงาน TNN เท่านั้น · Thai News Network © 2026</p>
   </div>
+</div>
 
-  <!-- ── Dashboards ── -->
-  <div class="section-title">
-    <h2>Dashboards</h2>
-  </div>
 
-  <div class="card-grid">
+<!-- ══════════════════════════════════
+     MAIN APP
+══════════════════════════════════ -->
+<div id="main-app">
 
-    <!-- Web Performance -->
-    <a href="web_performance_dashboard_2026.html" class="dash-card featured">
-      <div class="card-icon icon-orange">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-      </div>
-      <div class="card-label">Analytics</div>
-      <div class="card-title">Web Performance</div>
-      <div class="card-desc">ติดตามประสิทธิภาพเว็บไซต์ TNN แบบเรียลไทม์ · Pageviews, Sessions, Traffic Sources และ KPI ครบชุด</div>
-      <div class="card-tags">
-        <span class="tag">Pageviews</span>
-        <span class="tag">Sessions</span>
-        <span class="tag">Traffic</span>
-        <span class="tag">Q1 2026</span>
-      </div>
-      <div class="card-cta">
-        เปิด Dashboard
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
-    </a>
+  <div class="bg-grid"></div>
+  <div class="bg-glow-1"></div>
+  <div class="bg-glow-2"></div>
+  <div class="scanlines"></div>
 
-    <!-- Team Performance -->
-    <div class="dash-card" id="team" style="cursor:default;">
-      <div class="card-soon">Coming Soon</div>
-      <div class="card-icon icon-blue">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+  <div class="wrapper">
+
+    <!-- ── Top Bar ── -->
+    <div class="top-bar">
+      <div class="user-chip">
+        <div class="user-avatar-wrap">
+          <img id="user-avatar" src="" alt="">
+          <span id="user-initials">?</span>
+        </div>
+        <div class="user-info">
+          <span class="uname"  id="user-name">—</span>
+          <span class="uemail" id="user-email">—</span>
+        </div>
       </div>
-      <div class="card-label">Performance</div>
-      <div class="card-title">Team Performance</div>
-      <div class="card-desc">วิเคราะห์ผลงานทีมแยกตามแผนก · บทความ, ยอดอ่าน และ Engagement ของแต่ละทีม</div>
-      <div class="card-tags">
-        <span class="tag">Teams</span>
-        <span class="tag">Articles</span>
-        <span class="tag">Engagement</span>
+      <button class="signout-btn" onclick="doSignOut()">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        Sign out
+      </button>
+    </div>
+
+    <!-- ── Header ── -->
+    <header>
+      <div class="logo-wrap">
+        <div class="tnn-logo">
+          <svg width="60" height="28" viewBox="0 0 90 38" fill="none">
+            <rect x="0" y="0" width="26" height="7" rx="3.5" fill="white"/>
+            <rect x="9.5" y="0" width="7" height="38" rx="3.5" fill="white"/>
+            <rect x="32" y="0" width="7" height="38" rx="3.5" fill="white"/>
+            <path d="M39 3.5 L53 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
+            <rect x="53" y="0" width="7" height="38" rx="3.5" fill="white"/>
+            <rect x="66" y="0" width="7" height="38" rx="3.5" fill="white"/>
+            <path d="M73 3.5 L87 34.5" stroke="white" stroke-width="7" stroke-linecap="round"/>
+            <rect x="83" y="0" width="7" height="38" rx="3.5" fill="white"/>
+          </svg>
+        </div>
       </div>
-      <div class="card-cta" style="color:var(--gray3);">
-        กำลังพัฒนา
+
+      <div>
+        <div class="header-badge">
+          <span class="dot"></span>
+          Live Dashboard Hub
+        </div>
+      </div>
+
+      <h1>TNN <span>Intelligence</span><br>Dashboard</h1>
+      <p>ศูนย์กลางข้อมูลและ AI Analytics สำหรับทีม TNN · ออกแบบมาเพื่อการตัดสินใจที่รวดเร็ว</p>
+
+      <nav class="nav-bar">
+        <a href="web_performance_dashboard_2026.html" class="nav-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+          WEB PERFORMANCE
+        </a>
+        <a href="#team" class="nav-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          TEAM PERFORMANCE
+        </a>
+        <a href="tnn_review_q1.html" class="nav-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          REVIEWS
+        </a>
+        <a href="tnn_training2026_v1.html" class="nav-item">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+          TRAINING 2026
+        </a>
+      </nav>
+    </header>
+
+    <!-- ── Stats ── -->
+    <div class="stats-row">
+      <div class="stat-card">
+        <div class="stat-num"><span>4</span></div>
+        <div class="stat-label">Dashboards</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">Q<span>1</span></div>
+        <div class="stat-label">Current Quarter</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num">20<span>26</span></div>
+        <div class="stat-label">Year</div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-num"><span>AI</span></div>
+        <div class="stat-label">Powered</div>
       </div>
     </div>
 
-    <!-- Reviews -->
-    <a href="tnn_review_q1.html" class="dash-card">
-      <div class="card-icon icon-green">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-      </div>
-      <div class="card-label">Q1 Report</div>
-      <div class="card-title">Reviews</div>
-      <div class="card-desc">สรุปผลการดำเนินงาน Q1 2026 พร้อม Insights และ Recommendation สำหรับทีม</div>
-      <div class="card-tags">
-        <span class="tag">Q1 2026</span>
-        <span class="tag">Report</span>
-        <span class="tag">KPI</span>
-      </div>
-      <div class="card-cta">
-        ดูรายงาน
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
-    </a>
+    <!-- ── Dashboards ── -->
+    <div class="section-title">
+      <h2>Dashboards</h2>
+    </div>
 
-    <!-- Training 2026 -->
-    <a href="tnn_training2026_v1.html" class="dash-card">
-      <div class="card-icon icon-purple">
-        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+    <div class="card-grid">
+
+      <a href="web_performance_dashboard_2026.html" class="dash-card featured">
+        <div class="card-icon icon-orange">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        </div>
+        <div class="card-label">Analytics</div>
+        <div class="card-title">Web Performance</div>
+        <div class="card-desc">ติดตามประสิทธิภาพเว็บไซต์ TNN แบบเรียลไทม์ · Pageviews, Sessions, Traffic Sources และ KPI ครบชุด</div>
+        <div class="card-tags">
+          <span class="tag">Pageviews</span>
+          <span class="tag">Sessions</span>
+          <span class="tag">Traffic</span>
+          <span class="tag">Q1 2026</span>
+        </div>
+        <div class="card-cta">
+          เปิด Dashboard
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <div class="dash-card" id="team" style="cursor:default;">
+        <div class="card-soon">Coming Soon</div>
+        <div class="card-icon icon-blue">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        </div>
+        <div class="card-label">Performance</div>
+        <div class="card-title">Team Performance</div>
+        <div class="card-desc">วิเคราะห์ผลงานทีมแยกตามแผนก · บทความ, ยอดอ่าน และ Engagement ของแต่ละทีม</div>
+        <div class="card-tags">
+          <span class="tag">Teams</span>
+          <span class="tag">Articles</span>
+          <span class="tag">Engagement</span>
+        </div>
+        <div class="card-cta" style="color:var(--gray3);">กำลังพัฒนา</div>
       </div>
-      <div class="card-label">Learning</div>
-      <div class="card-title">Training 2026</div>
-      <div class="card-desc">แผนการอบรมและ Upskill ทีม TNN ประจำปี 2026 · หลักสูตร AI Tools สำหรับนักข่าว</div>
-      <div class="card-tags">
-        <span class="tag">AI Tools</span>
-        <span class="tag">Upskill</span>
-        <span class="tag">2026</span>
-      </div>
-      <div class="card-cta">
-        ดูแผนอบรม
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
-      </div>
-    </a>
+
+      <a href="tnn_review_q1.html" class="dash-card">
+        <div class="card-icon icon-green">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+        </div>
+        <div class="card-label">Q1 Report</div>
+        <div class="card-title">Reviews</div>
+        <div class="card-desc">สรุปผลการดำเนินงาน Q1 2026 พร้อม Insights และ Recommendation สำหรับทีม</div>
+        <div class="card-tags">
+          <span class="tag">Q1 2026</span>
+          <span class="tag">Report</span>
+          <span class="tag">KPI</span>
+        </div>
+        <div class="card-cta">
+          ดูรายงาน
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+      <a href="tnn_training2026_v1.html" class="dash-card">
+        <div class="card-icon icon-purple">
+          <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 10v6M2 10l10-5 10 5-10 5z"/><path d="M6 12v5c3 3 9 3 12 0v-5"/></svg>
+        </div>
+        <div class="card-label">Learning</div>
+        <div class="card-title">Training 2026</div>
+        <div class="card-desc">แผนการอบรมและ Upskill ทีม TNN ประจำปี 2026 · หลักสูตร AI Tools สำหรับนักข่าว</div>
+        <div class="card-tags">
+          <span class="tag">AI Tools</span>
+          <span class="tag">Upskill</span>
+          <span class="tag">2026</span>
+        </div>
+        <div class="card-cta">
+          ดูแผนอบรม
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+        </div>
+      </a>
+
+    </div>
+
+    <footer>
+      <p><strong>TNN Dashboard Hub</strong> · © 2026 Thai News Network · Powered by AI Analytics</p>
+    </footer>
 
   </div>
-
-  <!-- ── Footer ── -->
-  <footer>
-    <p><strong>TNN Dashboard Hub</strong> · © 2026 Thai News Network · Powered by AI Analytics</p>
-  </footer>
-
 </div>
 
 </body>
