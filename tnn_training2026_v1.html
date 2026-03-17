@@ -47,6 +47,19 @@
   .logo span { color: #5b42c8; }
   .badge { font-size: .82vw; font-weight: 500; color: #7a7790; border: 1px solid rgba(0,0,0,.11); border-radius: 20px; padding: .28em 1em; letter-spacing: .09em; text-transform: uppercase; background: rgba(255,255,255,.55); }
 
+  /* HOME BUTTON */
+  .hdr-right { display: flex; align-items: center; gap: .8vw; }
+  .btn-home {
+    display: inline-flex; align-items: center; gap: .4vw;
+    font-size: .78vw; font-weight: 600; letter-spacing: .07em;
+    color: #5b42c8; background: rgba(91,66,200,.08);
+    border: 1px solid rgba(91,66,200,.22); border-radius: 20px;
+    padding: .28em 1em; text-decoration: none;
+    transition: background .18s, color .15s;
+    white-space: nowrap;
+  }
+  .btn-home:hover { background: rgba(91,66,200,.16); color: #4a33b8; }
+
   /* TRACK */
   .track { position: relative; z-index: 2; flex: 1; display: flex; align-items: center; padding: 0 5vw; }
   .track::before { content: ''; position: absolute; left: 5vw; right: 5vw; top: 50%; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(0,0,0,.09) 8%, rgba(0,0,0,.09) 92%, transparent); }
@@ -296,7 +309,15 @@
 
     <div class="hdr">
       <div class="logo">TNN <span>Training</span></div>
-      <div class="badge">2026 · Upskill Program</div>
+      <div class="hdr-right">
+        <a class="btn-home" href="index.html">
+          <svg style="width:.8vw;height:.8vw;min-width:9px" viewBox="0 0 12 12" fill="none">
+            <path d="M1 5.5L6 1l5 4.5V11a.5.5 0 01-.5.5h-3V8H4.5v3.5h-3A.5.5 0 011 11V5.5z" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"/>
+          </svg>
+          Home
+        </a>
+        <div class="badge">2026 · Upskill Program</div>
+      </div>
     </div>
 
     <div class="track">
