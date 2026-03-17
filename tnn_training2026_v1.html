@@ -1,0 +1,383 @@
+
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+
+  .stage {
+    width: 100%;
+    aspect-ratio: 16/9;
+    background: #f4f2ee;
+    position: relative;
+    overflow: hidden;
+    font-family: 'DM Sans', sans-serif;
+    display: flex;
+    flex-direction: column;
+    box-sizing: border-box;
+  }
+
+  .bg-texture {
+    position: absolute; inset: 0;
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(120,100,220,0.06) 0%, transparent 45%),
+      radial-gradient(circle at 85% 75%, rgba(20,150,110,0.05) 0%, transparent 40%),
+      radial-gradient(circle at 68% 55%, rgba(230,120,20,0.13) 0%, transparent 38%);
+  }
+  .bg-lines {
+    position: absolute; inset: 0;
+    background-image:
+      linear-gradient(rgba(0,0,0,0.022) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(0,0,0,0.022) 1px, transparent 1px);
+    background-size: 52px 52px;
+  }
+
+  .header {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 3% 5% 0;
+  }
+  .logo {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(14px, 2.1vw, 26px);
+    font-weight: 700; color: #1a1825; letter-spacing: 0.06em;
+  }
+  .logo span { color: #5b42c8; }
+  .year-badge {
+    font-size: clamp(8px, 0.85vw, 11px); font-weight: 500; color: #7a7790;
+    border: 1px solid rgba(0,0,0,0.12); border-radius: 20px;
+    padding: 0.3em 1em; letter-spacing: 0.1em; text-transform: uppercase;
+    background: rgba(255,255,255,0.6);
+  }
+
+  .body {
+    position: relative; z-index: 2;
+    flex: 1; display: flex; align-items: center;
+    padding: 1% 5% 2%;
+  }
+
+  .h-line {
+    position: absolute; left: 5%; right: 5%; top: 50%;
+    height: 1.5px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.08) 88%, transparent);
+  }
+
+  .sessions {
+    display: flex; align-items: stretch;
+    width: 100%; position: relative; gap: 0;
+  }
+
+  .session {
+    flex: 1; display: flex; flex-direction: column; align-items: center;
+    position: relative; padding: 0 1.5%;
+  }
+  .session:not(:last-child)::after {
+    content: '';
+    position: absolute; right: 0; top: 10%; bottom: 10%;
+    width: 1px;
+    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.08), transparent);
+  }
+
+  .s-order {
+    font-size: clamp(7px, 0.78vw, 10px); font-weight: 500;
+    letter-spacing: 0.12em; text-transform: uppercase;
+    margin-bottom: 5%; padding: 0.35em 1em; border-radius: 20px; white-space: nowrap;
+  }
+  .s-order-1 { color: #4a3fa8; background: rgba(91,66,200,0.1); border: 1px solid rgba(91,66,200,0.2); }
+  .s-order-2 { color: #0d7a5f; background: rgba(20,150,110,0.1); border: 1px solid rgba(20,150,110,0.2); }
+  .s-order-3 {
+    color: #fff;
+    background: linear-gradient(135deg, #f07b20, #e8430a);
+    border: none;
+    padding: 0.45em 1.2em;
+    font-size: clamp(7.5px, 0.85vw, 11px);
+    box-shadow: 0 3px 12px rgba(230,80,20,0.35);
+  }
+
+  .s-node {
+    width: clamp(18px, 2vw, 26px); height: clamp(18px, 2vw, 26px);
+    border-radius: 50%; display: flex; align-items: center; justify-content: center;
+    margin-bottom: 5%; flex-shrink: 0; position: relative;
+  }
+  .node-done { background: #fff; border: 2px solid; }
+  .node-done-1 { border-color: #5b42c8; box-shadow: 0 2px 10px rgba(91,66,200,0.18); }
+  .node-done-2 { border-color: #14a078; box-shadow: 0 2px 10px rgba(20,160,120,0.18); }
+  .node-upcoming {
+    background: linear-gradient(135deg, #f07b20, #e8430a);
+    border: none;
+    box-shadow: 0 4px 16px rgba(230,80,20,0.45), 0 0 0 4px rgba(240,123,32,0.15);
+    width: clamp(22px, 2.4vw, 30px); height: clamp(22px, 2.4vw, 30px);
+  }
+  .check-icon { width: 55%; height: 55%; }
+
+  .done-bar {
+    display: flex; align-items: center; gap: 5px;
+    margin-bottom: 3%; width: 100%;
+  }
+  .done-line { flex: 1; height: 1px; background: currentColor; opacity: 0.2; }
+  .done-label {
+    font-size: clamp(6px, 0.62vw, 8px); font-weight: 500;
+    letter-spacing: 0.1em; text-transform: uppercase;
+    padding: 0.2em 0.7em; border-radius: 20px; white-space: nowrap;
+  }
+  .done-label-1 { color: #4a3fa8; background: rgba(91,66,200,0.08); }
+  .done-label-2 { color: #0d7a5f; background: rgba(20,150,110,0.08); }
+  .upcoming-label-bar {
+    font-size: clamp(6.5px, 0.68vw, 9px); font-weight: 600;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    padding: 0.3em 0.9em; border-radius: 20px; white-space: nowrap;
+    color: #fff;
+    background: linear-gradient(135deg, #f07b20, #e8430a);
+    box-shadow: 0 2px 8px rgba(230,80,20,0.3);
+  }
+
+  /* Cards */
+  .s-card {
+    width: 100%; border-radius: 10px; padding: 5% 7%;
+    flex: 1; position: relative; overflow: hidden;
+  }
+  .card-done-1 { background: rgba(255,255,255,0.65); border: 1px solid rgba(91,66,200,0.13); }
+  .card-done-2 { background: rgba(255,255,255,0.65); border: 1px solid rgba(20,150,110,0.13); }
+  .card-upcoming {
+    background: #fff;
+    border: 2px solid #f07b20;
+    box-shadow:
+      0 6px 28px rgba(230,80,20,0.18),
+      0 0 0 5px rgba(240,123,32,0.08),
+      inset 0 0 0 0 transparent;
+  }
+  /* Orange accent bar on upcoming card top */
+  .card-upcoming::before {
+    content: '';
+    position: absolute; top: 0; left: 0; right: 0; height: 3.5px;
+    background: linear-gradient(90deg, #f07b20, #e8430a, #f5a623);
+    border-radius: 10px 10px 0 0;
+  }
+
+  .s-date {
+    font-size: clamp(6.5px, 0.7vw, 9px); font-weight: 400;
+    letter-spacing: 0.05em; margin-bottom: 3%;
+    display: flex; align-items: center; gap: 5px;
+  }
+  .date-1 { color: #8880bb; }
+  .date-2 { color: #3a9a7e; }
+  .date-3 { color: #d06010; font-weight: 500; }
+
+  .s-name {
+    font-size: clamp(7px, 0.72vw, 9.5px); font-weight: 500;
+    letter-spacing: 0.07em; margin-bottom: 2.5%; text-transform: uppercase;
+  }
+  .name-1 { color: #8880bb; }
+  .name-2 { color: #3a9a7e; }
+  .name-3 { color: #d06010; }
+
+  .s-title {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(9px, 1.05vw, 14px); font-weight: 700;
+    line-height: 1.35; margin-bottom: 4%;
+  }
+  .title-done { color: #6a6480; }
+  .title-upcoming { color: #1a1825; }
+
+  .mode-chip {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: clamp(6px, 0.62vw, 8px); color: #8880bb;
+    background: rgba(91,66,200,0.06); border: 1px solid rgba(91,66,200,0.15);
+    border-radius: 20px; padding: 0.2em 0.8em; margin-bottom: 3%;
+  }
+
+  .topics { display: flex; flex-direction: column; gap: 5%; }
+  .topic-item {
+    display: flex; align-items: flex-start; gap: 5%;
+    font-size: clamp(6px, 0.65vw, 8.5px); color: #5a5670; line-height: 1.5;
+  }
+  .topic-dot {
+    width: clamp(4px, 0.45vw, 6px); height: clamp(4px, 0.45vw, 6px);
+    border-radius: 50%; background: #f07b20;
+    flex-shrink: 0; margin-top: 0.45em;
+  }
+  .topic-label { color: #c05010; font-weight: 600; }
+
+  .footer {
+    position: relative; z-index: 2;
+    display: flex; align-items: center; justify-content: center;
+    padding: 0 5% 2.5%; gap: 6px;
+  }
+  .f-sep { width: 3px; height: 3px; border-radius: 50%; background: #c0bdd0; }
+  .f-text { font-size: clamp(6.5px, 0.65vw, 8.5px); color: #b0adc0; letter-spacing: 0.1em; text-transform: uppercase; }
+</style>
+
+<div class="stage">
+  <div class="bg-texture"></div>
+  <div class="bg-lines"></div>
+
+  <div class="header">
+    <div class="logo">TNN <span>Training</span></div>
+    <div class="year-badge">2026 · Upskill Program</div>
+  </div>
+
+  <div class="body">
+    <div class="h-line"></div>
+    <div class="sessions">
+
+      <!-- Session 1 — DONE -->
+      <div class="session">
+        <div class="s-order s-order-1">Session 01</div>
+        <div class="s-node node-done node-done-1">
+          <svg class="check-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" fill="#5b42c8"/>
+            <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="done-bar" style="color:#5b42c8">
+          <div class="done-line"></div>
+          <span class="done-label done-label-1">✓ เสร็จสิ้นแล้ว</span>
+          <div class="done-line"></div>
+        </div>
+        <div class="s-card card-done-1">
+          <div class="s-date date-1">
+            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            25 กุมภาพันธ์ 2026
+          </div>
+          <div class="s-name name-1">SEO Training</div>
+          <div class="s-title title-done">AI-Augmented Journalism Mastering</div>
+          <div class="mode-chip">
+            <svg width="7" height="7" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            ออนไลน์
+          </div>
+        </div>
+      </div>
+
+      <!-- Session 2 — DONE -->
+      <div class="session">
+        <div class="s-order s-order-2">Session 02</div>
+        <div class="s-node node-done node-done-2">
+          <svg class="check-icon" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="9" fill="#14a078"/>
+            <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="done-bar" style="color:#14a078">
+          <div class="done-line"></div>
+          <span class="done-label done-label-2">✓ เสร็จสิ้นแล้ว</span>
+          <div class="done-line"></div>
+        </div>
+        <div class="s-card card-done-2">
+          <div class="s-date date-2">
+            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            3 มีนาคม 2026
+          </div>
+          <div class="s-name name-2">AI Training</div>
+          <div class="s-title title-done">Gems & NotebookLM สำหรับสื่อมวลชน</div>
+          <div class="topic-item" style="margin-top:4%">
+            <div class="topic-dot" style="background:#14a078"></div>
+            <span style="color:#4a7a6a">หลักสูตร upskill นักข่าวและผู้ปฏิบัติงานด้านสื่อ</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Session 3 — UPCOMING -->
+      <div class="session">
+        <div class="s-order s-order-3">Session 03</div>
+        <div class="s-node node-upcoming">
+          <svg width="55%" height="55%" viewBox="0 0 20 20" fill="none">
+            <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="1.8"/>
+            <path d="M10 7v3.5l2 1.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+        </div>
+        <div class="done-bar" style="color:#f07b20">
+          <div class="done-line"></div>
+          <span class="upcoming-label-bar">⏳ กำลังจะมาถึง</span>
+          <div class="done-line"></div>
+        </div>
+        <div class="s-card card-upcoming">
+          <div class="s-date date-3">
+            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+            9 เมษายน 2026
+          </div>
+          <div class="s-name name-3">Google Tools for News</div>
+          <div class="s-title title-upcoming">Research, Trends, YouTube & Maps</div>
+          <div class="topics">
+            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Research & Report</span> — Google Search & ตรวจสอบ AI</span></div>
+            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Google Trends</span> — วิเคราะห์กระแสด้วย Gemini</span></div>
+            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">YouTube News</span> — สารคดี ข่าวด่วน พอดแคสต์</span></div>
+            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Maps for News</span> — MyMaps, Google Earth</span></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="f-sep"></div>
+    <div class="f-text">TNN · Journalist Upskill Program · 2026</div>
+    <div class="f-sep"></div>
+  </div>
+</div>
+
+<!-- ── PDF Download & Home Buttons ── -->
+<style>
+.pdf-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #EC5F27, #c94d1e);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 13px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(236,95,39,0.5), 0 2px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'DM Sans', sans-serif;
+}
+.pdf-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(236,95,39,0.6);
+}
+.pdf-fab:active { transform: translateY(0); }
+.home-fab {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a1a1f;
+  color: #EC5F27;
+  border: 1px solid rgba(236,95,39,0.4);
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'DM Sans', sans-serif;
+  text-decoration: none;
+}
+.home-fab:hover {
+  transform: translateY(-2px);
+  background: rgba(236,95,39,0.12);
+}
+@media print {
+  .pdf-fab, .home-fab { display: none !important; }
+  @page { size: A4 landscape; margin: 10mm; }
+}
+</style>
+
+<button class="pdf-fab" onclick="window.print()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  Download PDF
+</button>
+<a href="index.html" class="home-fab">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  Home
+</a>

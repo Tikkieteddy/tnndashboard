@@ -1,0 +1,365 @@
+
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg:      #ffffff;
+    --bg2:     #f7f8fa;
+    --bg3:     #eef0f5;
+    --border:  rgba(0,0,0,0.06);
+    --border2: rgba(0,0,0,0.11);
+    --text:    #1a1d26;
+    --text2:   #4a4f62;
+    --text3:   #9098b0;
+    --c1:      #3b6bff;
+    --c2:      #0faa72;
+    --c3:      #d4890a;
+    --c4:      #e03535;
+    --c1bg:    rgba(59,107,255,0.08);
+    --c2bg:    rgba(15,170,114,0.08);
+    --c3bg:    rgba(212,137,10,0.08);
+    --c4bg:    rgba(224,53,53,0.08);
+    --prob-bg: rgba(224,53,53,0.06);
+    --fix-bg:  rgba(15,170,114,0.06);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  .shell {
+    font-family: 'IBM Plex Sans Thai', sans-serif;
+    background: var(--bg);
+    border-radius: 16px;
+    overflow: hidden;
+    border: 1px solid var(--border2);
+    box-shadow: 0 2px 16px rgba(0,0,0,0.07), 0 0 0 0.5px var(--border);
+  }
+
+  /* ── Header ── */
+  .header {
+    padding: 20px 24px 16px;
+    border-bottom: 1px solid var(--border2);
+    background: var(--bg);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .header-left h2 {
+    font-size: 15px; font-weight: 600;
+    color: var(--text); letter-spacing: -0.01em;
+  }
+  .header-left p {
+    font-size: 11px; color: var(--text3);
+    margin-top: 3px; font-weight: 300;
+  }
+
+  /* ── Filter chips ── */
+  .chips { display: flex; gap: 6px; flex-wrap: wrap; justify-content: flex-end; }
+  .chip {
+    font-size: 10px; font-weight: 600;
+    padding: 4px 11px; border-radius: 20px;
+    border: 1px solid; cursor: pointer;
+    transition: all 0.15s; letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+  .chip[data-cat="all"]     { color: var(--text2); border-color: var(--border2); background: var(--bg2); }
+  .chip[data-cat="content"] { color: var(--c1); border-color: var(--c1); background: var(--c1bg); }
+  .chip[data-cat="traffic"] { color: var(--c2); border-color: var(--c2); background: var(--c2bg); }
+  .chip[data-cat="seo"]     { color: var(--c3); border-color: var(--c3); background: var(--c3bg); }
+  .chip[data-cat="perf"]    { color: var(--c4); border-color: var(--c4); background: var(--c4bg); }
+  .chip.active { box-shadow: 0 2px 8px rgba(0,0,0,0.12); transform: translateY(-1px); filter: brightness(0.9); }
+  .chip.dimmed { opacity: 0.35; }
+
+  /* ── Table ── */
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; }
+  thead tr { background: var(--bg2); }
+  th {
+    padding: 10px 16px;
+    font-size: 10px; font-weight: 600;
+    color: var(--text3); text-align: left;
+    letter-spacing: 0.08em; text-transform: uppercase;
+    border-bottom: 1px solid var(--border2);
+    white-space: nowrap;
+  }
+  th:first-child  { width: 130px; }
+  th:nth-child(2) { width: 195px; }
+  th:nth-child(3) { width: 210px; }
+  th:last-child   { width: 210px; }
+
+  tbody tr {
+    border-bottom: 1px solid var(--border);
+    transition: background 0.12s;
+  }
+  tbody tr:last-child { border-bottom: none; }
+  tbody tr:hover { background: var(--bg2); }
+  tbody tr.hidden-row { display: none; }
+
+  td { padding: 14px 16px; font-size: 12.5px; color: var(--text2); vertical-align: top; line-height: 1.65; }
+
+  /* ── Topic column ── */
+  .topic-col { display: flex; flex-direction: column; gap: 6px; }
+  .badge {
+    display: inline-flex; align-items: center; gap: 4px;
+    font-size: 9.5px; font-weight: 700;
+    letter-spacing: 0.06em; padding: 3px 9px;
+    border-radius: 20px; width: fit-content;
+    text-transform: uppercase; border: 1px solid transparent;
+  }
+  .badge-dot { width: 5px; height: 5px; border-radius: 50%; }
+  .badge.content { background: var(--c1bg); color: var(--c1); border-color: rgba(59,107,255,0.2); }
+  .badge.content .badge-dot { background: var(--c1); }
+  .badge.traffic  { background: var(--c2bg); color: var(--c2); border-color: rgba(15,170,114,0.2); }
+  .badge.traffic .badge-dot  { background: var(--c2); }
+  .badge.seo      { background: var(--c3bg); color: var(--c3); border-color: rgba(212,137,10,0.2); }
+  .badge.seo .badge-dot      { background: var(--c3); }
+  .badge.perf     { background: var(--c4bg); color: var(--c4); border-color: rgba(224,53,53,0.2); }
+  .badge.perf .badge-dot     { background: var(--c4); }
+  .topic-name { font-size: 12px; font-weight: 600; color: var(--text); line-height: 1.3; }
+
+  /* ── Stat pills ── */
+  .stat-pill {
+    display: inline-block; font-size: 10px; font-weight: 700;
+    padding: 1px 6px; border-radius: 5px; margin: 0 1px;
+  }
+  .stat-down    { background: rgba(224,53,53,0.1);   color: #c42b2b; }
+  .stat-up      { background: rgba(15,170,114,0.1);  color: #0a8a5c; }
+  .stat-neutral { background: rgba(100,110,140,0.1); color: #5a6280; }
+
+  /* ── Problem & Fix cells ── */
+  .prob-cell { background: var(--prob-bg); border-radius: 8px; padding: 9px 11px; }
+  .fix-cell  { background: var(--fix-bg);  border-radius: 8px; padding: 9px 11px; }
+  .prob-text { color: #c0282a; display: flex; gap: 6px; align-items: flex-start; font-size: 12px; line-height: 1.6; }
+  .fix-text  { color: #0a7a52; display: flex; gap: 6px; align-items: flex-start; font-size: 12px; line-height: 1.6; }
+  .prob-icon, .fix-icon { flex-shrink: 0; font-size: 11px; margin-top: 2px; }
+
+  /* ── Footer ── */
+  .footer {
+    padding: 12px 20px;
+    border-top: 1px solid var(--border2);
+    background: var(--bg2);
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .legend { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; }
+  .legend-item { display: flex; align-items: center; gap: 5px; font-size: 10px; color: var(--text3); }
+  .legend-dot { width: 7px; height: 7px; border-radius: 50%; }
+  .count-badge {
+    font-size: 10px; color: var(--text3);
+    background: var(--bg); border: 1px solid var(--border2);
+    padding: 3px 11px; border-radius: 20px; font-weight: 500;
+  }
+</style>
+
+<div class="shell">
+  <div class="header">
+    <div class="header-left">
+      <h2>วิเคราะห์สรุปผล TNN — Q1/2026</h2>
+      <p>ม.ค.–15 มี.ค. 2569 &nbsp;·&nbsp; Content · Traffic · SEO · Performance</p>
+    </div>
+    <div class="chips">
+      <div class="chip active" data-cat="all">ทั้งหมด</div>
+      <div class="chip" data-cat="content">Content</div>
+      <div class="chip" data-cat="traffic">Traffic</div>
+      <div class="chip" data-cat="seo">SEO</div>
+      <div class="chip" data-cat="perf">เป้าหมาย</div>
+    </div>
+  </div>
+
+  <div class="table-wrap">
+    <table>
+      <thead>
+        <tr>
+          <th>หัวข้อ</th>
+          <th>สถานการณ์ปัจจุบัน</th>
+          <th>ปัญหาที่พบ</th>
+          <th>วิธีแก้ไข</th>
+        </tr>
+      </thead>
+      <tbody>
+
+        <tr data-cat="content">
+          <td><div class="topic-col">
+            <span class="badge content"><span class="badge-dot"></span>Content</span>
+            <span class="topic-name">ประเภทเนื้อหา</span>
+          </div></td>
+          <td>Social Talk สร้าง views สูงสุด <span class="stat-pill stat-up">5,746 views/ชิ้น</span> ขณะที่ Lifestyle, Infographic ได้ <span class="stat-pill stat-neutral">32–61 views</span></td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>เนื้อหาส่วนใหญ่ไม่ดึง engagement — อาชญากรรม, คอลัมนิสต์ มีวิวต่ำสุด ไม่คุ้มต้นทุน</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>เพิ่มสัดส่วน Social Talk และ TNN Exclusive <span class="stat-pill stat-up">204 views/ชิ้น</span> ลดเนื้อหา low-engagement</span></div></div></td>
+        </tr>
+
+        <tr data-cat="content">
+          <td><div class="topic-col">
+            <span class="badge content"><span class="badge-dot"></span>Content</span>
+            <span class="topic-name">หมวด Wealth</span>
+          </div></td>
+          <td>Wealth มีข่าวมากที่สุด <span class="stat-pill stat-neutral">198 ชิ้น (27%)</span> แต่ avg views ต่ำเพียง <span class="stat-pill stat-down">~60 views/ชิ้น</span></td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>ผลิตมาก แต่ quality ต่ำ ไม่คุ้มค่าทรัพยากรที่ใช้ในการผลิต</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>ลดปริมาณ เน้น story เชิงลึกที่มี depth และ engagement จริง</span></div></div></td>
+        </tr>
+
+        <tr data-cat="traffic">
+          <td><div class="topic-col">
+            <span class="badge traffic"><span class="badge-dot"></span>Traffic</span>
+            <span class="topic-name">Organic Search</span>
+          </div></td>
+          <td>Sessions ลดลงมากที่สุด <span class="stat-pill stat-down">-23.0%</span> (87K → 67K) สัดส่วนจาก 51% เหลือ 47%</td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>SEO อ่อนตัว — อาจเกิดจาก Google algorithm ปรับ หรือ keyword ranking ตก</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>ตรวจ Search Console → ปรับ headline SEO-friendly → เพิ่ม internal linking</span></div></div></td>
+        </tr>
+
+        <tr data-cat="traffic">
+          <td><div class="topic-col">
+            <span class="badge traffic"><span class="badge-dot"></span>Traffic</span>
+            <span class="topic-name">Organic Social</span>
+          </div></td>
+          <td>Organic Social เติบโต <span class="stat-pill stat-up">+27.5%</span> (28K → 35K) กลายเป็น <span class="stat-pill stat-up">25% ของ traffic</span> ทั้งหมด</td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>Referral traffic ยังติดลบ <span class="stat-pill stat-down">-5.1%</span> ยังไม่ได้ใช้ Social อย่างเต็มประสิทธิภาพ</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>ขยาย Social distribution, สร้าง shareable content เพิ่ม platform partnership</span></div></div></td>
+        </tr>
+
+        <tr data-cat="seo">
+          <td><div class="topic-col">
+            <span class="badge seo"><span class="badge-dot"></span>SEO</span>
+            <span class="topic-name">Clicks & CTR</span>
+          </div></td>
+          <td>Clicks <span class="stat-pill stat-down">-20.7%</span> · CTR <span class="stat-pill stat-down">-15.4%</span> (1.3%→1.1%) · Impressions <span class="stat-pill stat-down">-4.1%</span></td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>Generic keywords Impressions สูงแต่ CTR ต่ำมาก <span class="stat-pill stat-down">0–0.2%</span> เพราะ title ไม่ดึงคลิก</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>ปรับ Meta Titles & Descriptions ให้ตรง search intent, เพิ่ม structured data</span></div></div></td>
+        </tr>
+
+        <tr data-cat="seo">
+          <td><div class="topic-col">
+            <span class="badge seo"><span class="badge-dot"></span>SEO</span>
+            <span class="topic-name">Brand Keywords</span>
+          </div></td>
+          <td>Brand keywords (TNN, tnn16) CTR สูง <span class="stat-pill stat-up">19–35%</span> แต่ Impressions ต่ำ <span class="stat-pill stat-neutral">2K–11K</span></td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>คนรู้จัก TNN คลิกสูง แต่คนใหม่ไม่เจอ TNN ใน search — brand reach จำกัด</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>Internal linking + structured data รักษา brand SEO, ขยาย viral content สร้าง brand reach</span></div></div></td>
+        </tr>
+
+        <tr data-cat="perf">
+          <td><div class="topic-col">
+            <span class="badge perf"><span class="badge-dot"></span>เป้าหมาย</span>
+            <span class="topic-name">PV Q1/2026</span>
+          </div></td>
+          <td>ยอดรวม <span class="stat-pill stat-down">2.31M PV</span> จากเป้า <span class="stat-pill stat-neutral">3.75M PV</span> ขาดอีก <span class="stat-pill stat-down">1.44M PV</span> ใน 16 วัน</td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>ต้องทำ <span class="stat-pill stat-down">2.17×</span> ของ Daily Target จริง — gap ใหญ่มากในเวลาที่เหลือน้อย</span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>เร่ง viral/event content ปิด Q1, focus Social Talk + TNN Exclusive วิวต่อชิ้นสูง</span></div></div></td>
+        </tr>
+
+        <tr data-cat="perf">
+          <td><div class="topic-col">
+            <span class="badge perf"><span class="badge-dot"></span>เป้าหมาย</span>
+            <span class="topic-name">vs คู่แข่ง</span>
+          </div></td>
+          <td>TNN อันดับ 8 · BkkBiz อันดับ 1 <span class="stat-pill stat-neutral">2.44M views</span> · TNN ห่าง <span class="stat-pill stat-down">13.6×</span></td>
+          <td><div class="prob-cell"><div class="prob-text"><span class="prob-icon">●</span><span>TNN PV ลด <span class="stat-pill stat-down">-5.35%</span> ขณะที่คู่แข่งทุกรายเติบโต Bright <span class="stat-pill stat-up">+61.79%</span></span></div></div></td>
+          <td><div class="fix-cell"><div class="fix-text"><span class="fix-icon">✦</span><span>ศึกษา strategy Bright & PostToday ที่เติบโตสูง นำ insight มาปรับ content TNN</span></div></div></td>
+        </tr>
+
+      </tbody>
+    </table>
+  </div>
+
+  <div class="footer">
+    <div class="legend">
+      <div class="legend-item"><div class="legend-dot" style="background:#c42b2b"></div>ปัญหา</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0a8a5c"></div>วิธีแก้ไข</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#3b6bff"></div>Content</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#0faa72"></div>Traffic</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#d4890a"></div>SEO</div>
+      <div class="legend-item"><div class="legend-dot" style="background:#e03535"></div>เป้าหมาย</div>
+    </div>
+    <span class="count-badge" id="row-count">8 รายการ</span>
+  </div>
+</div>
+
+<script>
+  const chips = document.querySelectorAll('.chip');
+  const rows  = document.querySelectorAll('tbody tr');
+
+  chips.forEach(chip => {
+    chip.addEventListener('click', () => {
+      const cat = chip.dataset.cat;
+      chips.forEach(c => { c.classList.remove('active','dimmed'); c.classList.add('dimmed'); });
+      chip.classList.remove('dimmed'); chip.classList.add('active');
+
+      let count = 0;
+      rows.forEach(row => {
+        if (cat === 'all' || row.dataset.cat === cat) {
+          row.classList.remove('hidden-row'); count++;
+        } else {
+          row.classList.add('hidden-row');
+        }
+      });
+      document.getElementById('row-count').textContent = count + ' รายการ';
+    });
+  });
+</script>
+
+<!-- ── PDF Download & Home Buttons ── -->
+<style>
+.pdf-fab {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #EC5F27, #c94d1e);
+  color: #fff;
+  border: none;
+  border-radius: 50px;
+  padding: 13px 22px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 20px rgba(236,95,39,0.5), 0 2px 8px rgba(0,0,0,0.2);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+}
+.pdf-fab:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 28px rgba(236,95,39,0.6), 0 4px 12px rgba(0,0,0,0.25);
+}
+.pdf-fab:active { transform: translateY(0); }
+.home-fab {
+  position: fixed;
+  bottom: 28px;
+  left: 28px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #1a1a1f;
+  color: #EC5F27;
+  border: 1px solid rgba(236,95,39,0.4);
+  border-radius: 50px;
+  padding: 12px 20px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  cursor: pointer;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
+  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
+  font-family: 'IBM Plex Sans Thai', sans-serif;
+  text-decoration: none;
+}
+.home-fab:hover {
+  transform: translateY(-2px);
+  background: rgba(236,95,39,0.12);
+}
+@media print {
+  .pdf-fab, .home-fab { display: none !important; }
+  @page { size: A4 portrait; margin: 12mm; }
+}
+</style>
+
+<button class="pdf-fab" onclick="window.print()">
+  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+  Download PDF
+</button>
+<a href="index.html" class="home-fab">
+  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  Home
+</a>
