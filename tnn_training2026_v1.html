@@ -1,383 +1,233 @@
-
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TNN Training 2026</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700&family=DM+Sans:wght@300;400;500&display=swap');
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  .stage {
-    width: 100%;
-    aspect-ratio: 16/9;
-    background: #f4f2ee;
-    position: relative;
-    overflow: hidden;
-    font-family: 'DM Sans', sans-serif;
-    display: flex;
-    flex-direction: column;
-    box-sizing: border-box;
-  }
-
-  .bg-texture {
-    position: absolute; inset: 0;
-    background-image:
-      radial-gradient(circle at 15% 20%, rgba(120,100,220,0.06) 0%, transparent 45%),
-      radial-gradient(circle at 85% 75%, rgba(20,150,110,0.05) 0%, transparent 40%),
-      radial-gradient(circle at 68% 55%, rgba(230,120,20,0.13) 0%, transparent 38%);
-  }
-  .bg-lines {
-    position: absolute; inset: 0;
-    background-image:
-      linear-gradient(rgba(0,0,0,0.022) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(0,0,0,0.022) 1px, transparent 1px);
-    background-size: 52px 52px;
-  }
-
-  .header {
-    position: relative; z-index: 2;
-    display: flex; align-items: center; justify-content: space-between;
-    padding: 3% 5% 0;
-  }
-  .logo {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(14px, 2.1vw, 26px);
-    font-weight: 700; color: #1a1825; letter-spacing: 0.06em;
-  }
-  .logo span { color: #5b42c8; }
-  .year-badge {
-    font-size: clamp(8px, 0.85vw, 11px); font-weight: 500; color: #7a7790;
-    border: 1px solid rgba(0,0,0,0.12); border-radius: 20px;
-    padding: 0.3em 1em; letter-spacing: 0.1em; text-transform: uppercase;
-    background: rgba(255,255,255,0.6);
-  }
-
-  .body {
-    position: relative; z-index: 2;
-    flex: 1; display: flex; align-items: center;
-    padding: 1% 5% 2%;
-  }
-
-  .h-line {
-    position: absolute; left: 5%; right: 5%; top: 50%;
-    height: 1.5px;
-    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.08) 12%, rgba(0,0,0,0.08) 88%, transparent);
-  }
-
-  .sessions {
-    display: flex; align-items: stretch;
-    width: 100%; position: relative; gap: 0;
-  }
-
-  .session {
-    flex: 1; display: flex; flex-direction: column; align-items: center;
-    position: relative; padding: 0 1.5%;
-  }
-  .session:not(:last-child)::after {
-    content: '';
-    position: absolute; right: 0; top: 10%; bottom: 10%;
-    width: 1px;
-    background: linear-gradient(180deg, transparent, rgba(0,0,0,0.08), transparent);
-  }
-
-  .s-order {
-    font-size: clamp(7px, 0.78vw, 10px); font-weight: 500;
-    letter-spacing: 0.12em; text-transform: uppercase;
-    margin-bottom: 5%; padding: 0.35em 1em; border-radius: 20px; white-space: nowrap;
-  }
-  .s-order-1 { color: #4a3fa8; background: rgba(91,66,200,0.1); border: 1px solid rgba(91,66,200,0.2); }
-  .s-order-2 { color: #0d7a5f; background: rgba(20,150,110,0.1); border: 1px solid rgba(20,150,110,0.2); }
-  .s-order-3 {
-    color: #fff;
-    background: linear-gradient(135deg, #f07b20, #e8430a);
-    border: none;
-    padding: 0.45em 1.2em;
-    font-size: clamp(7.5px, 0.85vw, 11px);
-    box-shadow: 0 3px 12px rgba(230,80,20,0.35);
-  }
-
-  .s-node {
-    width: clamp(18px, 2vw, 26px); height: clamp(18px, 2vw, 26px);
-    border-radius: 50%; display: flex; align-items: center; justify-content: center;
-    margin-bottom: 5%; flex-shrink: 0; position: relative;
-  }
-  .node-done { background: #fff; border: 2px solid; }
-  .node-done-1 { border-color: #5b42c8; box-shadow: 0 2px 10px rgba(91,66,200,0.18); }
-  .node-done-2 { border-color: #14a078; box-shadow: 0 2px 10px rgba(20,160,120,0.18); }
-  .node-upcoming {
-    background: linear-gradient(135deg, #f07b20, #e8430a);
-    border: none;
-    box-shadow: 0 4px 16px rgba(230,80,20,0.45), 0 0 0 4px rgba(240,123,32,0.15);
-    width: clamp(22px, 2.4vw, 30px); height: clamp(22px, 2.4vw, 30px);
-  }
-  .check-icon { width: 55%; height: 55%; }
-
-  .done-bar {
-    display: flex; align-items: center; gap: 5px;
-    margin-bottom: 3%; width: 100%;
-  }
-  .done-line { flex: 1; height: 1px; background: currentColor; opacity: 0.2; }
-  .done-label {
-    font-size: clamp(6px, 0.62vw, 8px); font-weight: 500;
-    letter-spacing: 0.1em; text-transform: uppercase;
-    padding: 0.2em 0.7em; border-radius: 20px; white-space: nowrap;
-  }
-  .done-label-1 { color: #4a3fa8; background: rgba(91,66,200,0.08); }
-  .done-label-2 { color: #0d7a5f; background: rgba(20,150,110,0.08); }
-  .upcoming-label-bar {
-    font-size: clamp(6.5px, 0.68vw, 9px); font-weight: 600;
-    letter-spacing: 0.08em; text-transform: uppercase;
-    padding: 0.3em 0.9em; border-radius: 20px; white-space: nowrap;
-    color: #fff;
-    background: linear-gradient(135deg, #f07b20, #e8430a);
-    box-shadow: 0 2px 8px rgba(230,80,20,0.3);
-  }
-
-  /* Cards */
-  .s-card {
-    width: 100%; border-radius: 10px; padding: 5% 7%;
-    flex: 1; position: relative; overflow: hidden;
-  }
-  .card-done-1 { background: rgba(255,255,255,0.65); border: 1px solid rgba(91,66,200,0.13); }
-  .card-done-2 { background: rgba(255,255,255,0.65); border: 1px solid rgba(20,150,110,0.13); }
-  .card-upcoming {
-    background: #fff;
-    border: 2px solid #f07b20;
-    box-shadow:
-      0 6px 28px rgba(230,80,20,0.18),
-      0 0 0 5px rgba(240,123,32,0.08),
-      inset 0 0 0 0 transparent;
-  }
-  /* Orange accent bar on upcoming card top */
-  .card-upcoming::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 3.5px;
-    background: linear-gradient(90deg, #f07b20, #e8430a, #f5a623);
-    border-radius: 10px 10px 0 0;
-  }
-
-  .s-date {
-    font-size: clamp(6.5px, 0.7vw, 9px); font-weight: 400;
-    letter-spacing: 0.05em; margin-bottom: 3%;
-    display: flex; align-items: center; gap: 5px;
-  }
-  .date-1 { color: #8880bb; }
-  .date-2 { color: #3a9a7e; }
-  .date-3 { color: #d06010; font-weight: 500; }
-
-  .s-name {
-    font-size: clamp(7px, 0.72vw, 9.5px); font-weight: 500;
-    letter-spacing: 0.07em; margin-bottom: 2.5%; text-transform: uppercase;
-  }
-  .name-1 { color: #8880bb; }
-  .name-2 { color: #3a9a7e; }
-  .name-3 { color: #d06010; }
-
-  .s-title {
-    font-family: 'Playfair Display', serif;
-    font-size: clamp(9px, 1.05vw, 14px); font-weight: 700;
-    line-height: 1.35; margin-bottom: 4%;
-  }
-  .title-done { color: #6a6480; }
-  .title-upcoming { color: #1a1825; }
-
-  .mode-chip {
-    display: inline-flex; align-items: center; gap: 4px;
-    font-size: clamp(6px, 0.62vw, 8px); color: #8880bb;
-    background: rgba(91,66,200,0.06); border: 1px solid rgba(91,66,200,0.15);
-    border-radius: 20px; padding: 0.2em 0.8em; margin-bottom: 3%;
-  }
-
-  .topics { display: flex; flex-direction: column; gap: 5%; }
-  .topic-item {
-    display: flex; align-items: flex-start; gap: 5%;
-    font-size: clamp(6px, 0.65vw, 8.5px); color: #5a5670; line-height: 1.5;
-  }
-  .topic-dot {
-    width: clamp(4px, 0.45vw, 6px); height: clamp(4px, 0.45vw, 6px);
-    border-radius: 50%; background: #f07b20;
-    flex-shrink: 0; margin-top: 0.45em;
-  }
-  .topic-label { color: #c05010; font-weight: 600; }
-
-  .footer {
-    position: relative; z-index: 2;
+  html, body {
+    width: 100%; height: 100%;
+    background: #1a1a1a;
     display: flex; align-items: center; justify-content: center;
-    padding: 0 5% 2.5%; gap: 6px;
+    font-family: 'DM Sans', sans-serif;
   }
-  .f-sep { width: 3px; height: 3px; border-radius: 50%; background: #c0bdd0; }
-  .f-text { font-size: clamp(6.5px, 0.65vw, 8.5px); color: #b0adc0; letter-spacing: 0.1em; text-transform: uppercase; }
+  .wrapper { width: 100%; max-width: 1600px; padding: 20px; }
+  .stage {
+    width: 100%; aspect-ratio: 16/9;
+    background: #f4f2ee;
+    position: relative; overflow: hidden;
+    display: flex; flex-direction: column;
+    border-radius: 12px;
+    box-shadow: 0 24px 80px rgba(0,0,0,0.5);
+  }
+  .bg1 {
+    position: absolute; inset: 0; pointer-events: none;
+    background:
+      radial-gradient(circle at 14% 18%, rgba(110,88,210,.07) 0%, transparent 42%),
+      radial-gradient(circle at 84% 72%, rgba(18,145,105,.06) 0%, transparent 38%),
+      radial-gradient(circle at 67% 54%, rgba(228,115,18,.10) 0%, transparent 36%);
+  }
+  .bg2 {
+    position: absolute; inset: 0; pointer-events: none;
+    background-image: linear-gradient(rgba(0,0,0,.018) 1px,transparent 1px), linear-gradient(90deg,rgba(0,0,0,.018) 1px,transparent 1px);
+    background-size: 48px 48px;
+  }
+
+  /* HEADER */
+  .hdr { position: relative; z-index: 2; display: flex; align-items: center; justify-content: space-between; padding: 2.4vw 5vw 0; flex-shrink: 0; }
+  .logo { font-family: 'Playfair Display', serif; font-size: 2.2vw; font-weight: 700; color: #1a1825; letter-spacing: .05em; }
+  .logo span { color: #5b42c8; }
+  .badge { font-size: .82vw; font-weight: 500; color: #7a7790; border: 1px solid rgba(0,0,0,.11); border-radius: 20px; padding: .28em 1em; letter-spacing: .09em; text-transform: uppercase; background: rgba(255,255,255,.55); }
+
+  /* TRACK */
+  .track { position: relative; z-index: 2; flex: 1; display: flex; align-items: center; padding: 0 5vw; }
+  .track::before { content: ''; position: absolute; left: 5vw; right: 5vw; top: 50%; height: 1.5px; background: linear-gradient(90deg, transparent, rgba(0,0,0,.09) 8%, rgba(0,0,0,.09) 92%, transparent); }
+  .sessions { display: flex; align-items: center; width: 100%; position: relative; }
+
+  .sess { flex: 1; display: flex; flex-direction: column; align-items: center; position: relative; padding: 0 1vw; }
+  .sess:not(:last-child)::after { content: ''; position: absolute; right: 0; top: 5%; bottom: 5%; width: 1px; background: linear-gradient(180deg, transparent, rgba(0,0,0,.08), transparent); }
+
+  .stop { display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5vw; width: 100%; }
+
+  /* PILL */
+  .pill { font-size: .8vw; font-weight: 600; letter-spacing: .11em; text-transform: uppercase; border-radius: 20px; white-space: nowrap; padding: .38em 1.1em; margin-bottom: 1vw; }
+  .p1 { color: #4a3fa8; background: rgba(91,66,200,.09); border: 1px solid rgba(91,66,200,.2); }
+  .p2 { color: #0d7a5f; background: rgba(20,150,110,.09); border: 1px solid rgba(20,150,110,.2); }
+  .p3 { color: #fff; font-size: .86vw; background: linear-gradient(135deg,#f07b20,#e03d08); animation: pillBlink 1.4s ease-in-out infinite; }
+
+  /* NODE */
+  .node { border-radius: 50%; display: flex; align-items: center; justify-content: center; width: 2.2vw; height: 2.2vw; margin-bottom: .9vw; position: relative; flex-shrink: 0; }
+  .n1 { background: #fff; border: .13vw solid #5b42c8; box-shadow: 0 .15vw .8vw rgba(91,66,200,.2); }
+  .n2 { background: #fff; border: .13vw solid #14a078; box-shadow: 0 .15vw .8vw rgba(20,160,120,.2); }
+  .n3 { width: 2.5vw; height: 2.5vw; background: linear-gradient(135deg,#f07b20,#e03d08); animation: nodePulse 1.4s ease-in-out infinite; }
+
+  /* STATUS BAR */
+  .sbar { display: flex; align-items: center; gap: .35vw; width: 80%; }
+  .sline { flex: 1; height: 1px; opacity: .2; background: currentColor; }
+  .schip { font-size: .68vw; font-weight: 500; letter-spacing: .08em; text-transform: uppercase; padding: .2em .7em; border-radius: 20px; white-space: nowrap; }
+  .sc1 { color: #4a3fa8; background: rgba(91,66,200,.08); }
+  .sc2 { color: #0d7a5f; background: rgba(20,150,110,.08); }
+  .sc3 { color: #fff; font-weight: 700; font-size: .72vw; background: linear-gradient(135deg,#f07b20,#e03d08); animation: chipBlink 1.4s ease-in-out infinite; }
+
+  /* ANIMATIONS — session 3 only */
+  @keyframes pillBlink {
+    0%, 100% { opacity: 1;   box-shadow: 0 .2vw 1vw rgba(224,80,18,.5); }
+    50%       { opacity: 0.4; box-shadow: none; }
+  }
+  @keyframes nodePulse {
+    0%, 100% { box-shadow: 0 .3vw 1.2vw rgba(224,80,18,.45), 0 0 0 .38vw rgba(240,120,30,.18); }
+    50%       { box-shadow: 0 .1vw .4vw rgba(224,80,18,.15), 0 0 0 .7vw rgba(240,120,30,.04); }
+  }
+  @keyframes chipBlink {
+    0%, 100% { opacity: 1; }
+    50%       { opacity: 0.35; }
+  }
+
+  /* CARD */
+  .card { width: 88%; border-radius: .7vw; padding: .9vw 1.2vw; display: flex; flex-direction: column; gap: .42vw; position: relative; overflow: hidden; }
+  .c1 { background: rgba(255,255,255,.65); border: 1px solid rgba(91,66,200,.13); }
+  .c2 { background: rgba(255,255,255,.65); border: 1px solid rgba(20,150,110,.13); }
+  .c3 { background: #fff; border: .12vw solid #f07b20; box-shadow: 0 .5vw 2vw rgba(224,80,18,.14), 0 0 0 .3vw rgba(240,120,30,.07); }
+  .c3::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: .26vw; background: linear-gradient(90deg,#f07b20,#e03d08,#f5a020); border-radius: .7vw .7vw 0 0; }
+
+  .dt { font-size: .78vw; display: flex; align-items: center; gap: .3vw; }
+  .dt1 { color: #9088cc; } .dt2 { color: #3a9a7e; } .dt3 { color: #d06010; font-weight: 600; }
+
+  .tag { font-size: .76vw; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; }
+  .tg1 { color: #9088cc; } .tg2 { color: #3a9a7e; } .tg3 { color: #d06010; }
+
+  .ttl { font-family: 'Playfair Display', serif; font-size: 1.05vw; font-weight: 700; line-height: 1.3; }
+  .tt12 { color: #6a6480; } .tt3 { color: #1a1825; }
+
+  .mchip { display: inline-flex; align-items: center; gap: .3vw; font-size: .68vw; color: #9088cc; background: rgba(91,66,200,.06); border: 1px solid rgba(91,66,200,.14); border-radius: 20px; padding: .18em .7em; align-self: flex-start; }
+
+  .sub { font-size: .73vw; color: #4a7a6a; display: flex; align-items: flex-start; gap: .32vw; }
+  .subdot { width: .4vw; height: .4vw; min-width: 4px; min-height: 4px; border-radius: 50%; background: #14a078; flex-shrink: 0; margin-top: .42em; }
+
+  .topics { display: flex; flex-direction: column; gap: .32vw; }
+  .ti { display: flex; align-items: flex-start; gap: .34vw; font-size: .73vw; color: #5a5670; line-height: 1.4; }
+  .tdot { width: .4vw; height: .4vw; min-width: 4px; min-height: 4px; border-radius: 50%; background: #f07b20; flex-shrink: 0; margin-top: .44em; }
+  .tlbl { color: #c05010; font-weight: 700; }
+
+  /* FOOTER */
+  .ftr { position: relative; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 0 5vw 1.6vw; gap: 6px; flex-shrink: 0; }
+  .fdot { width: 3px; height: 3px; border-radius: 50%; background: #c0bdd0; }
+  .ftxt { font-size: .65vw; color: #b0adc0; letter-spacing: .1em; text-transform: uppercase; }
+
+  @media (max-width: 600px) { .wrapper { padding: 10px; } .stage { border-radius: 8px; } }
 </style>
+</head>
+<body>
+<div class="wrapper">
+  <div class="stage">
+    <div class="bg1"></div>
+    <div class="bg2"></div>
 
-<div class="stage">
-  <div class="bg-texture"></div>
-  <div class="bg-lines"></div>
+    <div class="hdr">
+      <div class="logo">TNN <span>Training</span></div>
+      <div class="badge">2026 · Upskill Program</div>
+    </div>
 
-  <div class="header">
-    <div class="logo">TNN <span>Training</span></div>
-    <div class="year-badge">2026 · Upskill Program</div>
-  </div>
+    <div class="track">
+      <div class="sessions">
 
-  <div class="body">
-    <div class="h-line"></div>
-    <div class="sessions">
-
-      <!-- Session 1 — DONE -->
-      <div class="session">
-        <div class="s-order s-order-1">Session 01</div>
-        <div class="s-node node-done node-done-1">
-          <svg class="check-icon" viewBox="0 0 20 20" fill="none">
-            <circle cx="10" cy="10" r="9" fill="#5b42c8"/>
-            <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="done-bar" style="color:#5b42c8">
-          <div class="done-line"></div>
-          <span class="done-label done-label-1">✓ เสร็จสิ้นแล้ว</span>
-          <div class="done-line"></div>
-        </div>
-        <div class="s-card card-done-1">
-          <div class="s-date date-1">
-            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            25 กุมภาพันธ์ 2026
+        <!-- Session 01 -->
+        <div class="sess">
+          <div class="stop">
+            <div class="pill p1">Session 01</div>
+            <div class="node n1">
+              <svg style="width:58%;height:58%" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" fill="#5b42c8"/>
+                <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="sbar" style="color:#5b42c8">
+              <div class="sline"></div><span class="schip sc1">✓ เสร็จสิ้นแล้ว</span><div class="sline"></div>
+            </div>
           </div>
-          <div class="s-name name-1">SEO Training</div>
-          <div class="s-title title-done">AI-Augmented Journalism Mastering</div>
-          <div class="mode-chip">
-            <svg width="7" height="7" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            ออนไลน์
+          <div class="card c1">
+            <div class="dt dt1">
+              <svg style="width:.8vw;height:.8vw;min-width:8px" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              25 กุมภาพันธ์ 2026
+            </div>
+            <div class="tag tg1">SEO Training</div>
+            <div class="ttl tt12">AI-Augmented Journalism Mastering</div>
+            <div class="mchip">
+              <svg style="width:.7vw;height:.7vw;min-width:7px" viewBox="0 0 12 12" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.3"/><path d="M6 3v3l2 1.5" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              ออนไลน์
+            </div>
           </div>
         </div>
+
+        <!-- Session 02 -->
+        <div class="sess">
+          <div class="stop">
+            <div class="pill p2">Session 02</div>
+            <div class="node n2">
+              <svg style="width:58%;height:58%" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="9" fill="#14a078"/>
+                <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="sbar" style="color:#14a078">
+              <div class="sline"></div><span class="schip sc2">✓ เสร็จสิ้นแล้ว</span><div class="sline"></div>
+            </div>
+          </div>
+          <div class="card c2">
+            <div class="dt dt2">
+              <svg style="width:.8vw;height:.8vw;min-width:8px" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              3 มีนาคม 2026
+            </div>
+            <div class="tag tg2">AI Training</div>
+            <div class="ttl tt12">Gems & NotebookLM สำหรับสื่อมวลชน</div>
+            <div class="sub"><div class="subdot"></div><span>หลักสูตร upskill นักข่าวและผู้ปฏิบัติงานด้านสื่อ</span></div>
+          </div>
+        </div>
+
+        <!-- Session 03 — UPCOMING with blink -->
+        <div class="sess">
+          <div class="stop">
+            <div class="pill p3">Session 03</div>
+            <div class="node n3">
+              <svg style="width:52%;height:52%" viewBox="0 0 20 20" fill="none">
+                <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="2"/>
+                <path d="M10 7v3.5l2 1.5" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="sbar" style="color:#f07b20">
+              <div class="sline"></div><span class="schip sc3">⏳ กำลังจะมาถึง</span><div class="sline"></div>
+            </div>
+          </div>
+          <div class="card c3">
+            <div class="dt dt3">
+              <svg style="width:.8vw;height:.8vw;min-width:8px" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
+              9 เมษายน 2026
+            </div>
+            <div class="tag tg3">Google Tools for News</div>
+            <div class="ttl tt3">Research, Trends, YouTube & Maps</div>
+            <div class="topics">
+              <div class="ti"><div class="tdot"></div><span><span class="tlbl">Research & Report</span> — Google Search & ตรวจสอบ AI</span></div>
+              <div class="ti"><div class="tdot"></div><span><span class="tlbl">Google Trends</span> — วิเคราะห์กระแสด้วย Gemini</span></div>
+              <div class="ti"><div class="tdot"></div><span><span class="tlbl">YouTube News</span> — สารคดี ข่าวด่วน พอดแคสต์</span></div>
+              <div class="ti"><div class="tdot"></div><span><span class="tlbl">Maps for News</span> — MyMaps, Google Earth</span></div>
+            </div>
+          </div>
+        </div>
+
       </div>
+    </div>
 
-      <!-- Session 2 — DONE -->
-      <div class="session">
-        <div class="s-order s-order-2">Session 02</div>
-        <div class="s-node node-done node-done-2">
-          <svg class="check-icon" viewBox="0 0 20 20" fill="none">
-            <circle cx="10" cy="10" r="9" fill="#14a078"/>
-            <path d="M6 10.5l3 3 5-6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="done-bar" style="color:#14a078">
-          <div class="done-line"></div>
-          <span class="done-label done-label-2">✓ เสร็จสิ้นแล้ว</span>
-          <div class="done-line"></div>
-        </div>
-        <div class="s-card card-done-2">
-          <div class="s-date date-2">
-            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            3 มีนาคม 2026
-          </div>
-          <div class="s-name name-2">AI Training</div>
-          <div class="s-title title-done">Gems & NotebookLM สำหรับสื่อมวลชน</div>
-          <div class="topic-item" style="margin-top:4%">
-            <div class="topic-dot" style="background:#14a078"></div>
-            <span style="color:#4a7a6a">หลักสูตร upskill นักข่าวและผู้ปฏิบัติงานด้านสื่อ</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Session 3 — UPCOMING -->
-      <div class="session">
-        <div class="s-order s-order-3">Session 03</div>
-        <div class="s-node node-upcoming">
-          <svg width="55%" height="55%" viewBox="0 0 20 20" fill="none">
-            <circle cx="10" cy="10" r="7" stroke="#fff" stroke-width="1.8"/>
-            <path d="M10 7v3.5l2 1.5" stroke="#fff" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
-          </svg>
-        </div>
-        <div class="done-bar" style="color:#f07b20">
-          <div class="done-line"></div>
-          <span class="upcoming-label-bar">⏳ กำลังจะมาถึง</span>
-          <div class="done-line"></div>
-        </div>
-        <div class="s-card card-upcoming">
-          <div class="s-date date-3">
-            <svg width="8" height="8" viewBox="0 0 12 12" fill="none"><rect x="1" y="2" width="10" height="9" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M4 1v2M8 1v2M1 5h10" stroke="currentColor" stroke-width="1.3" stroke-linecap="round"/></svg>
-            9 เมษายน 2026
-          </div>
-          <div class="s-name name-3">Google Tools for News</div>
-          <div class="s-title title-upcoming">Research, Trends, YouTube & Maps</div>
-          <div class="topics">
-            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Research & Report</span> — Google Search & ตรวจสอบ AI</span></div>
-            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Google Trends</span> — วิเคราะห์กระแสด้วย Gemini</span></div>
-            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">YouTube News</span> — สารคดี ข่าวด่วน พอดแคสต์</span></div>
-            <div class="topic-item"><div class="topic-dot"></div><span><span class="topic-label">Maps for News</span> — MyMaps, Google Earth</span></div>
-          </div>
-        </div>
-      </div>
-
+    <div class="ftr">
+      <div class="fdot"></div>
+      <div class="ftxt">TNN · Journalist Upskill Program · 2026</div>
+      <div class="fdot"></div>
     </div>
   </div>
-
-  <div class="footer">
-    <div class="f-sep"></div>
-    <div class="f-text">TNN · Journalist Upskill Program · 2026</div>
-    <div class="f-sep"></div>
-  </div>
 </div>
-
-<!-- ── PDF Download & Home Buttons ── -->
-<style>
-.pdf-fab {
-  position: fixed;
-  bottom: 28px;
-  right: 28px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: linear-gradient(135deg, #EC5F27, #c94d1e);
-  color: #fff;
-  border: none;
-  border-radius: 50px;
-  padding: 13px 22px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow: 0 4px 20px rgba(236,95,39,0.5), 0 2px 8px rgba(0,0,0,0.2);
-  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
-  font-family: 'DM Sans', sans-serif;
-}
-.pdf-fab:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 28px rgba(236,95,39,0.6);
-}
-.pdf-fab:active { transform: translateY(0); }
-.home-fab {
-  position: fixed;
-  bottom: 28px;
-  left: 28px;
-  z-index: 9999;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: #1a1a1f;
-  color: #EC5F27;
-  border: 1px solid rgba(236,95,39,0.4);
-  border-radius: 50px;
-  padding: 12px 20px;
-  font-size: 13px;
-  font-weight: 700;
-  letter-spacing: 0.04em;
-  cursor: pointer;
-  box-shadow: 0 4px 16px rgba(0,0,0,0.3);
-  transition: all 0.2s cubic-bezier(0.4,0,0.2,1);
-  font-family: 'DM Sans', sans-serif;
-  text-decoration: none;
-}
-.home-fab:hover {
-  transform: translateY(-2px);
-  background: rgba(236,95,39,0.12);
-}
-@media print {
-  .pdf-fab, .home-fab { display: none !important; }
-  @page { size: A4 landscape; margin: 10mm; }
-}
-</style>
-
-<button class="pdf-fab" onclick="window.print()">
-  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-  Download PDF
-</button>
-<a href="index.html" class="home-fab">
-  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
-  Home
-</a>
+</body>
+</html>
