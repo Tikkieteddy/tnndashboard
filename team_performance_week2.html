@@ -284,8 +284,9 @@ const TEAM_CONFIG = [
 ];
 
 // ─── gviz fetch helper ───
-async function fetchGviz(sheetName) {
-  const url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+async function fetchGviz(sheetName, selectQuery) {
+  let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
+  if (selectQuery) url += `&tq=${encodeURIComponent(selectQuery)}`;
   const resp = await fetch(url);
   const text = await resp.text();
   // Strip JSONP wrapper: google.visualization.Query.setResponse(Ellipsis)
@@ -372,68 +373,64 @@ function parseNum(cell) {
 // ─── Main data loading ───
 async function loadData() {
   try {
-    // Fetch both sheets in parallel
+    // Fetch both sheets in parallel using SELECT queries for fixed column positions
+    // Weekly: SELECT B,E,F,G,H → [0]=TeamName, [1]=week("week1"…), [2]=PVTarget, [3]=PVActual, [4]=Articles
+    // Monthly: SELECT B,C,E,F,G → [0]=TeamName, [1]=Month("Jan"…), [2]=PVTarget, [3]=PVActual, [4]=Articles
     const [weeklyData, monthlyData] = await Promise.all([
-      fetchGviz('actual target team week'),
-      fetchGviz('actual target team month')
+      fetchGviz('actual target team week', 'SELECT B,E,F,G,H'),
+      fetchGviz('actual target team month', 'SELECT B,C,E,F,G')
     ]);
 
-    // --- Parse weekly data ---
-    const wCols = weeklyData.table.cols;
+    // --- Parse weekly data (fixed column indices) ---
     const wRows = weeklyData.table.rows;
-
-    // Find key columns
-    const teamCol = findCol(wCols, 'team name', 'team', 'ทีม');
-    const pvActCol = findCol(wCols, 'pv actual', 'pv_actual', 'actual pv', 'pageview');
-    const pvTargetCol = findCol(wCols, 'pv target', 'pv_target', 'target pv');
-    const artCol = findCol(wCols, 'article', 'articles', 'บทความ');
-
-    // Group weekly data by team
     const weeklyByTeam = {};
     for (const row of wRows) {
       if (!row.c) continue;
-      const weekNum = parseWeekNum(wCols, row);
-      if (weekNum === null || weekNum < WEEK_START || weekNum > WEEK_NUM) continue;
-
-      const rawTeam = gvizCellValue(row.c[teamCol]);
+      const rawTeam = gvizCellValue(row.c[0]);
       const tc = matchTeam(rawTeam);
       if (!tc) continue;
+
+      // Week column: value is "week1", "week2", etc.
+      const weekStr = gvizCellValue(row.c[1]);
+      if (!weekStr) continue;
+      const weekNum = parseInt(String(weekStr).replace(/[^\d]/g, ''));
+      if (isNaN(weekNum) || weekNum < WEEK_START || weekNum > WEEK_NUM) continue;
+
+      const pvTarget = parseNum(row.c[2]);
+      const pvAct    = parseNum(row.c[3]);
+      const articles = parseNum(row.c[4]);
 
       if (!weeklyByTeam[tc.id]) weeklyByTeam[tc.id] = {};
       weeklyByTeam[tc.id][weekNum] = {
-        pv: pvActCol >= 0 ? parseNum(row.c[pvActCol]) : 0,
-        pvTarget: pvTargetCol >= 0 ? parseNum(row.c[pvTargetCol]) : tc.wkPvT,
-        articles: artCol >= 0 ? parseNum(row.c[artCol]) : 0
+        pv: pvAct,
+        pvTarget: pvTarget > 0 ? pvTarget : tc.wkPvT,
+        articles: articles
       };
     }
 
-    // --- Parse monthly data ---
-    const mCols = monthlyData.table.cols;
+    // --- Parse monthly data (fixed column indices) ---
     const mRows = monthlyData.table.rows;
-
-    const mTeamCol = findCol(mCols, 'team name', 'team', 'ทีม');
-    const mMonthCol = findCol(mCols, 'month', 'เดือน');
-    const mPvActCol = findCol(mCols, 'pv actual', 'pv_actual', 'actual pv');
-    const mPvTargetCol = findCol(mCols, 'pv target', 'pv_target', 'target pv');
-    const mArtCol = findCol(mCols, 'article', 'articles', 'บทความ');
-
     const monthlyByTeam = {};
     for (const row of mRows) {
       if (!row.c) continue;
-      const rawTeam = gvizCellValue(row.c[mTeamCol]);
+      const rawTeam = gvizCellValue(row.c[0]);
       const tc = matchTeam(rawTeam);
       if (!tc) continue;
 
-      let month = gvizCellValue(row.c[mMonthCol]);
+      let month = gvizCellValue(row.c[1]);
       if (!month) continue;
       month = String(month).trim().substring(0, 3); // 'Jan', 'Feb', 'Mar'
       if (!MONTHS_TO_SHOW.includes(month)) continue;
 
+      const pvTarget = parseNum(row.c[2]);
+      const pvAct    = parseNum(row.c[3]);
+      const articles = parseNum(row.c[4]);
+
       if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
       monthlyByTeam[tc.id][month] = {
-        pv: mPvActCol >= 0 ? parseNum(row.c[mPvActCol]) : 0,
-        pvTarget: mPvTargetCol >= 0 ? parseNum(row.c[mPvTargetCol]) : tc.moPvT,
-        articles: mArtCol >= 0 ? parseNum(row.c[mArtCol]) : 0
+        pv: pvAct,
+        pvTarget: pvTarget > 0 ? pvTarget : tc.moPvT,
+        articles: articles
       };
     }
 
@@ -460,8 +457,8 @@ async function loadData() {
       // Use target from sheet if available, else fallback
       let wkTarget = tc.wkPvT;
       let moTarget = tc.moPvT;
-      const firstWeekData = wData[WEEK_NUM] || wData[Object.keys(wData)[0]];
-      if (firstWeekData && firstWeekData.pvTarget > 0) wkTarget = firstWeekData.pvTarget;
+      const currentWeekData = wData[WEEK_NUM] || wData[Object.keys(wData)[0]];
+      if (currentWeekData && currentWeekData.pvTarget > 0) wkTarget = currentWeekData.pvTarget;
       const firstMonthData = mData[MONTHS_TO_SHOW[0]];
       if (firstMonthData && firstMonthData.pvTarget > 0) moTarget = firstMonthData.pvTarget;
 
