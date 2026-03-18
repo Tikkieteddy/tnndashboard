@@ -40,12 +40,47 @@
   .kw-table .kw-name { font-weight:600; color:#2d2a26; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   .kw-table .kw-num { font-weight:700; color:#EC5F27; text-align:right; }
   .footer { text-align:center; padding:20px; color:#b5afa8; font-size:11px; }
+  /* --- TOP NAV --- */
+  .topnav {
+    position:sticky; top:0; z-index:1000;
+    background:rgba(255,255,255,0.96);
+    backdrop-filter:blur(10px);
+    border-bottom:1px solid rgba(0,0,0,.08);
+    padding:0 24px;
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:20px;
+    box-shadow:0 2px 12px rgba(0,0,0,.06);
+    flex-wrap:wrap;
+  }
+  .topnav a {
+    display:inline-flex; align-items:center; gap:4px;
+    padding:12px 14px; font-size:12px; font-weight:600;
+    color:#5a5550; text-decoration:none;
+    border-bottom:3px solid transparent;
+    transition:all 0.2s;
+    white-space:nowrap;
+  }
+  .topnav a:hover { color:#EC5F27; background:rgba(236,95,39,.05); }
+  .topnav a.home { color:#EC5F27; font-weight:700; }
+  .topnav a.active { color:#EC5F27; border-bottom-color:#EC5F27; }
+  .topnav .sep { color:#ddd; padding:0 4px; }
   @media(max-width:900px) {
     .grid3 { grid-template-columns:1fr; }
   }
 </style>
 </head>
 <body>
+
+<nav class="topnav">
+  <a href="index.html" class="home">🏠 Home</a>
+  <span class="sep">|</span>
+  <a href="web_all_2026_week11.html">📊 Web Performance</a>
+  <a href="team_performance_week11.html" class="active">👥 Team Charts</a>
+  <a href="team_review_week11.html">🎯 Team Review</a>
+  <a href="seo_review_week11.html">🔍 SEO Review</a>
+  <a href="suggestion_review_week11.html">💡 แนวโน้ม</a>
+  <a href="tnn_training2026_v1.html">📚 Training</a>
+</nav>
 
 <div class="header">
   <div style="text-align:center;flex:1;">
