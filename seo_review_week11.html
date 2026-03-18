@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SEO Performance Review - Week 11</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+            color: #2c3e50;
+            min-height: 100vh;
+            padding-top: 80px;
+        }
+
+        /* Navigation */
+        .navbar {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+            border-bottom: 1px solid rgba(236, 95, 39, 0.1);
+        }
+
+        .nav-container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 0 40px;
+            height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .nav-brand {
+            font-size: 24px;
+            font-weight: 700;
+            color: #EC5F27;
+            letter-spacing: 1px;
+        }
+
+        .nav-menu {
+            display: flex;
+            gap: 50px;
+            list-style: none;
+        }
+
+        .nav-menu a {
+            text-decoration: none;
+            color: #2c3e50;
+            font-weight: 500;
+            font-size: 15px;
+            transition: all 0.3s ease;
+            position: relative;
+            padding-bottom: 5px;
+        }
+
+        .nav-menu a:hover {
+            color: #EC5F27;
+        }
+
+        .nav-menu a.active {
+            color: #EC5F27;
+        }
+
+        .nav-menu a.active::after {
+            content: '';
+            position: absolute;
+            bottom: -10px;
+            left: 0;
+            right: 0;
+            height: 3px;
+            background: linear-gradient(90deg, #EC5F27 0%, #ff7f4a 100%);
+            border-radius: 3px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 60px 40px;
+        }
+
+        /* Header */
+        .page-header {
+            margin-bottom: 50px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 36px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .week-selector {
+            background: white;
+            padding: 12px 24px;
+            border-radius: 10px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            font-weight: 500;
+            color: #EC5F27;
+            border-left: 4px solid #EC5F27;
+        }
+
+        /* KPI Cards Row */
+        .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 50px;
+        }
+
+        .kpi-card {
+            background: white;
+            padding: 40px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-top: 4px solid #EC5F27;
+        }
+
+        .kpi-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .kpi-label {
+            font-size: 14px;
+            font-weight: 500;
+            color: #7f8c8d;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 12px;
+        }
+
+        .kpi-value {
+            font-size: 48px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 12px;
+        }
+
+        .kpi-change {
+            font-size: 14px;
+            font-weight: 500;
+            color: #e74c3c;
+        }
+
+        .kpi-change.positive {
+            color: #27ae60;
+        }
+
+        /* Section Title */
+        .section-title {
+            font-size: 24px;
+            font-weight: 700;
+            color: #2c3e50;
+            margin-bottom: 30px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-title::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 28px;
+            background: linear-gradient(180deg, #EC5F27 0%, #ff7f4a 100%);
+            border-radius: 2px;
+        }
+
+        /* Table Styles */
+        .table-card {
+            background: white;
+            border-radius: 16px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            margin-bottom: 50px;
+            transition: all 0.3s ease;
+        }
+
+        .table-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+        }
+
+        .table-card table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .table-card thead {
+            background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
+            border-bottom: 2px solid #EC5F27;
+        }
+
+        .table-card th {
+            padding: 20px;
+            text-align: left;
+            font-weight: 600;
+            color: #2c3e50;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .table-card td {
+            padding: 18px 20px;
+            border-bottom: 1px solid #ecf0f1;
+            font-size: 15px;
+        }
+
+        .table-card tbody tr:hover {
+            background-color: #f8f9fa;
+        }
+
+        .table-card tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .metric-value {
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .ctr-value {
+            color: #EC5F27;
+            font-weight: 600;
+        }
+
+        /* Note Below Table */
+        .table-note {
+            padding: 20px;
+            background: linear-gradient(135deg, rgba(236, 95, 39, 0.05) 0%, rgba(255, 127, 74, 0.05) 100%);
+            border-left: 4px solid #EC5F27;
+            border-radius: 0 0 16px 16px;
+            font-size: 14px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        /* Recommendation Cards */
+        .recommendations {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 25px;
+            margin-bottom: 50px;
+        }
+
+        .recommendation-card {
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            transition: all 0.3s ease;
+            border-left: 4px solid #EC5F27;
+            position: relative;
+        }
+
+        .recommendation-card:hover {
+            box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+            transform: translateY(-5px);
+        }
+
+        .recommendation-number {
+            display: inline-block;
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #EC5F27 0%, #ff7f4a 100%);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 40px;
+            font-weight: 700;
+            font-size: 18px;
+            margin-bottom: 15px;
+        }
+
+        .recommendation-title {
+            font-size: 16px;
+            font-weight: 600;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            line-height: 1.4;
+        }
+
+        .recommendation-description {
+            font-size: 14px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #95a5a6;
+            font-size: 13px;
+            border-top: 1px solid #ecf0f1;
+            margin-top: 60px;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .container {
+                padding: 40px 20px;
+            }
+
+            .nav-container {
+                padding: 0 20px;
+            }
+
+            .nav-menu {
+                gap: 25px;
+            }
+
+            .page-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 20px;
+            }
+
+            .header-content h1 {
+                font-size: 28px;
+            }
+
+            .kpi-row {
+                grid-template-columns: 1fr;
+            }
+
+            .recommendations {
+                grid-template-columns: 1fr;
+            }
+
+            .kpi-value {
+                font-size: 36px;
+            }
+        }
+
+        /* Animation */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .kpi-card, .table-card, .recommendation-card {
+            animation: fadeIn 0.6s ease forwards;
+        }
+
+        .kpi-card:nth-child(1) { animation-delay: 0.1s; }
+        .kpi-card:nth-child(2) { animation-delay: 0.2s; }
+        .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-brand">TNN Dashboard</div>
+            <ul class="nav-menu">
+                <li><a href="team_review_week11.html">Team Performance</a></li>
+                <li><a href="seo_review_week11.html" class="active">SEO Performance</a></li>
+                <li><a href="suggestion_review_week11.html">แนวโน้มและข้อเสนอแนะ</a></li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-content">
+                <h1>วิเคราะห์ SEO Performance</h1>
+            </div>
+            <div class="week-selector">สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
+        </div>
+
+        <!-- KPI Summary Cards -->
+        <div class="kpi-row">
+            <div class="kpi-card">
+                <div class="kpi-label">Clicks</div>
+                <div class="kpi-value">53,700</div>
+                <div class="kpi-change">↓ -20.7% จาก 67,700</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Impressions</div>
+                <div class="kpi-value">4,890,000</div>
+                <div class="kpi-change">↓ -4.1% จาก 5,100,000</div>
+            </div>
+            <div class="kpi-card">
+                <div class="kpi-label">Average CTR</div>
+                <div class="kpi-value">1.1%</div>
+                <div class="kpi-change">↓ -15.4% จาก 1.3%</div>
+            </div>
+        </div>
+
+        <!-- Generic Keywords Section -->
+        <div class="section-title">ประเภท Keywords - Generic (Impressions สูง, CTR ต่ำ)</div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Impressions</th>
+                        <th>Clicks</th>
+                        <th>CTR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="metric-value">สภาพอากาศ</td>
+                        <td class="metric-value">255,000</td>
+                        <td class="metric-value">~250</td>
+                        <td class="ctr-value">~0.1%</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-value">ราคาทองวันนี้</td>
+                        <td class="metric-value">130,000</td>
+                        <td class="metric-value">~260</td>
+                        <td class="ctr-value">~0.2%</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-value">พยากรณ์อากาศ</td>
+                        <td class="metric-value">68,000</td>
+                        <td class="metric-value">~340</td>
+                        <td class="ctr-value">~0.5%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-note">
+                <strong>📊 ข้อมูลเชิงลึก:</strong> Keywords กว้างเกินไป ผู้ค้นหาคลิกเข้ามาน้อย เนื่องจาก search intent ไม่ตรงกับเนื้อหา TNN ประสบการณ์ผู้ใช้ปลายน้อย
+            </div>
+        </div>
+
+        <!-- High-CTR Keywords Section -->
+        <div class="section-title">High-CTR Keywords (Brand & Social Content)</div>
+        <div class="table-card">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Keyword</th>
+                        <th>Impressions</th>
+                        <th>Clicks</th>
+                        <th>CTR</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="metric-value">tnn16</td>
+                        <td class="metric-value">11,000</td>
+                        <td class="metric-value">3,872</td>
+                        <td class="ctr-value">35.2%</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-value">แอคมี่สามีใคร</td>
+                        <td class="metric-value">2,000</td>
+                        <td class="metric-value">482</td>
+                        <td class="ctr-value">24.1%</td>
+                    </tr>
+                    <tr>
+                        <td class="metric-value">แอ็คมี่วรวัฒน์ภรรยา</td>
+                        <td class="metric-value">3,000</td>
+                        <td class="metric-value">573</td>
+                        <td class="ctr-value">19.1%</td>
+                    </tr>
+                </tbody>
+            </table>
+            <div class="table-note">
+                <strong>🎯 ข้อมูลเชิงลึก:</strong> Social/Viral content และ Brand keywords มี engagement แรง Traffic conversion ดีเยี่ยม ควรเพิ่ม visibility ของ content ประเภทนี้
+            </div>
+        </div>
+
+        <!-- SEO Optimization Recommendations -->
+        <div class="section-title">SEO Optimization Recommendations</div>
+        <div class="recommendations">
+            <div class="recommendation-card">
+                <div class="recommendation-number">1</div>
+                <div class="recommendation-title">ปรับปรุง Meta Titles และ Meta Descriptions</div>
+                <div class="recommendation-description">สำหรับ generic news keywords ให้ CTR สูงขึ้น มี Impressions แต่ CTR ต่ำ เชิญชวนผู้ค้นหาเข้ามาเพิ่มเติม</div>
+            </div>
+
+            <div class="recommendation-card">
+                <div class="recommendation-number">2</div>
+                <div class="recommendation-title">Maintain SEO Strength สำหรับ Brand Keywords</div>
+                <div class="recommendation-description">TNN, tnn16, tnn live ควรเพิ่ม internal linking และ structured data เพื่อให้ rankings คงที่และเพิ่มขึ้นต่อไป</div>
+            </div>
+
+            <div class="recommendation-card">
+                <div class="recommendation-number">3</div>
+                <div class="recommendation-title">สร้าง Content Aligned with Search Intent</div>
+                <div class="recommendation-description">Generic keyword search intent ไม่ตรงกับเนื้อหา TNN ปรับเนื้อหา metadata ให้เป็นไปตามที่ผู้ค้นหาต้องการ</div>
+            </div>
+
+            <div class="recommendation-card">
+                <div class="recommendation-number">4</div>
+                <div class="recommendation-title">Leverage Viral Content ในแง่ SEO</div>
+                <div class="recommendation-description">สร้าง optimized pages สำหรับ content viral ที่มี organic search demand หากต้องการขยาย organic reach ยาวปานกลาง</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <p>SEO Performance Review Week 11 | 9-15 มี.ค. 2569 | Generated by AI Analysis</p>
+    </footer>
+</body>
+</html>

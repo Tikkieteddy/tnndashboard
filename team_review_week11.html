@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Team Performance Review - Week 11 | TNN Dashboard</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 50%, #f0f4f8 100%);
+            color: #333;
+            min-height: 100vh;
+            padding-bottom: 60px;
+        }
+
+        /* Sticky Navigation */
+        nav {
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            background: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            backdrop-filter: blur(10px);
+            border-bottom: 3px solid #EC5F27;
+        }
+
+        nav ul {
+            list-style: none;
+            display: flex;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0;
+        }
+
+        nav li {
+            flex: 1;
+        }
+
+        nav a {
+            display: block;
+            padding: 18px 24px;
+            text-decoration: none;
+            color: #555;
+            font-weight: 500;
+            font-size: 16px;
+            border-bottom: 4px solid transparent;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        nav a:hover {
+            color: #EC5F27;
+            background-color: rgba(236, 95, 39, 0.05);
+        }
+
+        nav a.active {
+            color: #EC5F27;
+            border-bottom-color: #EC5F27;
+            background-color: rgba(236, 95, 39, 0.08);
+        }
+
+        /* Header Section */
+        .header {
+            max-width: 1200px;
+            margin: 40px auto 30px;
+            padding: 0 20px;
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 10px;
+        }
+
+        .week-selector {
+            display: inline-block;
+            background: white;
+            padding: 12px 24px;
+            border-radius: 12px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
+            font-size: 14px;
+            color: #666;
+            border-left: 4px solid #EC5F27;
+            margin-bottom: 30px;
+        }
+
+        /* Container */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Card Styles */
+        .card {
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            padding: 32px;
+            margin-bottom: 30px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+        }
+
+        .card-title {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card-subtitle {
+            font-size: 13px;
+            color: #888;
+            margin-bottom: 24px;
+            font-weight: 500;
+        }
+
+        /* Table Styles */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+        }
+
+        th {
+            background: linear-gradient(135deg, #EC5F27 0%, #d44a1a 100%);
+            color: white;
+            padding: 14px 16px;
+            text-align: left;
+            font-weight: 600;
+            border-radius: 8px 8px 0 0;
+        }
+
+        td {
+            padding: 14px 16px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        tbody tr {
+            transition: background-color 0.2s ease;
+        }
+
+        tbody tr:nth-child(odd) {
+            background-color: #f9f9f9;
+        }
+
+        tbody tr:nth-child(even) {
+            background-color: #ffffff;
+        }
+
+        tbody tr:hover {
+            background-color: #f5f5f5;
+        }
+
+        /* Status Badges */
+        .status-warning {
+            display: inline-block;
+            background: #fff3e0;
+            color: #e65100;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        .status-critical {
+            display: inline-block;
+            background: #ffebee;
+            color: #c62828;
+            padding: 4px 12px;
+            border-radius: 6px;
+            font-weight: 600;
+            font-size: 13px;
+        }
+
+        /* Trend Indicators */
+        .trend-down {
+            color: #d32f2f;
+            font-weight: 700;
+        }
+
+        .trend-up {
+            color: #388e3c;
+            font-weight: 700;
+        }
+
+        .trend-stable {
+            color: #f57c00;
+            font-weight: 700;
+        }
+
+        /* Recommendations Section */
+        .recommendations-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+            gap: 20px;
+            margin-top: 24px;
+        }
+
+        .recommendation-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #ffffff 100%);
+            border: 2px solid #f0f0f0;
+            border-radius: 12px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            border-left: 4px solid #EC5F27;
+        }
+
+        .recommendation-card:hover {
+            border-color: #EC5F27;
+            box-shadow: 0 8px 20px rgba(236, 95, 39, 0.12);
+            transform: translateY(-2px);
+        }
+
+        .recommendation-number {
+            display: inline-block;
+            background: #EC5F27;
+            color: white;
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            margin-bottom: 12px;
+            font-size: 14px;
+        }
+
+        .recommendation-title {
+            font-size: 15px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
+        }
+
+        .recommendation-text {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.6;
+        }
+
+        /* Footer */
+        footer {
+            max-width: 1200px;
+            margin: 50px auto 0;
+            padding: 30px 20px;
+            text-align: center;
+            color: #888;
+            font-size: 13px;
+            border-top: 1px solid #eee;
+        }
+
+        /* Achievement % styling */
+        .achievement-cell {
+            font-weight: 600;
+            font-size: 15px;
+        }
+
+        .achievement-high {
+            color: #388e3c;
+        }
+
+        .achievement-medium {
+            color: #f57c00;
+        }
+
+        .achievement-low {
+            color: #d32f2f;
+        }
+
+        /* Numbers formatting */
+        .number {
+            text-align: right;
+            font-family: 'Courier New', monospace;
+            font-weight: 500;
+        }
+
+        /* Responsive */
+        @media (max-width: 768px) {
+            .card {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 12px;
+            }
+
+            td, th {
+                padding: 10px 8px;
+            }
+
+            nav a {
+                padding: 14px 12px;
+                font-size: 14px;
+            }
+
+            .header-title {
+                font-size: 24px;
+            }
+
+            .recommendations-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Sticky Navigation -->
+    <nav>
+        <ul>
+            <li><a href="team_review_week11.html" class="active">Team Performance</a></li>
+            <li><a href="seo_review_week11.html">SEO Performance</a></li>
+            <li><a href="suggestion_review_week11.html">แนวโน้มและข้อเสนอแนะ</a></li>
+        </ul>
+    </nav>
+
+    <!-- Header -->
+    <div class="header">
+        <h1 class="header-title">🎯 วิเคราะห์ Team Performance</h1>
+        <div class="week-selector">📅 สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="container">
+        <!-- Card 1: Performance vs Target -->
+        <div class="card">
+            <div class="card-title">📊 Performance vs Target</div>
+            <div class="card-subtitle">สัปดาห์ 9-15 มี.ค.</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th style="text-align: right;">Views</th>
+                        <th style="text-align: right;">Target</th>
+                        <th style="text-align: right;">Achievement %</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Online Web</strong></td>
+                        <td class="number">42,238</td>
+                        <td class="number">103,600</td>
+                        <td class="number achievement-cell achievement-medium">40.8%</td>
+                        <td><span class="status-warning">⚠️ ต่ำกว่า Target</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Health</strong></td>
+                        <td class="number">6,205</td>
+                        <td class="number">20,300</td>
+                        <td class="number achievement-cell achievement-low">30.6%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wealth</strong></td>
+                        <td class="number">4,397</td>
+                        <td class="number">20,300</td>
+                        <td class="number achievement-cell achievement-low">21.7%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>World</strong></td>
+                        <td class="number">4,187</td>
+                        <td class="number">23,100</td>
+                        <td class="number achievement-cell achievement-low">18.1%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Earth</strong></td>
+                        <td class="number">3,990</td>
+                        <td class="number">20,300</td>
+                        <td class="number achievement-cell achievement-low">19.7%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tech</strong></td>
+                        <td class="number">3,576</td>
+                        <td class="number">23,100</td>
+                        <td class="number achievement-cell achievement-low">15.5%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายการเศรษฐกิจ</strong></td>
+                        <td class="number">2,954</td>
+                        <td class="number">20,300</td>
+                        <td class="number achievement-cell achievement-low">14.6%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Channel</strong></td>
+                        <td class="number">2,435</td>
+                        <td class="number">20,300</td>
+                        <td class="number achievement-cell achievement-low">12.0%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Online Original</strong></td>
+                        <td class="number">1,016</td>
+                        <td class="number">23,100</td>
+                        <td class="number achievement-cell achievement-low">4.4%</td>
+                        <td><span class="status-critical">🔴 ต่ำมาก</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Card 2: Trend Analysis -->
+        <div class="card">
+            <div class="card-title">📈 Trend Analysis</div>
+            <div class="card-subtitle">ความเปลี่ยนแปลงในระยะ 4 สัปดาห์</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th style="text-align: right;">Week 8</th>
+                        <th style="text-align: right;">Week 9</th>
+                        <th style="text-align: right;">Week 10</th>
+                        <th style="text-align: right;">Week 11</th>
+                        <th style="text-align: center;">Trend</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Online Web</strong></td>
+                        <td class="number">33,883</td>
+                        <td class="number">59,271</td>
+                        <td class="number">58,602</td>
+                        <td class="number">42,238</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลง</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Health</strong></td>
+                        <td class="number">11,972</td>
+                        <td class="number">4,567</td>
+                        <td class="number">3,626</td>
+                        <td class="number">6,205</td>
+                        <td style="text-align: center;"><span class="trend-up">↗️ ฟื้นตัว</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>World</strong></td>
+                        <td class="number">7,135</td>
+                        <td class="number">7,357</td>
+                        <td class="number">5,906</td>
+                        <td class="number">4,187</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลง</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wealth</strong></td>
+                        <td class="number">7,032</td>
+                        <td class="number">4,305</td>
+                        <td class="number">3,768</td>
+                        <td class="number">4,397</td>
+                        <td style="text-align: center;"><span class="trend-up">↗️ ฟื้นตัว</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Earth</strong></td>
+                        <td class="number">5,698</td>
+                        <td class="number">4,954</td>
+                        <td class="number">6,691</td>
+                        <td class="number">3,990</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลง</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tech</strong></td>
+                        <td class="number">4,409</td>
+                        <td class="number">4,704</td>
+                        <td class="number">6,790</td>
+                        <td class="number">3,576</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลง</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายการเศรษฐกิจ</strong></td>
+                        <td class="number">3,682</td>
+                        <td class="number">3,465</td>
+                        <td class="number">3,276</td>
+                        <td class="number">2,954</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลงต่อเนื่อง</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Channel</strong></td>
+                        <td class="number">3,034</td>
+                        <td class="number">2,256</td>
+                        <td class="number">851</td>
+                        <td class="number">2,435</td>
+                        <td style="text-align: center;"><span class="trend-up">↗️ ฟื้นตัว</span></td>
+                    </tr>
+                    <tr>
+                        <td><strong>Online Original</strong></td>
+                        <td class="number">1,851</td>
+                        <td class="number">1,909</td>
+                        <td class="number">1,489</td>
+                        <td class="number">1,016</td>
+                        <td style="text-align: center;"><span class="trend-down">↘️ ขาลง</span></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Card 3: Content Volume -->
+        <div class="card">
+            <div class="card-title">📝 Content Volume</div>
+            <div class="card-subtitle">จำนวนบทความและ Engagement สัปดาห์ล่าสุด</div>
+            <table>
+                <thead>
+                    <tr>
+                        <th>Team</th>
+                        <th style="text-align: right;">Articles</th>
+                        <th style="text-align: right;">Views/Article</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><strong>Online Web</strong></td>
+                        <td class="number">194</td>
+                        <td class="number">218</td>
+                    </tr>
+                    <tr>
+                        <td><strong>รายการเศรษฐกิจ</strong></td>
+                        <td class="number">99</td>
+                        <td class="number">30</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tech</strong></td>
+                        <td class="number">72</td>
+                        <td class="number">50</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Wealth</strong></td>
+                        <td class="number">63</td>
+                        <td class="number">70</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Earth</strong></td>
+                        <td class="number">62</td>
+                        <td class="number">64</td>
+                    </tr>
+                    <tr>
+                        <td><strong>World</strong></td>
+                        <td class="number">59</td>
+                        <td class="number">71</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Channel</strong></td>
+                        <td class="number">48</td>
+                        <td class="number">51</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Health</strong></td>
+                        <td class="number">33</td>
+                        <td class="number">188</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Online Original</strong></td>
+                        <td class="number">10</td>
+                        <td class="number">102</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Card 4: Recommendations -->
+        <div class="card">
+            <div class="card-title">💡 ข้อเสนอแนะ</div>
+            <div class="card-subtitle">สิ่งที่ต้องปรับปรุงเพื่อให้บรรลุเป้าหมาย</div>
+            <div class="recommendations-grid">
+                <div class="recommendation-card">
+                    <div class="recommendation-number">1</div>
+                    <div class="recommendation-title">ปรับปรุง Health และ Wealth Content Quality</div>
+                    <div class="recommendation-text">ต่ำกว่า target ~70-80% ต้องเพิ่มเนื้อหาเชิงลึก breaking news และ analysis เพื่อเพิ่มคุณภาพและ engagement</div>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-number">2</div>
+                    <div class="recommendation-title">เสริมพลัง Channel Team</div>
+                    <div class="recommendation-text">ผลิต 48 ชิ้น/สัปดาห์ แต่ได้เพียง 2,435 views ต่ำกว่า target 88% ต้องเพิ่มความหลากหลายและการส่งเสริม</div>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-number">3</div>
+                    <div class="recommendation-title">Monitor Health Team Downtrend</div>
+                    <div class="recommendation-text">ลดลงจาก 11,972 เป็น 6,205 views ต้อง deep dive editorial direction เพื่อหาสาเหตุของการลดลง</div>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-number">4</div>
+                    <div class="recommendation-title">Stabilize World Team</div>
+                    <div class="recommendation-text">ลดลงจาก 7,357 เป็น 4,187 views ต้องรีวิว keyword targeting และ SEO strategy</div>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-number">5</div>
+                    <div class="recommendation-title">Maintain Online Web Momentum</div>
+                    <div class="recommendation-text">เพิ่มจาก 42K เป็น 103K views พิจารณาเพิ่มเนื้อหา viral และ trending topics เพื่อรักษาโมเมนตัม</div>
+                </div>
+                <div class="recommendation-card">
+                    <div class="recommendation-number">6</div>
+                    <div class="recommendation-title">Annual Target Roadmap</div>
+                    <div class="recommendation-text">ถึง annual target 15M PV ต้องเพิ่มประสิทธิภาพทั้ง 9 ทีม โดยเฉพาะ Online Web (2-2.5x) และ Health/Wealth (3-4x)</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer>
+        Team Performance Review Week 11 | 9-15 มี.ค. 2569 | Generated by AI Analysis
+    </footer>
+</body>
+</html>

@@ -1,0 +1,581 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Team Performance - Week 11 (9-15 มี.ค. 2569)</title>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Noto Sans Thai',sans-serif;
+    background:linear-gradient(180deg,#f0ebe3 0%,#e8e0d4 40%,#f5f0ea 100%);
+    color:#2d2a26;
+    padding:24px;
+    min-height:100vh;
+  }
+  .header {
+    display:flex; align-items:center; justify-content:center; gap:20px;
+    padding:24px 32px;
+    background:linear-gradient(135deg,#EC5F27 0%,#d44a18 50%,#b8390f 100%);
+    border-radius:20px; margin-bottom:28px;
+    box-shadow:0 8px 32px rgba(236,95,39,0.35);
+  }
+  .header h1 { font-size:26px; font-weight:800; color:#fff; margin-bottom:4px; letter-spacing:-.5px; }
+  .header p { color:rgba(255,255,255,.85); font-size:12px; }
+  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; margin-bottom:28px; }
+  .card {
+    background:#fff; border-radius:16px; padding:18px;
+    border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
+  }
+  .card-title { font-size:13px; font-weight:700; color:#2d2a26; margin-bottom:3px; }
+  .card-sub { font-size:10px; color:#a09890; margin-bottom:10px; }
+  .ch { position:relative; width:100%; height:320px; }
+  .ch.sm { height:260px; }
+  .kw-table { width:100%; border-collapse:collapse; font-size:12px; }
+  .kw-table th { background:#f5f0ea; padding:8px 10px; text-align:left; font-weight:700; font-size:11px; color:#8c8680; text-transform:uppercase; letter-spacing:1px; }
+  .kw-table td { padding:8px 10px; border-bottom:1px solid rgba(0,0,0,.06); }
+  .kw-table tr:nth-child(even) td { background:rgba(0,0,0,.02); }
+  .kw-table .kw-name { font-weight:600; color:#2d2a26; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+  .kw-table .kw-num { font-weight:700; color:#EC5F27; text-align:right; }
+  .footer { text-align:center; padding:20px; color:#b5afa8; font-size:11px; }
+  @media(max-width:900px) {
+    .grid3 { grid-template-columns:1fr; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div style="text-align:center;flex:1;">
+    <h1>Team Performance Dashboard</h1>
+    <p>สัปดาห์ที่ 11 | 9-15 มี.ค. 2569 | ข้อมูลจาก Google Sheet All Performance2026</p>
+  </div>
+</div>
+
+<!-- Box 1: ชุดที่ 1: Page Views รายสัปดาห์ -->
+<div style="background:#fff; border-radius:16px; padding:28px; margin-bottom:28px; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <h2 style="font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px;">📊 ชุดที่ 1: Page Views รายสัปดาห์ (4 สัปดาห์ย้อนหลัง)</h2>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Channel - Weekly PV</div>
+      <div class="card-sub">Target: 20,300/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Channel"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">รายการเศรษฐกิจ - Weekly PV</div>
+      <div class="card-sub">Target: 20,300/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Economy"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Wealth - Weekly PV</div>
+      <div class="card-sub">Target: 20,300/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Wealth"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Health - Weekly PV</div>
+      <div class="card-sub">Target: 20,300/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Health"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Earth - Weekly PV</div>
+      <div class="card-sub">Target: 20,300/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Earth"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Original - Weekly PV</div>
+      <div class="card-sub">Target: 23,100/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_OnlineOriginal"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">World - Weekly PV</div>
+      <div class="card-sub">Target: 23,100/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_World"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tech - Weekly PV</div>
+      <div class="card-sub">Target: 23,100/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_Tech"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Web - Weekly PV</div>
+      <div class="card-sub">Target: 103,600/week</div>
+      <div class="ch"><canvas id="teamWeeklyPV_OnlineWeb"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Box 2: ชุดที่ 2: Page Views รายเดือน -->
+<div style="background:#fff; border-radius:16px; padding:28px; margin-bottom:28px; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <h2 style="font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px;">📈 ชุดที่ 2: Page Views รายเดือน (ม.ค.-มี.ค.)</h2>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Channel - Monthly PV</div>
+      <div class="card-sub">Target: 87,500/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Channel"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">รายการเศรษฐกิจ - Monthly PV</div>
+      <div class="card-sub">Target: 87,500/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Economy"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Wealth - Monthly PV</div>
+      <div class="card-sub">Target: 87,500/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Wealth"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Health - Monthly PV</div>
+      <div class="card-sub">Target: 87,500/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Health"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Earth - Monthly PV</div>
+      <div class="card-sub">Target: 87,500/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Earth"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Original - Monthly PV</div>
+      <div class="card-sub">Target: 100,000/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_OnlineOriginal"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">World - Monthly PV</div>
+      <div class="card-sub">Target: 100,000/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_World"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tech - Monthly PV</div>
+      <div class="card-sub">Target: 100,000/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_Tech"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Web - Monthly PV</div>
+      <div class="card-sub">Target: 450,000/month</div>
+      <div class="ch"><canvas id="teamMonthlyPV_OnlineWeb"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Box 3: ชุดที่ 3: จำนวนข่าว รายสัปดาห์ -->
+<div style="background:#fff; border-radius:16px; padding:28px; margin-bottom:28px; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <h2 style="font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px;">📰 ชุดที่ 3: จำนวนข่าว รายสัปดาห์ (4 สัปดาห์ย้อนหลัง)</h2>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Channel - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Channel"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">รายการเศรษฐกิจ - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Economy"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Wealth - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Wealth"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Health - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Health"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Earth - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Earth"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Original - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_OnlineOriginal"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">World - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_World"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tech - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_Tech"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Web - Weekly Articles</div>
+      <div class="card-sub">สัปดาห์ 4 สุดท้าย</div>
+      <div class="ch"><canvas id="teamWeeklyArt_OnlineWeb"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Box 4: ชุดที่ 4: จำนวนข่าว รายเดือน -->
+<div style="background:#fff; border-radius:16px; padding:28px; margin-bottom:28px; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <h2 style="font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px;">📰 ชุดที่ 4: จำนวนข่าว รายเดือน (ม.ค.-มี.ค.)</h2>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Channel - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Channel"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">รายการเศรษฐกิจ - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Economy"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Wealth - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Wealth"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">Health - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Health"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Earth - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Earth"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Original - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_OnlineOriginal"></canvas></div>
+    </div>
+  </div>
+
+  <div class="grid3">
+    <div class="card">
+      <div class="card-title">World - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_World"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Tech - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_Tech"></canvas></div>
+    </div>
+    <div class="card">
+      <div class="card-title">Online Web - Monthly Articles</div>
+      <div class="card-sub">ม.ค.-มี.ค.</div>
+      <div class="ch"><canvas id="teamMonthlyArt_OnlineWeb"></canvas></div>
+    </div>
+  </div>
+</div>
+
+<!-- Box 5: Top 5 Rankings -->
+<div style="background:#fff; border-radius:16px; padding:28px; margin-bottom:28px; border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);">
+  <h2 style="font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px;">🏆 Top 5 Rankings - สัปดาห์ 9-15 มี.ค.</h2>
+
+  <div class="grid3">
+    <div>
+      <div style="font-size:12px; font-weight:700; color:#2d2a26; margin-bottom:12px;">Top 5 Team by PV</div>
+      <div style="font-size:10px; color:#a09890; margin-bottom:12px;">สัปดาห์ 9-15 มี.ค. 2569</div>
+      <table class="kw-table">
+        <thead>
+          <tr><th>#</th><th>Team</th><th style="text-align:right;">Views</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="kw-name">Online Web</td><td class="kw-num">42,238</td></tr>
+          <tr><td>2</td><td class="kw-name">Health</td><td class="kw-num">6,205</td></tr>
+          <tr><td>3</td><td class="kw-name">Wealth</td><td class="kw-num">4,397</td></tr>
+          <tr><td>4</td><td class="kw-name">World</td><td class="kw-num">4,187</td></tr>
+          <tr><td>5</td><td class="kw-name">Earth</td><td class="kw-num">3,990</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-size:12px; font-weight:700; color:#2d2a26; margin-bottom:12px;">Top 5 Team by Articles</div>
+      <div style="font-size:10px; color:#a09890; margin-bottom:12px;">สัปดาห์ 9-15 มี.ค. 2569</div>
+      <table class="kw-table">
+        <thead>
+          <tr><th>#</th><th>Team</th><th style="text-align:right;">Articles</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="kw-name">Online Web</td><td class="kw-num">194</td></tr>
+          <tr><td>2</td><td class="kw-name">รายการเศรษฐกิจ</td><td class="kw-num">99</td></tr>
+          <tr><td>3</td><td class="kw-name">Tech</td><td class="kw-num">72</td></tr>
+          <tr><td>4</td><td class="kw-name">Wealth</td><td class="kw-num">63</td></tr>
+          <tr><td>5</td><td class="kw-name">Earth</td><td class="kw-num">62</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div>
+      <div style="font-size:12px; font-weight:700; color:#2d2a26; margin-bottom:12px;">Top 5 Authors by PV</div>
+      <div style="font-size:10px; color:#a09890; margin-bottom:12px;">สัปดาห์ 9-15 มี.ค. 2569</div>
+      <table class="kw-table">
+        <thead>
+          <tr><th>#</th><th>Author</th><th style="text-align:right;">Views</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>1</td><td class="kw-name">Yosakrei</td><td class="kw-num">32,023</td></tr>
+          <tr><td>2</td><td class="kw-name">Tanvarut</td><td class="kw-num">4,225</td></tr>
+          <tr><td>3</td><td class="kw-name">Chayapha</td><td class="kw-num">3,808</td></tr>
+          <tr><td>4</td><td class="kw-name">Natnicha</td><td class="kw-num">3,358</td></tr>
+          <tr><td>5</td><td class="kw-name">Juthaluck</td><td class="kw-num">2,911</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Team Performance Dashboard Week 11 | 9-15 มี.ค. 2569 | Data: Google Sheet All Performance2026</div>
+
+<script>
+Chart.defaults.color='#8c8680';
+Chart.defaults.font.family="'Noto Sans Thai',sans-serif";
+
+const O='rgba(236,95,39,';
+const gapC='rgba(220,38,38,0.15)';
+const gold='#d97706';
+
+// ===== TEAM WEEKLY PV CHARTS =====
+function createTeamWeeklyPVChart(canvasId, teamData, targetWeekly, teamColor) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const D = teamData;
+  const T = targetWeekly;
+  const L = ['16-22 ก.พ.','23 ก.พ.-1 มี.ค.','2-8 มี.ค.','9-15 มี.ค.'];
+  const G = D.map(v => Math.max(0, T - v));
+  const P = D.map(v => (((v - T) / T) * 100).toFixed(1));
+  const pctChange = D.map((v, i) => i === 0 ? null : (((v - D[i-1]) / D[i-1]) * 100).toFixed(1));
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: L, datasets: [
+      { label: 'PV', data: D, backgroundColor: teamColor, borderRadius: 6, barPercentage: 0.6 },
+      { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: 0.6 }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1000).toFixed(0) + 'K' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx;
+          x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
+            x.fillText(v.toLocaleString(), b.x, b.y - 24);
+            if (i === D.length - 1 && pctChange[i] !== null) {
+              x.fillStyle = pctChange[i] >= 0 ? '#16a34a' : '#dc2626';
+              x.font = 'bold 10px Noto Sans Thai';
+              x.fillText((pctChange[i] >= 0 ? '+' : '') + pctChange[i] + '%', b.x, b.y - 10);
+            }
+          });
+          const yS = c.scales.y, tY = yS.getPixelForValue(T);
+          x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
+          x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
+          x.fillStyle = gold; x.font = 'bold 10px Noto Sans Thai'; x.textAlign = 'right';
+          x.fillText('Target: ' + T.toLocaleString(), c.chartArea.right, tY - 6);
+          x.restore();
+        }
+      }
+    }
+  });
+}
+
+createTeamWeeklyPVChart('teamWeeklyPV_Channel', [3034, 2256, 851, 2435], 20300, 'rgba(236,95,39,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_Economy', [3682, 3465, 3276, 2954], 20300, 'rgba(236,95,39,0.64)');
+createTeamWeeklyPVChart('teamWeeklyPV_Wealth', [7032, 4305, 3768, 4397], 20300, 'rgba(14,65,116,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_Health', [11972, 4567, 3626, 6205], 20300, 'rgba(232,28,155,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_Earth', [5698, 4954, 6691, 3990], 20300, 'rgba(34,147,62,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_OnlineOriginal', [1851, 1909, 1489, 1016], 23100, 'rgba(236,95,39,0.43)');
+createTeamWeeklyPVChart('teamWeeklyPV_World', [7135, 7357, 5906, 4187], 23100, 'rgba(203,44,48,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_Tech', [4409, 4704, 6790, 3576], 23100, 'rgba(34,211,202,0.85)');
+createTeamWeeklyPVChart('teamWeeklyPV_OnlineWeb', [33883, 59271, 58602, 42238], 103600, 'rgba(236,95,39,0.43)');
+
+// ===== TEAM MONTHLY PV CHARTS =====
+function createTeamMonthlyPVChart(canvasId, monthlyData, targetMonthly, teamColor) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const D = monthlyData;
+  const T = targetMonthly;
+  const L = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม*'];
+  const G = D.map(v => Math.max(0, T - v));
+  const P = D.map(v => (((v - T) / T) * 100).toFixed(1));
+  const pctChange = D.map((v, i) => i === 0 ? null : (((v - D[i-1]) / D[i-1]) * 100).toFixed(1));
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: L, datasets: [
+      { label: 'PV', data: D, backgroundColor: [teamColor, teamColor, teamColor.replace(/0\.\d+\)/, '0.55)')], borderRadius: 6, barPercentage: 0.5 },
+      { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: 0.5 }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1e6).toFixed(1) + 'M' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx;
+          x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
+            x.fillText(v.toLocaleString(), b.x, b.y - 24);
+            if (i === D.length - 1 && pctChange[i] !== null) {
+              x.fillStyle = pctChange[i] >= 0 ? '#16a34a' : '#dc2626';
+              x.font = 'bold 10px Noto Sans Thai';
+              x.fillText((pctChange[i] >= 0 ? '+' : '') + pctChange[i] + '%', b.x, b.y - 10);
+            }
+          });
+          const yS = c.scales.y, tY = yS.getPixelForValue(T);
+          x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
+          x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
+          x.fillStyle = gold; x.font = 'bold 10px Noto Sans Thai'; x.textAlign = 'right';
+          x.fillText('Target: ' + T.toLocaleString(), c.chartArea.right, tY - 6);
+          x.restore();
+        }
+      }
+    }
+  });
+}
+
+createTeamMonthlyPVChart('teamMonthlyPV_Channel', [9696, 13516, 3411], 87500, 'rgba(236,95,39,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_Economy', [6891, 14825, 6230], 87500, 'rgba(236,95,39,0.64)');
+createTeamMonthlyPVChart('teamMonthlyPV_Wealth', [10124, 23167, 8498], 87500, 'rgba(14,65,116,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_Health', [15067, 28005, 10098], 87500, 'rgba(232,28,155,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_Earth', [11856, 27708, 11716], 87500, 'rgba(34,147,62,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_OnlineOriginal', [5151, 8383, 2939], 100000, 'rgba(236,95,39,0.43)');
+createTeamMonthlyPVChart('teamMonthlyPV_World', [18114, 25583, 10556], 100000, 'rgba(203,44,48,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_Tech', [14597, 47721, 10687], 100000, 'rgba(34,211,202,0.85)');
+createTeamMonthlyPVChart('teamMonthlyPV_OnlineWeb', [85027, 253253, 120154], 450000, 'rgba(236,95,39,0.43)');
+
+// ===== TEAM WEEKLY ARTICLES =====
+function createTeamWeeklyArticlesChart(canvasId, teamData, teamColor) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const D = teamData;
+  const L = ['16-22 ก.พ.','23 ก.พ.-1 มี.ค.','2-8 มี.ค.','9-15 มี.ค.'];
+  const pctChange = D.map((v, i) => i === 0 ? null : (((v - D[i-1]) / D[i-1]) * 100).toFixed(1));
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: L, datasets: [
+      { label: 'Articles', data: D, backgroundColor: teamColor, borderRadius: 6, barPercentage: 0.6 }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => v } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx;
+          x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
+            x.fillText(v, b.x, b.y - 12);
+            if (i === D.length - 1 && pctChange[i] !== null) {
+              x.fillStyle = pctChange[i] >= 0 ? '#16a34a' : '#dc2626';
+              x.font = 'bold 10px Noto Sans Thai';
+              x.fillText((pctChange[i] >= 0 ? '+' : '') + pctChange[i] + '%', b.x, b.y - 0);
+            }
+          });
+          x.restore();
+        }
+      }
+    }
+  });
+}
+
+createTeamWeeklyArticlesChart('teamWeeklyArt_Channel', [25, 40, 26, 48], 'rgba(236,95,39,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_Economy', [77, 82, 96, 99], 'rgba(236,95,39,0.64)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_Wealth', [82, 82, 61, 63], 'rgba(14,65,116,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_Health', [38, 33, 30, 33], 'rgba(232,28,155,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_Earth', [57, 62, 62, 62], 'rgba(34,147,62,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_OnlineOriginal', [9, 19, 16, 10], 'rgba(236,95,39,0.43)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_World', [59, 53, 58, 59], 'rgba(203,44,48,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_Tech', [59, 55, 61, 72], 'rgba(34,211,202,0.85)');
+createTeamWeeklyArticlesChart('teamWeeklyArt_OnlineWeb', [160, 171, 163, 194], 'rgba(236,95,39,0.43)');
+
+// ===== TEAM MONTHLY ARTICLES =====
+function createTeamMonthlyArticlesChart(canvasId, monthlyData, teamColor) {
+  const ctx = document.getElementById(canvasId).getContext('2d');
+  const D = monthlyData;
+  const L = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม*'];
+  const pctChange = D.map((v, i) => i === 0 ? null : (((v - D[i-1]) / D[i-1]) * 100).toFixed(1));
+  new Chart(ctx, {
+    type: 'bar',
+    data: { labels: L, datasets: [
+      { label: 'Articles', data: D, backgroundColor: [teamColor, teamColor, teamColor.replace(/0\.\d+\)/, '0.55)')], borderRadius: 6, barPercentage: 0.5 }
+    ]},
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      layout: { padding: { top: 20 } },
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { grid: { display: false } },
+        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => v } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx;
+          x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
+            x.fillText(v, b.x, b.y - 12);
+            if (i === D.length - 1 && pctChange[i] !== null) {
+              x.fillStyle = pctChange[i] >= 0 ? '#16a34a' : '#dc2626';
+              x.font = 'bold 10px Noto Sans Thai';
+              x.fillText((pctChange[i] >= 0 ? '+' : '') + pctChange[i] + '%', b.x, b.y - 0);
+            }
+          });
+          x.restore();
+        }
+      }
+    }
+  });
+}
+
+createTeamMonthlyArticlesChart('teamMonthlyArt_Channel', [88, 159, 76], 'rgba(236,95,39,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_Economy', [150, 339, 195], 'rgba(236,95,39,0.64)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_Wealth', [147, 291, 130], 'rgba(14,65,116,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_Health', [67, 135, 67], 'rgba(232,28,155,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_Earth', [135, 241, 132], 'rgba(34,147,62,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_OnlineOriginal', [26, 70, 28], 'rgba(236,95,39,0.43)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_World', [130, 227, 121], 'rgba(203,44,48,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_Tech', [115, 246, 137], 'rgba(34,211,202,0.85)');
+createTeamMonthlyArticlesChart('teamMonthlyArt_OnlineWeb', [388, 693, 375], 'rgba(236,95,39,0.43)');
+</script>
+
+</body>
+</html>
