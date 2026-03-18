@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Performance - Week 11 (9-15 มี.ค.)</title>
+<title>Team Performance - Week 3 (12-18 ม.ค.)</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
@@ -177,7 +177,7 @@
     <ul class="nav-menu" id="mainNav">
       <li><a href="index.html">Home</a></li>
       <li><a href="web_all_2026_week11.html">Web Performance</a></li>
-      <li><a href="team_performance_week11.html" class="active">Team Charts</a></li>
+      <li><a href="team_performance_week3.html" class="active">Team Charts</a></li>
       <li class="has-dropdown"><a href="#">Reviews</a>
         <ul class="dropdown">
           <li><a href="team_review_week11.html">Team Review</a></li>
@@ -194,7 +194,7 @@
 <div class="header">
   <div style="text-align:center;flex:1;">
     <h1>Team Performance Dashboard</h1>
-    <p>Week 11 | 9-15 มี.ค. | Data: Google Sheet All Performance 2026</p>
+    <p>Week 3 | 12-18 ม.ค. | Data: Google Sheet All Performance 2026</p>
   </div>
 </div>
 
@@ -214,7 +214,7 @@
     <div class="ws-grid">
         <a href="team_performance_week1.html">Week 1 (29 ธ.ค. 68 - 4 ม.ค. 69)</a>
         <a href="team_performance_week2.html">Week 2 (5-11 ม.ค.)</a>
-        <a href="team_performance_week3.html">Week 3 (12-18 ม.ค.)</a>
+        <a href="team_performance_week3.html" class="ws-active">Week 3 (12-18 ม.ค.)</a>
         <a href="team_performance_week4.html">Week 4 (19-25 ม.ค.)</a>
         <a href="team_performance_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
         <a href="team_performance_week6.html">Week 6 (2-8 ก.พ.)</a>
@@ -222,7 +222,7 @@
         <a href="team_performance_week8.html">Week 8 (16-22 ก.พ.)</a>
         <a href="team_performance_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
         <a href="team_performance_week10.html">Week 10 (2-8 มี.ค.)</a>
-        <a href="team_performance_week11.html" class="ws-active">Week 11 (9-15 มี.ค.)</a>
+        <a href="team_performance_week11.html">Week 11 (9-15 มี.ค.)</a>
     </div>
   </div>
 </div>
@@ -235,13 +235,13 @@
 <!-- Top 5 Rankings -->
 <div id="top5Container"></div>
 
-<div class="footer">Team Performance Dashboard Week 11 | 9-15 มี.ค. | Data: Google Sheet All Performance 2026</div>
+<div class="footer">Team Performance Dashboard Week 3 | 12-18 ม.ค. | Data: Google Sheet All Performance 2026</div>
 
 <script>
 Chart.defaults.color='#8c8680';
 Chart.defaults.font.family="'Noto Sans Thai',sans-serif";
 
-const WEEK_NUM = 11;
+const WEEK_NUM = 3;
 const SHEET_ID = '1vuHDop1s4ZmydRIJsg0O26O1TsUKyeac0iU06Cl6NNY';
 const gold='#d97706';
 const gapC='rgba(220,38,38,0.15)';
@@ -267,8 +267,8 @@ const WEEK_START = WEEK_NUM - NUM_DISPLAY + 1;
 const DISPLAY_WEEKS = ALL_WEEKS.filter(w => w.n >= WEEK_START && w.n <= WEEK_NUM);
 const WEEKLY_LABELS = DISPLAY_WEEKS.map(w => w.thai);
 
-const MONTHS_TO_SHOW = ['Jan', 'Feb', 'Mar'];
-const MONTHLY_LABELS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม*'];
+const MONTHS_TO_SHOW = ['Jan'];
+const MONTHLY_LABELS = ['มกราคม*'];
 
 // Team configuration: id, display name, color, weekly PV target, monthly PV target
 const TEAM_CONFIG = [
