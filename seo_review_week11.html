@@ -6,176 +6,230 @@
     <title>SEO Performance Review - Week 11</title>
     <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
 
         body {
             font-family: 'Noto Sans Thai', sans-serif;
             background: linear-gradient(135deg, #f8f9fa 0%, #f0f2f5 100%);
             color: #2c3e50;
             min-height: 100vh;
-            padding-top: 80px;
         }
 
-        /* Navigation */
-        .navbar {
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-            border-bottom: 1px solid rgba(236, 95, 39, 0.1);
-        }
-
-
-
-
-
-
-
-
-        /* Container */
         .container {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 24px 20px;
         }
 
-        /* Header */
         .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 4px solid #EC5F27;
         }
 
         .header-content h1 {
+            font-size: 22px;
+            font-weight: 700;
+            color: #1a1a1a;
         }
 
         .week-selector {
+            font-size: 13px;
+            color: #EC5F27;
+            font-weight: 600;
+            background: rgba(236,95,39,0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
         }
 
-        /* KPI Cards Row */
         .kpi-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .kpi-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px 24px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            border-left: 4px solid #EC5F27;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .kpi-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
         }
 
         .kpi-label {
+            font-size: 11px;
+            font-weight: 600;
+            color: #888;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 8px;
         }
 
         .kpi-value {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 6px;
         }
 
         .kpi-change {
+            font-size: 12px;
+            color: #d32f2f;
+            font-weight: 500;
         }
 
-        .kpi-change.positive {
-        }
+        .kpi-change.positive { color: #388e3c; }
 
-        /* Section Title */
         .section-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 12px;
+            margin-top: 8px;
+            padding: 10px 14px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #EC5F27;
+            box-shadow: 0 1px 6px rgba(0,0,0,0.05);
         }
 
-        .section-title::before {
-        }
-
-        /* Table Styles */
         .table-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            overflow: hidden;
+            margin-bottom: 20px;
+            transition: box-shadow 0.2s;
         }
 
-        .table-card:hover {
-        }
+        .table-card:hover { box-shadow: 0 6px 20px rgba(0,0,0,0.1); }
 
-        .table-card table {
-        }
+        .table-card table { width: 100%; border-collapse: collapse; }
 
-        .table-card thead {
-        }
+        .table-card thead { background: linear-gradient(135deg, #EC5F27, #d44a1a); }
 
         .table-card th {
+            padding: 12px 16px;
+            text-align: left;
+            font-size: 11px;
+            font-weight: 600;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
         }
 
         .table-card td {
+            padding: 12px 16px;
+            font-size: 13px;
+            color: #333;
+            border-bottom: 1px solid #f0f0f0;
         }
 
-        .table-card tbody tr:hover {
-        }
+        .table-card tbody tr:hover { background-color: rgba(236,95,39,0.04); }
+        .table-card tbody tr:last-child td { border-bottom: none; }
 
-        .table-card tbody tr:last-child td {
-        }
+        .metric-value { font-weight: 500; }
 
-        .metric-value {
-        }
+        .ctr-value { font-weight: 700; color: #EC5F27; }
 
-        .ctr-value {
-        }
-
-        /* Note Below Table */
         .table-note {
+            padding: 12px 16px;
+            background: #f8f9fa;
+            font-size: 12.5px;
+            color: #555;
+            line-height: 1.6;
+            border-top: 1px solid #f0f0f0;
         }
 
-        /* Recommendation Cards */
         .recommendations {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 16px;
+            margin-bottom: 24px;
         }
 
         .recommendation-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.07);
+            border-left: 4px solid #EC5F27;
+            transition: transform 0.2s, box-shadow 0.2s;
         }
 
         .recommendation-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.1);
         }
 
         .recommendation-number {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            background: #EC5F27;
+            color: white;
+            border-radius: 50%;
+            font-size: 13px;
+            font-weight: 700;
+            margin-bottom: 10px;
         }
 
         .recommendation-title {
+            font-size: 14px;
+            font-weight: 700;
+            color: #1a1a1a;
+            margin-bottom: 8px;
         }
 
         .recommendation-description {
+            font-size: 12.5px;
+            color: #666;
+            line-height: 1.6;
         }
 
-        /* Footer */
         .footer {
+            text-align: center;
+            padding: 24px;
+            color: #888;
+            font-size: 12px;
         }
 
-        /* Responsive */
-        @media (max-width: 768px) {
-            .container {
-            }
-
-
-
-            .page-header {
-            }
-
-            .header-content h1 {
-            }
-
-            .kpi-row {
-            }
-
-            .recommendations {
-            }
-
-            .kpi-value {
-            }
-
-        /* Animation */
         @keyframes fadeIn {
-            from {
-            }
-            to {
-            }
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
 
         .kpi-card, .table-card, .recommendation-card {
+            animation: fadeIn 0.4s ease both;
         }
-
         .kpi-card:nth-child(1) { animation-delay: 0.1s; }
         .kpi-card:nth-child(2) { animation-delay: 0.2s; }
         .kpi-card:nth-child(3) { animation-delay: 0.3s; }
+
+        @media (max-width: 768px) {
+            .kpi-row { grid-template-columns: 1fr; }
+            .recommendations { grid-template-columns: 1fr; }
+            .header-content h1 { font-size: 18px; }
+            .kpi-value { font-size: 22px; }
+        }
+
     /* === TOPNAV === */
 .topnav{margin-bottom:16px;position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.08);box-shadow:0 2px 16px rgba(0,0,0,.07);font-family:'Noto Sans Thai',sans-serif;}
 .nav-inner{display:flex;align-items:center;padding:0 20px;gap:0;}
