@@ -219,10 +219,10 @@
         <a href="team_performance_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
         <a href="team_performance_week6.html">Week 6 (2-8 ก.พ.)</a>
         <a href="team_performance_week7.html">Week 7 (9-15 ก.พ.)</a>
-        <a href="team_performance_week8.html" class="ws-active">Week 8 (16-22 ก.พ.)</a>
+        <a href="team_performance_week8.html">Week 8 (16-22 ก.พ.)</a>
         <a href="team_performance_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
         <a href="team_performance_week10.html">Week 10 (2-8 มี.ค.)</a>
-        <a href="team_performance_week11.html">Week 11 (9-15 มี.ค.)</a>
+        <a href="team_performance_week8.html" class="ws-active">Week 11 (9-15 มี.ค.)</a>
     </div>
   </div>
 </div>
@@ -282,6 +282,32 @@ const TEAM_CONFIG = [
   {id:'Tech',        match:['tech'],                                   name:'Tech',             color:'rgba(34,211,202,0.85)', wkPvT:23100,  moPvT:100000},
   {id:'Earth',       match:['earth'],                                  name:'Earth',            color:'rgba(34,147,62,0.85)',  wkPvT:20300,  moPvT:87500}
 ];
+
+// ─── Fallback data from CSV (used when Google Sheet hasn't been updated yet) ───
+const CSV_FALLBACK = {
+  weekly: {
+    'OnlineWeb':  {10:{pv:58602,articles:163}, 11:{pv:42238,articles:194}},
+    'OnlineOrig': {10:{pv:1489,articles:16},   11:{pv:1016,articles:10}},
+    'Channel':    {10:{pv:851,articles:26},     11:{pv:2435,articles:48}},
+    'Economy':    {10:{pv:3276,articles:96},    11:{pv:2954,articles:99}},
+    'World':      {10:{pv:5906,articles:58},    11:{pv:4187,articles:59}},
+    'Wealth':     {10:{pv:3768,articles:61},    11:{pv:4397,articles:63}},
+    'Health':     {10:{pv:3626,articles:30},    11:{pv:6205,articles:33}},
+    'Tech':       {10:{pv:6790,articles:61},    11:{pv:3576,articles:72}},
+    'Earth':      {10:{pv:6691,articles:62},    11:{pv:3990,articles:62}}
+  },
+  monthly: {
+    'OnlineWeb':  {'Mar':{pv:100840,articles:357}},
+    'OnlineOrig': {'Mar':{pv:2505,articles:26}},
+    'Channel':    {'Mar':{pv:3286,articles:74}},
+    'Economy':    {'Mar':{pv:6230,articles:195}},
+    'World':      {'Mar':{pv:10093,articles:117}},
+    'Wealth':     {'Mar':{pv:8165,articles:124}},
+    'Health':     {'Mar':{pv:9831,articles:63}},
+    'Tech':       {'Mar':{pv:10366,articles:133}},
+    'Earth':      {'Mar':{pv:10681,articles:124}}
+  }
+};
 
 // ─── gviz fetch helper ───
 async function fetchGviz(sheetName, selectQuery) {
@@ -432,6 +458,33 @@ async function loadData() {
         pvTarget: pvTarget > 0 ? pvTarget : tc.moPvT,
         articles: articles
       };
+    }
+
+    // --- Apply CSV fallback for missing weekly data ---
+    for (const tc of TEAM_CONFIG) {
+      const fb = CSV_FALLBACK.weekly[tc.id];
+      if (!fb) continue;
+      if (!weeklyByTeam[tc.id]) weeklyByTeam[tc.id] = {};
+      for (const [wk, vals] of Object.entries(fb)) {
+        const wn = parseInt(wk);
+        const existing = weeklyByTeam[tc.id][wn];
+        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
+          weeklyByTeam[tc.id][wn] = {pv:vals.pv, pvTarget:tc.wkPvT, articles:vals.articles};
+        }
+      }
+    }
+
+    // --- Apply CSV fallback for missing monthly data ---
+    for (const tc of TEAM_CONFIG) {
+      const fb = CSV_FALLBACK.monthly[tc.id];
+      if (!fb) continue;
+      if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
+      for (const [mo, vals] of Object.entries(fb)) {
+        const existing = monthlyByTeam[tc.id][mo];
+        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
+          monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
+        }
+      }
     }
 
     // --- Build TEAMS array ---
