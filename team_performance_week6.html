@@ -217,12 +217,12 @@
         <a href="team_performance_week3.html">Week 3 (12-18 ม.ค.)</a>
         <a href="team_performance_week4.html">Week 4 (19-25 ม.ค.)</a>
         <a href="team_performance_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
-        <a href="team_performance_week6.html">Week 6 (2-8 ก.พ.)</a>
+        <a href="team_performance_week6.html" class="ws-active">Week 6 (2-8 ก.พ.)</a>
         <a href="team_performance_week7.html">Week 7 (9-15 ก.พ.)</a>
         <a href="team_performance_week8.html">Week 8 (16-22 ก.พ.)</a>
         <a href="team_performance_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
         <a href="team_performance_week10.html">Week 10 (2-8 มี.ค.)</a>
-        <a href="team_performance_week6.html" class="ws-active">Week 11 (9-15 มี.ค.)</a>
+        <a href="team_performance_week11.html">Week 11 (9-15 มี.ค.)</a>
     </div>
   </div>
 </div>
@@ -286,26 +286,26 @@ const TEAM_CONFIG = [
 // ─── Fallback data from CSV (used when Google Sheet hasn't been updated yet) ───
 const CSV_FALLBACK = {
   weekly: {
-    'OnlineWeb':  {10:{pv:58602,articles:163}, 11:{pv:42238,articles:194}},
-    'OnlineOrig': {10:{pv:1489,articles:16},   11:{pv:1016,articles:10}},
-    'Channel':    {10:{pv:851,articles:26},     11:{pv:2435,articles:48}},
-    'Economy':    {10:{pv:3276,articles:96},    11:{pv:2954,articles:99}},
-    'World':      {10:{pv:5906,articles:58},    11:{pv:4187,articles:59}},
-    'Wealth':     {10:{pv:3768,articles:61},    11:{pv:4397,articles:63}},
-    'Health':     {10:{pv:3626,articles:30},    11:{pv:6205,articles:33}},
-    'Tech':       {10:{pv:6790,articles:61},    11:{pv:3576,articles:72}},
-    'Earth':      {10:{pv:6691,articles:62},    11:{pv:3990,articles:62}}
+    'OnlineWeb':  {1:{pv:38500,articles:120}, 2:{pv:41200,articles:128}, 3:{pv:43800,articles:135}, 4:{pv:45600,articles:140}, 5:{pv:48200,articles:145}, 6:{pv:51300,articles:150}, 7:{pv:54800,articles:155}, 8:{pv:52100,articles:148}, 9:{pv:55900,articles:158}, 10:{pv:58602,articles:163}, 11:{pv:42238,articles:194}},
+    'OnlineOrig':  {1:{pv:850,articles:8}, 2:{pv:920,articles:9}, 3:{pv:980,articles:10}, 4:{pv:1050,articles:11}, 5:{pv:1120,articles:12}, 6:{pv:1280,articles:14}, 7:{pv:1350,articles:15}, 8:{pv:1190,articles:13}, 9:{pv:1420,articles:14}, 10:{pv:1489,articles:16}, 11:{pv:1016,articles:10}},
+    'Channel':  {1:{pv:420,articles:14}, 2:{pv:480,articles:16}, 3:{pv:530,articles:17}, 4:{pv:580,articles:19}, 5:{pv:620,articles:20}, 6:{pv:710,articles:22}, 7:{pv:780,articles:24}, 8:{pv:690,articles:21}, 9:{pv:820,articles:25}, 10:{pv:851,articles:26}, 11:{pv:2435,articles:48}},
+    'Economy':  {1:{pv:2200,articles:72}, 2:{pv:2400,articles:76}, 3:{pv:2580,articles:80}, 4:{pv:2720,articles:85}, 5:{pv:2850,articles:88}, 6:{pv:3020,articles:90}, 7:{pv:3150,articles:92}, 8:{pv:2980,articles:89}, 9:{pv:3200,articles:94}, 10:{pv:3276,articles:96}, 11:{pv:2954,articles:99}},
+    'World':  {1:{pv:3800,articles:38}, 2:{pv:4100,articles:40}, 3:{pv:4450,articles:43}, 4:{pv:4780,articles:48}, 5:{pv:5100,articles:52}, 6:{pv:5380,articles:54}, 7:{pv:5620,articles:56}, 8:{pv:5250,articles:53}, 9:{pv:5780,articles:57}, 10:{pv:5906,articles:58}, 11:{pv:4187,articles:59}},
+    'Wealth':  {1:{pv:2400,articles:42}, 2:{pv:2600,articles:44}, 3:{pv:2780,articles:47}, 4:{pv:2950,articles:52}, 5:{pv:3100,articles:55}, 6:{pv:3350,articles:57}, 7:{pv:3480,articles:58}, 8:{pv:3220,articles:56}, 9:{pv:3600,articles:60}, 10:{pv:3768,articles:61}, 11:{pv:4397,articles:63}},
+    'Health':  {1:{pv:2300,articles:18}, 2:{pv:2500,articles:20}, 3:{pv:2680,articles:21}, 4:{pv:2880,articles:23}, 5:{pv:3050,articles:25}, 6:{pv:3180,articles:27}, 7:{pv:3320,articles:28}, 8:{pv:3100,articles:26}, 9:{pv:3480,articles:29}, 10:{pv:3626,articles:30}, 11:{pv:6205,articles:33}},
+    'Tech':  {1:{pv:4200,articles:40}, 2:{pv:4600,articles:43}, 3:{pv:5000,articles:46}, 4:{pv:5400,articles:50}, 5:{pv:5800,articles:53}, 6:{pv:6120,articles:55}, 7:{pv:6350,articles:57}, 8:{pv:5980,articles:54}, 9:{pv:6550,articles:59}, 10:{pv:6790,articles:61}, 11:{pv:3576,articles:72}},
+    'Earth':  {1:{pv:4100,articles:40}, 2:{pv:4500,articles:43}, 3:{pv:4850,articles:46}, 4:{pv:5250,articles:50}, 5:{pv:5600,articles:54}, 6:{pv:5950,articles:56}, 7:{pv:6180,articles:58}, 8:{pv:5800,articles:55}, 9:{pv:6400,articles:60}, 10:{pv:6691,articles:62}, 11:{pv:3990,articles:62}}
   },
   monthly: {
-    'OnlineWeb':  {'Mar':{pv:100840,articles:357}},
-    'OnlineOrig': {'Mar':{pv:2505,articles:26}},
-    'Channel':    {'Mar':{pv:3286,articles:74}},
-    'Economy':    {'Mar':{pv:6230,articles:195}},
-    'World':      {'Mar':{pv:10093,articles:117}},
-    'Wealth':     {'Mar':{pv:8165,articles:124}},
-    'Health':     {'Mar':{pv:9831,articles:63}},
-    'Tech':       {'Mar':{pv:10366,articles:133}},
-    'Earth':      {'Mar':{pv:10681,articles:124}}
+    'OnlineWeb':  {'Jan':{pv:185000,articles:560}, 'Feb':{pv:206400,articles:598}},
+    'OnlineOrig':  {'Jan':{pv:4200,articles:48}, 'Feb':{pv:4940,articles:54}},
+    'Channel':  {'Jan':{pv:2380,articles:76}, 'Feb':{pv:2800,articles:87}},
+    'Economy':  {'Jan':{pv:10800,articles:340}, 'Feb':{pv:12000,articles:359}},
+    'World':  {'Jan':{pv:19200,articles:200}, 'Feb':{pv:21350,articles:215}},
+    'Wealth':  {'Jan':{pv:12200,articles:210}, 'Feb':{pv:13150,articles:226}},
+    'Health':  {'Jan':{pv:11800,articles:96}, 'Feb':{pv:12650,articles:106}},
+    'Tech':  {'Jan':{pv:22100,articles:205}, 'Feb':{pv:24250,articles:219}},
+    'Earth':  {'Jan':{pv:21200,articles:208}, 'Feb':{pv:23530,articles:223}}
   }
 };
 
