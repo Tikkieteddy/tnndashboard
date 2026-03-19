@@ -460,30 +460,24 @@ async function loadData() {
       };
     }
 
-    // --- Apply CSV fallback for missing weekly data ---
+    // --- Apply CSV fallback (authoritative for historical week pages) ---
     for (const tc of TEAM_CONFIG) {
       const fb = CSV_FALLBACK.weekly[tc.id];
       if (!fb) continue;
       if (!weeklyByTeam[tc.id]) weeklyByTeam[tc.id] = {};
       for (const [wk, vals] of Object.entries(fb)) {
         const wn = parseInt(wk);
-        const existing = weeklyByTeam[tc.id][wn];
-        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
-          weeklyByTeam[tc.id][wn] = {pv:vals.pv, pvTarget:tc.wkPvT, articles:vals.articles};
-        }
+        weeklyByTeam[tc.id][wn] = {pv:vals.pv, pvTarget:tc.wkPvT, articles:vals.articles};
       }
     }
 
-    // --- Apply CSV fallback for missing monthly data ---
+    // --- Apply CSV fallback monthly (authoritative for historical week pages) ---
     for (const tc of TEAM_CONFIG) {
       const fb = CSV_FALLBACK.monthly[tc.id];
       if (!fb) continue;
       if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
       for (const [mo, vals] of Object.entries(fb)) {
-        const existing = monthlyByTeam[tc.id][mo];
-        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
-          monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
-        }
+        monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
       }
     }
 
