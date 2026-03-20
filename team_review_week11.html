@@ -21,30 +21,34 @@
         }
 
 
-        /* Header Section */
-        .header {
-            max-width: 1200px;
-            margin: 40px auto 30px;
-            padding: 0 20px;
+        /* Page Header - same as SEO Review */
+        .page-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 12px;
+            margin-bottom: 24px;
+            padding: 20px 24px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+            border-left: 4px solid #EC5F27;
         }
 
-        .header-title {
-            font-size: 32px;
+        .header-content h1 {
+            font-size: 22px;
             font-weight: 700;
             color: #1a1a1a;
-            margin-bottom: 10px;
         }
 
         .week-selector {
-            display: inline-block;
-            background: white;
-            padding: 12px 24px;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
-            font-size: 14px;
-            color: #666;
-            border-left: 4px solid #EC5F27;
-            margin-bottom: 30px;
+            font-size: 13px;
+            color: #EC5F27;
+            font-weight: 600;
+            background: rgba(236,95,39,0.08);
+            padding: 6px 14px;
+            border-radius: 20px;
         }
 
         /* Container */
@@ -302,7 +306,7 @@
 .back-reviews{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:rgba(236,95,39,.08);color:#EC5F27;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.2s;border:1.5px solid rgba(236,95,39,.15);}
 .back-reviews:hover{background:rgba(236,95,39,.15);border-color:#EC5F27;transform:translateY(-1px);box-shadow:0 3px 12px rgba(236,95,39,.15);}
 .back-reviews svg{flex-shrink:0;}
-.header-top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+.header-top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;width:100%;}
 
 /* Scroll to top button */
 .scroll-top-btn{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:#EC5F27;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(236,95,39,0.35);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:9999;font-size:20px;}
@@ -327,17 +331,18 @@
   </div>
 </nav>
 
-    <!-- Header -->
-    <div class="header">
-        <div class="header-top-row">
-            <a href="reviews.html" class="back-reviews"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Reviews</a>
-            <div class="week-selector">📅 สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
-        </div>
-        <h1 class="header-title">🎯 วิเคราะห์ Team Performance</h1>
-    </div>
-
     <!-- Main Content -->
     <div class="container">
+        <!-- Page Header -->
+        <div class="page-header">
+            <div class="header-top-row">
+                <a href="reviews.html" class="back-reviews"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Reviews</a>
+                <div class="week-selector">สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
+            </div>
+            <div class="header-content">
+                <h1>🎯 วิเคราะห์ Team Performance</h1>
+            </div>
+        </div>
         <!-- Card 1: Performance vs Target -->
         <div class="card">
             <div class="card-title">📊 Performance vs Target</div>
