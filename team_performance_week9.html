@@ -322,8 +322,8 @@ const WEEK_START = WEEK_NUM - NUM_DISPLAY + 1;
 const DISPLAY_WEEKS = ALL_WEEKS.filter(w => w.n >= WEEK_START && w.n <= WEEK_NUM);
 const WEEKLY_LABELS = DISPLAY_WEEKS.map(w => w.thai);
 
-const MONTHS_TO_SHOW = ["Jan", "Feb", "Mar"];
-const MONTHLY_LABELS = ["\u0e21\u0e01\u0e23\u0e32\u0e04\u0e21", "\u0e01\u0e38\u0e21\u0e20\u0e32\u0e1e\u0e31\u0e19\u0e18\u0e4c", "\u0e21\u0e35\u0e19\u0e32\u0e04\u0e21*"];
+const MONTHS_TO_SHOW = ["Feb", "Mar"];
+const MONTHLY_LABELS = ["กุมภาพันธ์ (23-28)", "มีนาคม (1)"];
 
 const TEAM_CONFIG = [
   {id:'OnlineWeb',   match:['online web','onlineweb'],                 name:'Online Web',       color:'rgba(236,95,39,0.85)',  wkPvT:103600, moPvT:450000},
@@ -350,15 +350,15 @@ const CSV_FALLBACK = {
     'Earth':  {6:{pv:4335,articles:59}, 7:{pv:11293,articles:63}, 8:{pv:5698,articles:57}, 9:{pv:4954,articles:62}}
   },
   monthly: {
-    'OnlineWeb':  {'Jan':{pv:85027,articles:388}, 'Feb':{pv:253253,articles:693}, 'Mar':{pv:120154,articles:375}},
-    'OnlineOrig':  {'Jan':{pv:5151,articles:26}, 'Feb':{pv:8383,articles:70}, 'Mar':{pv:2939,articles:28}},
-    'Channel':  {'Jan':{pv:9696,articles:88}, 'Feb':{pv:13516,articles:159}, 'Mar':{pv:3411,articles:76}},
-    'Economy':  {'Jan':{pv:6891,articles:150}, 'Feb':{pv:14825,articles:339}, 'Mar':{pv:6230,articles:195}},
-    'World':  {'Jan':{pv:18114,articles:130}, 'Feb':{pv:25583,articles:227}, 'Mar':{pv:10556,articles:121}},
-    'Wealth':  {'Jan':{pv:10124,articles:147}, 'Feb':{pv:23167,articles:291}, 'Mar':{pv:8498,articles:130}},
-    'Health':  {'Jan':{pv:15067,articles:67}, 'Feb':{pv:28005,articles:135}, 'Mar':{pv:10098,articles:67}},
-    'Tech':  {'Jan':{pv:14597,articles:115}, 'Feb':{pv:47721,articles:246}, 'Mar':{pv:10687,articles:137}},
-    'Earth':  {'Jan':{pv:11856,articles:135}, 'Feb':{pv:27708,articles:241}, 'Mar':{pv:11716,articles:132}}
+    'OnlineWeb':  {'Feb':{pv:39957,articles:153}, 'Mar':{pv:19314,articles:18}},
+    'OnlineOrig':  {'Feb':{pv:1475,articles:17}, 'Mar':{pv:434,articles:2}},
+    'Channel':  {'Feb':{pv:2131,articles:38}, 'Mar':{pv:125,articles:2}},
+    'Economy':  {'Feb':{pv:3465,articles:82}, 'Mar':{pv:0,articles:0}},
+    'World':  {'Feb':{pv:6894,articles:49}, 'Mar':{pv:463,articles:4}},
+    'Wealth':  {'Feb':{pv:3972,articles:76}, 'Mar':{pv:333,articles:6}},
+    'Health':  {'Feb':{pv:4300,articles:29}, 'Mar':{pv:267,articles:4}},
+    'Tech':  {'Feb':{pv:4383,articles:51}, 'Mar':{pv:321,articles:4}},
+    'Earth':  {'Feb':{pv:3919,articles:54}, 'Mar':{pv:1035,articles:8}}
   }
 };
 
