@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Reviews Dashboard 2026 | TNN</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body {
+    font-family:'Noto Sans Thai',sans-serif;
+    background:linear-gradient(180deg,#f0ebe3 0%,#e8e0d4 40%,#f5f0ea 100%);
+    color:#2d2a26;
+    padding:0 24px 24px;
+    min-height:100vh;
+  }
+  .header {
+    display:flex; align-items:center; justify-content:center; gap:20px;
+    padding:28px 32px;
+    background:linear-gradient(135deg,#EC5F27 0%,#d44a18 50%,#b8390f 100%);
+    border-radius:20px; margin-bottom:28px;
+    box-shadow:0 8px 32px rgba(236,95,39,0.35);
+  }
+  .header h1 { font-size:28px; font-weight:800; color:#fff; margin-bottom:4px; letter-spacing:-.5px; }
+  .header p { color:rgba(255,255,255,.85); font-size:13px; }
+
+  /* ACCORDION */
+  .accordion-section { margin-bottom:16px; }
+  .accordion-header {
+    display:flex; align-items:center; gap:16px;
+    padding:22px 28px;
+    background:#fff;
+    border-radius:16px;
+    border:1.5px solid rgba(0,0,0,.06);
+    box-shadow:0 2px 12px rgba(0,0,0,.05);
+    cursor:pointer;
+    transition:all 0.25s ease;
+    user-select:none;
+  }
+  .accordion-header:hover {
+    border-color:rgba(236,95,39,.25);
+    box-shadow:0 4px 20px rgba(236,95,39,.1);
+  }
+  .accordion-header.active {
+    border-color:#EC5F27;
+    border-bottom-left-radius:0;
+    border-bottom-right-radius:0;
+    background:rgba(236,95,39,.03);
+    box-shadow:0 4px 20px rgba(236,95,39,.12);
+  }
+  .acc-icon {
+    width:48px; height:48px; border-radius:14px;
+    display:flex; align-items:center; justify-content:center;
+    font-size:22px; flex-shrink:0;
+  }
+  .acc-icon.team { background:linear-gradient(135deg,#EC5F27,#d44a18); }
+  .acc-icon.seo { background:linear-gradient(135deg,#2d8cf0,#1a6fd4); }
+  .acc-icon.suggestion { background:linear-gradient(135deg,#52c41a,#3ea814); }
+  .acc-title {
+    flex:1;
+  }
+  .acc-title h2 {
+    font-size:18px; font-weight:800; color:#2d2a26; margin-bottom:2px;
+  }
+  .acc-title p {
+    font-size:12.5px; color:#a09890; font-weight:500;
+  }
+  .acc-badge {
+    padding:5px 12px; border-radius:8px;
+    font-size:11px; font-weight:700; color:#EC5F27;
+    background:rgba(236,95,39,.08);
+    white-space:nowrap;
+  }
+  .acc-arrow {
+    font-size:20px; color:#b5afa8; transition:transform 0.3s ease;
+    flex-shrink:0;
+  }
+  .accordion-header.active .acc-arrow {
+    transform:rotate(180deg);
+    color:#EC5F27;
+  }
+
+  /* ACCORDION BODY */
+  .accordion-body {
+    max-height:0;
+    overflow:hidden;
+    transition:max-height 0.4s ease;
+    background:#fff;
+    border-left:1.5px solid #EC5F27;
+    border-right:1.5px solid #EC5F27;
+    border-bottom:1.5px solid #EC5F27;
+    border-bottom-left-radius:16px;
+    border-bottom-right-radius:16px;
+  }
+  .accordion-body.open {
+    max-height:600px;
+  }
+  .accordion-body-inner {
+    padding:20px 28px 24px;
+  }
+
+  /* MONTH GROUP */
+  .month-group { margin-bottom:16px; }
+  .month-group:last-child { margin-bottom:0; }
+  .month-group-label {
+    font-size:11px; font-weight:700; color:#a09890; margin-bottom:8px;
+    text-transform:uppercase; letter-spacing:1px;
+  }
+  .week-list {
+    display:flex; flex-wrap:wrap; gap:8px;
+  }
+  .week-btn {
+    display:inline-flex; align-items:center; gap:8px;
+    padding:10px 16px; border-radius:10px;
+    text-decoration:none;
+    background:#f8f6f3; border:1.5px solid rgba(0,0,0,.06);
+    transition:all 0.2s; cursor:pointer;
+    font-family:'Noto Sans Thai',sans-serif;
+  }
+  .week-btn:hover {
+    background:rgba(236,95,39,.07); border-color:rgba(236,95,39,.25);
+    transform:translateY(-1px); box-shadow:0 3px 12px rgba(236,95,39,.1);
+  }
+  .week-btn .wb-num {
+    font-size:13px; font-weight:800; color:#2d2a26;
+  }
+  .week-btn .wb-date {
+    font-size:11px; color:#8c8680;
+  }
+  .week-btn .wb-arrow {
+    font-size:14px; color:#EC5F27; font-weight:700; opacity:0;
+    transition:opacity 0.2s;
+  }
+  .week-btn:hover .wb-arrow { opacity:1; }
+  .week-btn.latest {
+    background:rgba(236,95,39,.06); border-color:#EC5F27;
+    position:relative;
+  }
+  .week-btn.latest::after {
+    content:'ล่าสุด'; position:absolute; top:-8px; right:8px;
+    font-size:8px; font-weight:700; color:#EC5F27;
+    background:rgba(236,95,39,.12); padding:1px 6px; border-radius:4px;
+    letter-spacing:0.3px;
+  }
+  .week-btn.disabled {
+    opacity:0.4; pointer-events:none; cursor:default;
+  }
+
+  .footer { text-align:center; padding:20px; color:#b5afa8; font-size:11px; }
+
+  /* TOPNAV */
+  .topnav{margin:0 -24px 16px;position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.08);box-shadow:0 2px 16px rgba(0,0,0,.07);font-family:'Noto Sans Thai',sans-serif;}
+  .nav-inner{display:flex;align-items:center;padding:0 20px;gap:0;}
+  .nav-brand{font-size:17px;font-weight:900;color:#EC5F27;text-decoration:none;padding:14px 12px 14px 0;margin-right:4px;letter-spacing:-0.5px;flex-shrink:0;}
+  .nav-sep{color:#ddd;padding:0 6px;font-size:18px;flex-shrink:0;}
+  .nav-menu{display:flex;list-style:none;margin:0;padding:0;align-items:center;flex:1;}
+  .nav-menu>li{position:relative;}
+  .nav-menu>li>a{display:inline-flex;align-items:center;gap:4px;padding:16px 13px;font-size:12.5px;font-weight:600;color:#5a5550;text-decoration:none;border-bottom:3px solid transparent;transition:all 0.2s;white-space:nowrap;}
+  .nav-menu>li>a:hover{color:#EC5F27;background:rgba(236,95,39,.05);}
+  .nav-menu>li>a.active{color:#EC5F27;border-bottom-color:#EC5F27;}
+  .has-dropdown>a::after{content:' \25BE';font-size:9px;opacity:0.7;}
+  .dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid rgba(0,0,0,.09);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.13);min-width:170px;padding:8px 0;list-style:none;z-index:999;}
+  .has-dropdown:hover .dropdown{display:block;}
+  .dropdown li a{display:block;padding:10px 18px;font-size:12.5px;font-weight:500;color:#5a5550;text-decoration:none;transition:all 0.15s;white-space:nowrap;}
+  .dropdown li a:hover{background:rgba(236,95,39,.07);color:#EC5F27;}
+  .dropdown li a.active{color:#EC5F27;font-weight:700;background:rgba(236,95,39,.05);}
+  .nav-hamburger{display:none;background:none;border:1px solid rgba(0,0,0,.12);border-radius:6px;font-size:18px;cursor:pointer;padding:6px 10px;color:#5a5550;margin-left:auto;}
+  @media(max-width:768px){
+    .topnav{margin:0 -24px 12px;}
+    .nav-hamburger{display:block;}
+    .nav-menu{display:none;flex-direction:column;align-items:flex-start;width:100%;background:#fff;border-top:1px solid rgba(0,0,0,.08);padding:6px 0 12px;}
+    .nav-menu.open{display:flex;}
+    .nav-menu>li{width:100%;}
+    .nav-menu>li>a{padding:11px 20px;border-bottom:none;width:100%;}
+    .dropdown{position:static;box-shadow:none;border:none;border-radius:0;padding:0;background:#f8f6f3;display:none;}
+    .has-dropdown:hover .dropdown{display:none;}
+    .has-dropdown.open .dropdown{display:block;}
+    .dropdown li a{padding:9px 36px;}
+    .nav-sep{display:none;}
+    .week-list { flex-direction:column; }
+    .week-btn { width:100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">TNN</a>
+    <span class="nav-sep">|</span>
+    <ul class="nav-menu" id="mainNav">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="web_all_2026.html">Web Performance</a></li>
+      <li><a href="team_performance.html">Team Charts</a></li>
+      <li class="has-dropdown"><a href="reviews.html" class="active">Reviews</a>
+        <ul class="dropdown">
+          <li><a href="team_review_week11.html">Team Review</a></li>
+          <li><a href="seo_review_week11.html">SEO Review</a></li>
+          <li><a href="suggestion_review_week11.html">Suggestion</a></li>
+        </ul>
+      </li>
+      <li><a href="tnn_training2026_v1.html">Training</a></li>
+    </ul>
+    <button class="nav-hamburger" onclick="toggleNav()">&#9776;</button>
+  </div>
+</nav>
+
+<div class="header">
+  <div style="text-align:center;flex:1;">
+    <h1>Reviews Dashboard</h1>
+    <p>วิเคราะห์และข้อเสนอแนะรายสัปดาห์ | คลิกหัวข้อเพื่อเลือกดูข้อมูลแต่ละ Week</p>
+  </div>
+</div>
+
+<!-- ===== 1) TEAM REVIEW ===== -->
+<div class="accordion-section">
+  <div class="accordion-header" onclick="toggleAccordion(this)">
+    <div class="acc-icon team">📊</div>
+    <div class="acc-title">
+      <h2>Team Review</h2>
+      <p>วิเคราะห์ผลงานรายทีม แต่ละสัปดาห์</p>
+    </div>
+    <div class="acc-badge">11 Weeks</div>
+    <div class="acc-arrow">▼</div>
+  </div>
+  <div class="accordion-body">
+    <div class="accordion-body-inner">
+      <div class="month-group">
+        <div class="month-group-label">มกราคม 2026</div>
+        <div class="week-list">
+          <a href="team_review_week1.html" class="week-btn disabled"><span class="wb-num">Week 1</span><span class="wb-date">29 ธ.ค. - 4 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week2.html" class="week-btn disabled"><span class="wb-num">Week 2</span><span class="wb-date">5-11 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week3.html" class="week-btn disabled"><span class="wb-num">Week 3</span><span class="wb-date">12-18 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week4.html" class="week-btn disabled"><span class="wb-num">Week 4</span><span class="wb-date">19-25 ม.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">กุมภาพันธ์ 2026</div>
+        <div class="week-list">
+          <a href="team_review_week5.html" class="week-btn disabled"><span class="wb-num">Week 5</span><span class="wb-date">26 ม.ค. - 1 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week6.html" class="week-btn disabled"><span class="wb-num">Week 6</span><span class="wb-date">2-8 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week7.html" class="week-btn disabled"><span class="wb-num">Week 7</span><span class="wb-date">9-15 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week8.html" class="week-btn disabled"><span class="wb-num">Week 8</span><span class="wb-date">16-22 ก.พ.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">มีนาคม 2026</div>
+        <div class="week-list">
+          <a href="team_review_week9.html" class="week-btn disabled"><span class="wb-num">Week 9</span><span class="wb-date">23 ก.พ. - 1 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week10.html" class="week-btn disabled"><span class="wb-num">Week 10</span><span class="wb-date">2-8 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="team_review_week11.html" class="week-btn latest"><span class="wb-num">Week 11</span><span class="wb-date">9-15 มี.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 2) SEO REVIEW ===== -->
+<div class="accordion-section">
+  <div class="accordion-header" onclick="toggleAccordion(this)">
+    <div class="acc-icon seo">🔍</div>
+    <div class="acc-title">
+      <h2>SEO Review</h2>
+      <p>วิเคราะห์ SEO Performance, Clicks, Impressions, CTR</p>
+    </div>
+    <div class="acc-badge">11 Weeks</div>
+    <div class="acc-arrow">▼</div>
+  </div>
+  <div class="accordion-body">
+    <div class="accordion-body-inner">
+      <div class="month-group">
+        <div class="month-group-label">มกราคม 2026</div>
+        <div class="week-list">
+          <a href="seo_review_week1.html" class="week-btn disabled"><span class="wb-num">Week 1</span><span class="wb-date">29 ธ.ค. - 4 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week2.html" class="week-btn disabled"><span class="wb-num">Week 2</span><span class="wb-date">5-11 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week3.html" class="week-btn disabled"><span class="wb-num">Week 3</span><span class="wb-date">12-18 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week4.html" class="week-btn disabled"><span class="wb-num">Week 4</span><span class="wb-date">19-25 ม.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">กุมภาพันธ์ 2026</div>
+        <div class="week-list">
+          <a href="seo_review_week5.html" class="week-btn disabled"><span class="wb-num">Week 5</span><span class="wb-date">26 ม.ค. - 1 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week6.html" class="week-btn disabled"><span class="wb-num">Week 6</span><span class="wb-date">2-8 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week7.html" class="week-btn disabled"><span class="wb-num">Week 7</span><span class="wb-date">9-15 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week8.html" class="week-btn disabled"><span class="wb-num">Week 8</span><span class="wb-date">16-22 ก.พ.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">มีนาคม 2026</div>
+        <div class="week-list">
+          <a href="seo_review_week9.html" class="week-btn disabled"><span class="wb-num">Week 9</span><span class="wb-date">23 ก.พ. - 1 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week10.html" class="week-btn disabled"><span class="wb-num">Week 10</span><span class="wb-date">2-8 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="seo_review_week11.html" class="week-btn latest"><span class="wb-num">Week 11</span><span class="wb-date">9-15 มี.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 3) SUGGESTION ===== -->
+<div class="accordion-section">
+  <div class="accordion-header" onclick="toggleAccordion(this)">
+    <div class="acc-icon suggestion">💡</div>
+    <div class="acc-title">
+      <h2>Suggestion</h2>
+      <p>ข้อเสนอแนะและแนวโน้มรายสัปดาห์</p>
+    </div>
+    <div class="acc-badge">11 Weeks</div>
+    <div class="acc-arrow">▼</div>
+  </div>
+  <div class="accordion-body">
+    <div class="accordion-body-inner">
+      <div class="month-group">
+        <div class="month-group-label">มกราคม 2026</div>
+        <div class="week-list">
+          <a href="suggestion_review_week1.html" class="week-btn disabled"><span class="wb-num">Week 1</span><span class="wb-date">29 ธ.ค. - 4 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week2.html" class="week-btn disabled"><span class="wb-num">Week 2</span><span class="wb-date">5-11 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week3.html" class="week-btn disabled"><span class="wb-num">Week 3</span><span class="wb-date">12-18 ม.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week4.html" class="week-btn disabled"><span class="wb-num">Week 4</span><span class="wb-date">19-25 ม.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">กุมภาพันธ์ 2026</div>
+        <div class="week-list">
+          <a href="suggestion_review_week5.html" class="week-btn disabled"><span class="wb-num">Week 5</span><span class="wb-date">26 ม.ค. - 1 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week6.html" class="week-btn disabled"><span class="wb-num">Week 6</span><span class="wb-date">2-8 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week7.html" class="week-btn disabled"><span class="wb-num">Week 7</span><span class="wb-date">9-15 ก.พ.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week8.html" class="week-btn disabled"><span class="wb-num">Week 8</span><span class="wb-date">16-22 ก.พ.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+      <div class="month-group">
+        <div class="month-group-label">มีนาคม 2026</div>
+        <div class="week-list">
+          <a href="suggestion_review_week9.html" class="week-btn disabled"><span class="wb-num">Week 9</span><span class="wb-date">23 ก.พ. - 1 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week10.html" class="week-btn disabled"><span class="wb-num">Week 10</span><span class="wb-date">2-8 มี.ค.</span><span class="wb-arrow">→</span></a>
+          <a href="suggestion_review_week11.html" class="week-btn latest"><span class="wb-num">Week 11</span><span class="wb-date">9-15 มี.ค.</span><span class="wb-arrow">→</span></a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="footer">Reviews Dashboard 2026 | TNN Intelligence</div>
+
+<script>
+function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
+document.querySelectorAll('.has-dropdown>a').forEach(function(a){a.addEventListener('click',function(e){if(window.innerWidth<=768){e.preventDefault();this.parentElement.classList.toggle('open');}});});
+
+function toggleAccordion(header) {
+  const wasActive = header.classList.contains('active');
+  // Close all
+  document.querySelectorAll('.accordion-header').forEach(h => h.classList.remove('active'));
+  document.querySelectorAll('.accordion-body').forEach(b => { b.classList.remove('open'); b.style.maxHeight = '0'; });
+  // Open clicked (if it wasn't already open)
+  if (!wasActive) {
+    header.classList.add('active');
+    const body = header.nextElementSibling;
+    body.classList.add('open');
+    body.style.maxHeight = body.scrollHeight + 'px';
+  }
+}
+</script>
+</body>
+</html>
