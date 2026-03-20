@@ -259,6 +259,16 @@
   .dropdown li a{padding:9px 36px;}
   .nav-sep{display:none;}
 }
+
+.back-reviews{display:inline-flex;align-items:center;gap:6px;padding:8px 16px;border-radius:10px;background:rgba(236,95,39,.08);color:#EC5F27;font-size:13px;font-weight:700;text-decoration:none;transition:all 0.2s;border:1.5px solid rgba(236,95,39,.15);}
+.back-reviews:hover{background:rgba(236,95,39,.15);border-color:#EC5F27;transform:translateY(-1px);box-shadow:0 3px 12px rgba(236,95,39,.15);}
+.back-reviews svg{flex-shrink:0;}
+.header-top-row{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:8px;flex-wrap:wrap;}
+
+/* Scroll to top button */
+.scroll-top-btn{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:#EC5F27;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(236,95,39,0.35);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:9999;font-size:20px;}
+.scroll-top-btn:hover{background:#d44a18;transform:translateY(-3px);box-shadow:0 6px 24px rgba(236,95,39,0.45);}
+.scroll-top-btn.visible{opacity:1;visibility:visible;}
 </style>
 </head>
 <body>
@@ -270,13 +280,7 @@
       <li><a href="index.html">Home</a></li>
       <li><a href="web_all_2026_week11.html">Web Performance</a></li>
       <li><a href="team_performance_week11.html">Team Charts</a></li>
-      <li class="has-dropdown"><a href="reviews.html" class="active">Reviews</a>
-        <ul class="dropdown">
-          <li><a href="team_review_week11.html">Team Review</a></li>
-          <li><a href="seo_review_week11.html" class="active">SEO Review</a></li>
-          <li><a href="suggestion_review_week11.html">Suggestion</a></li>
-        </ul>
-      </li>
+      <li><a href="reviews.html" class="active">Reviews</a></li>
       <li><a href="tnn_training2026_v1.html">Training</a></li>
     </ul>
     <button class="nav-hamburger" onclick="toggleNav()">☰</button>
@@ -287,10 +291,13 @@
     <div class="container">
         <!-- Page Header -->
         <div class="page-header">
+            <div class="header-top-row">
+                <a href="reviews.html" class="back-reviews"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>Reviews</a>
+                <div class="week-selector">สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
+            </div>
             <div class="header-content">
                 <h1>วิเคราะห์ SEO Performance</h1>
             </div>
-            <div class="week-selector">สัปดาห์ที่ 11 (9-15 มี.ค. 2569)</div>
         </div>
 
         <!-- KPI Summary Cards -->
@@ -424,6 +431,9 @@
 <script>
 function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
 document.querySelectorAll('.has-dropdown>a').forEach(function(a){a.addEventListener('click',function(e){if(window.innerWidth<=768){e.preventDefault();this.parentElement.classList.toggle('open');}});});
+
+window.addEventListener('scroll',function(){var b=document.getElementById('scrollTopBtn');if(b){if(window.scrollY>300){b.classList.add('visible')}else{b.classList.remove('visible')}}});
 </script>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="กลับด้านบน"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg></button>
 </body>
 </html>
