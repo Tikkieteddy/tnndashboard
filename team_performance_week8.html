@@ -322,8 +322,8 @@ const WEEK_START = WEEK_NUM - NUM_DISPLAY + 1;
 const DISPLAY_WEEKS = ALL_WEEKS.filter(w => w.n >= WEEK_START && w.n <= WEEK_NUM);
 const WEEKLY_LABELS = DISPLAY_WEEKS.map(w => w.thai);
 
-const MONTHS_TO_SHOW = ["Feb"];
-const MONTHLY_LABELS = ["กุมภาพันธ์ (16-22)"];
+const MONTHS_TO_SHOW = ["Jan", "Feb"];
+const MONTHLY_LABELS = ["มกราคม", "กุมภาพันธ์*"];
 
 const TEAM_CONFIG = [
   {id:'OnlineWeb',   match:['online web','onlineweb'],                 name:'Online Web',       color:'rgba(236,95,39,0.85)',  wkPvT:103600, moPvT:450000},
@@ -350,15 +350,15 @@ const CSV_FALLBACK = {
     'Earth':  {5:{pv:2463,articles:8}, 6:{pv:4335,articles:59}, 7:{pv:11293,articles:63}, 8:{pv:5698,articles:57}}
   },
   monthly: {
-    'OnlineWeb':  {'Feb':{pv:33883,articles:160}},
-    'OnlineOrig':  {'Feb':{pv:1851,articles:9}},
-    'Channel':  {'Feb':{pv:3034,articles:25}},
-    'Economy':  {'Feb':{pv:3682,articles:77}},
-    'World':  {'Feb':{pv:7135,articles:59}},
-    'Wealth':  {'Feb':{pv:7032,articles:82}},
-    'Health':  {'Feb':{pv:11972,articles:38}},
-    'Tech':  {'Feb':{pv:4409,articles:59}},
-    'Earth':  {'Feb':{pv:5698,articles:57}}
+    'OnlineWeb':  {'Jan':{pv:94519,articles:455}, 'Feb':{pv:213296,articles:540}},
+    'OnlineOrig':  {'Jan':{pv:6055,articles:32}, 'Feb':{pv:6908,articles:53}},
+    'Channel':  {'Jan':{pv:10101,articles:100}, 'Feb':{pv:11385,articles:121}},
+    'Economy':  {'Jan':{pv:7980,articles:206}, 'Feb':{pv:11360,articles:257}},
+    'World':  {'Jan':{pv:19603,articles:151}, 'Feb':{pv:18689,articles:178}},
+    'Wealth':  {'Jan':{pv:10534,articles:157}, 'Feb':{pv:19195,articles:215}},
+    'Health':  {'Jan':{pv:16593,articles:84}, 'Feb':{pv:23705,articles:106}},
+    'Tech':  {'Jan':{pv:27385,articles:147}, 'Feb':{pv:43338,articles:195}},
+    'Earth':  {'Jan':{pv:13396,articles:160}, 'Feb':{pv:23789,articles:187}}
   }
 };
 
