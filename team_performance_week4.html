@@ -457,15 +457,13 @@ async function loadData() {
         }
       }
     }
+    // Monthly: ALWAYS use CSV_FALLBACK (week-specific days) over Google Sheet (full-month cumulative)
     for (const tc of TEAM_CONFIG) {
       const fb = CSV_FALLBACK.monthly[tc.id];
       if (!fb) continue;
       if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
       for (const [mo, vals] of Object.entries(fb)) {
-        const existing = monthlyByTeam[tc.id][mo];
-        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
-          monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
-        }
+        monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
       }
     }
 
