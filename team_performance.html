@@ -3,8 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Team Performance - Week 11 (9-15 มี.ค.)</title>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<title>Team Performance Dashboard 2026</title>
 <style>
   @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
   * { margin:0; padding:0; box-sizing:border-box; }
@@ -17,126 +16,78 @@
   }
   .header {
     display:flex; align-items:center; justify-content:center; gap:20px;
-    padding:24px 32px;
+    padding:28px 32px;
     background:linear-gradient(135deg,#EC5F27 0%,#d44a18 50%,#b8390f 100%);
-    border-radius:20px; margin-bottom:16px;
+    border-radius:20px; margin-bottom:24px;
     box-shadow:0 8px 32px rgba(236,95,39,0.35);
   }
-  .header h1 { font-size:26px; font-weight:800; color:#fff; margin-bottom:4px; letter-spacing:-.5px; }
-  .header p { color:rgba(255,255,255,.85); font-size:12px; }
+  .header h1 { font-size:28px; font-weight:800; color:#fff; margin-bottom:4px; letter-spacing:-.5px; }
+  .header p { color:rgba(255,255,255,.85); font-size:13px; }
 
-  /* ─── WEEK SELECTOR ─── */
-  .week-selector {
-    background:#fff; border-radius:14px; margin-bottom:20px;
-    border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
-    overflow:hidden;
+  /* SECTION TITLE */
+  .section-title {
+    font-size:18px; font-weight:800; color:#2d2a26; margin-bottom:16px;
+    display:flex; align-items:center; gap:10px;
   }
-  .ws-header {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:14px 22px; cursor:pointer; user-select:none;
-    transition:background 0.15s;
-  }
-  .ws-header:hover { background:rgba(236,95,39,.03); }
-  .ws-header-left { display:flex; align-items:center; gap:10px; }
-  .ws-icon { font-size:18px; }
-  .ws-title { font-size:14px; font-weight:700; color:#2d2a26; }
-  .ws-subtitle { font-size:11px; color:#a09890; margin-top:1px; }
-  .ws-arrow {
-    font-size:12px; color:#a09890; transition:transform 0.3s;
-  }
-  .ws-arrow.open { transform:rotate(180deg); }
-  .ws-body {
-    display:none; padding:0 12px 14px;
-    border-top:1px solid rgba(0,0,0,.05);
-  }
-  .ws-body.open { display:block; }
-  .ws-grid {
-    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:8px;
-    padding-top:12px;
-  }
-  .ws-grid a {
-    display:block; padding:10px 14px; border-radius:10px; text-decoration:none;
-    font-size:12.5px; font-weight:600; color:#5a5550;
-    background:#f8f6f3; border:1.5px solid transparent;
-    transition:all 0.15s;
-  }
-  .ws-grid a:hover { background:rgba(236,95,39,.07); color:#EC5F27; border-color:rgba(236,95,39,.15); }
-  .ws-grid a.ws-active {
-    background:rgba(236,95,39,.1); color:#EC5F27; border-color:#EC5F27;
-    font-weight:800;
-  }
+  .section-title .st-icon { font-size:22px; }
+  .section-title .st-sub { font-size:12px; font-weight:500; color:#a09890; }
 
-  /* ─── TEAM BOX ─── */
-  .team-box {
-    background:#fff; border-radius:16px; padding:0; margin-bottom:24px;
-    border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
-    overflow:hidden;
-  }
-  .team-box-header {
-    display:flex; align-items:center; justify-content:space-between;
-    padding:18px 24px; gap:16px; flex-wrap:wrap;
-    border-bottom:1px solid rgba(0,0,0,.05);
-  }
-  .team-box-left { display:flex; align-items:center; gap:12px; }
-  .team-dot { width:14px; height:14px; border-radius:50%; flex-shrink:0; }
-  .team-name { font-size:18px; font-weight:800; color:#2d2a26; }
-  .team-targets { font-size:10px; color:#a09890; margin-top:2px; }
-
-  /* ─── CHART GRID ─── */
-  .team-charts { display:grid; grid-template-columns:1fr 1fr; gap:0; }
-  .chart-cell {
-    padding:18px 20px;
-    border-bottom:1px solid rgba(0,0,0,.04);
-    border-right:1px solid rgba(0,0,0,.04);
-  }
-  .chart-cell:nth-child(2n) { border-right:none; }
-  .chart-cell:nth-last-child(-n+2) { border-bottom:none; }
-  .chart-cell-title { font-size:12px; font-weight:700; color:#2d2a26; margin-bottom:2px; }
-  .chart-cell-sub { font-size:10px; color:#a09890; margin-bottom:8px; }
-  .ch { position:relative; width:100%; height:260px; }
-
-  /* ─── TOP 5 ─── */
-  .top5-box {
-    background:#fff; border-radius:16px; padding:28px; margin-bottom:28px;
+  /* WEEK GRID - always expanded */
+  .weeks-container {
+    background:#fff; border-radius:16px; padding:24px; margin-bottom:28px;
     border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
   }
-  .top5-title { font-size:20px; font-weight:800; color:#EC5F27; margin-bottom:24px; }
-  .grid3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; }
-  .kw-table { width:100%; border-collapse:collapse; font-size:12px; }
-  .kw-table th { background:#f5f0ea; padding:8px 10px; text-align:left; font-weight:700; font-size:11px; color:#8c8680; text-transform:uppercase; letter-spacing:1px; }
-  .kw-table td { padding:8px 10px; border-bottom:1px solid rgba(0,0,0,.06); }
-  .kw-table tr:nth-child(even) td { background:rgba(0,0,0,.02); }
-  .kw-table .kw-name { font-weight:600; color:#2d2a26; max-width:200px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-  .kw-table .kw-num { font-weight:700; color:#EC5F27; text-align:right; }
+  .weeks-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:12px;
+  }
+  .week-card {
+    display:flex; align-items:center; gap:14px;
+    padding:16px 20px; border-radius:14px; text-decoration:none;
+    background:#f8f6f3; border:1.5px solid rgba(0,0,0,.06);
+    transition:all 0.2s; cursor:pointer;
+  }
+  .week-card:hover {
+    background:rgba(236,95,39,.07); border-color:rgba(236,95,39,.25);
+    transform:translateY(-2px); box-shadow:0 4px 16px rgba(236,95,39,.12);
+  }
+  .wc-badge {
+    flex-shrink:0; padding:4px 10px; border-radius:8px;
+    font-size:10px; font-weight:700; color:#fff; letter-spacing:0.5px;
+  }
+  .wc-week {
+    font-size:15px; font-weight:800; color:#2d2a26;
+  }
+  .wc-date {
+    font-size:11.5px; color:#8c8680; flex:1;
+  }
+  .wc-arrow {
+    font-size:16px; color:#EC5F27; font-weight:700; opacity:0;
+    transition:opacity 0.2s;
+  }
+  .week-card:hover .wc-arrow { opacity:1; }
+
+  /* LATEST WEEK HIGHLIGHT */
+  .latest-card {
+    background:rgba(236,95,39,.06); border-color:#EC5F27;
+    position:relative;
+  }
+  .latest-card::after {
+    content:'ล่าสุด'; position:absolute; top:8px; right:12px;
+    font-size:9px; font-weight:700; color:#EC5F27;
+    background:rgba(236,95,39,.1); padding:2px 8px; border-radius:6px;
+    letter-spacing:0.5px;
+  }
+
+  /* MONTH SECTIONS */
+  .month-section { margin-bottom:8px; }
+  .month-label {
+    font-size:13px; font-weight:700; color:#a09890; margin-bottom:10px;
+    padding-left:4px; text-transform:uppercase; letter-spacing:1px;
+  }
+
   .footer { text-align:center; padding:20px; color:#b5afa8; font-size:11px; }
 
-  /* ─── LOADING ─── */
-  .loading-box {
-    text-align:center; padding:60px 20px;
-    color:#a09890; font-size:14px;
-  }
-  .loading-box .spinner {
-    display:inline-block; width:32px; height:32px;
-    border:3px solid rgba(236,95,39,.2); border-top-color:#EC5F27;
-    border-radius:50%; animation:spin 0.8s linear infinite;
-    margin-bottom:12px;
-  }
-  @keyframes spin { to { transform:rotate(360deg); } }
-  .error-msg {
-    text-align:center; padding:40px 20px;
-    color:#dc2626; font-size:13px; font-weight:600;
-  }
-
-  @media(max-width:900px) {
-    .team-charts { grid-template-columns:1fr; }
-    .chart-cell { border-right:none; }
-    .chart-cell:nth-last-child(-n+2) { border-bottom:1px solid rgba(0,0,0,.04); }
-    .chart-cell:last-child { border-bottom:none; }
-    .grid3 { grid-template-columns:1fr; }
-    .ws-grid { grid-template-columns:1fr 1fr; }
-  }
-
-/* === TOPNAV === */
+/* TOPNAV */
 .topnav{margin:0 -24px 16px;position:sticky;top:0;z-index:1000;background:rgba(255,255,255,0.97);backdrop-filter:blur(12px);border-bottom:1px solid rgba(0,0,0,.08);box-shadow:0 2px 16px rgba(0,0,0,.07);font-family:'Noto Sans Thai',sans-serif;}
 .nav-inner{display:flex;align-items:center;padding:0 20px;gap:0;}
 .nav-brand{font-size:17px;font-weight:900;color:#EC5F27;text-decoration:none;padding:14px 12px 14px 0;margin-right:4px;letter-spacing:-0.5px;flex-shrink:0;}
@@ -165,6 +116,7 @@
   .has-dropdown.open .dropdown{display:block;}
   .dropdown li a{padding:9px 36px;}
   .nav-sep{display:none;}
+  .weeks-grid { grid-template-columns:1fr; }
 }
 </style>
 </head>
@@ -194,621 +146,106 @@
 <div class="header">
   <div style="text-align:center;flex:1;">
     <h1>Team Performance Dashboard</h1>
-    <p>Week 11 | 9-15 มี.ค. | Data: Google Sheet All Performance 2026</p>
+    <p>เลือกดูข้อมูลรายสัปดาห์ | Data: Google Sheet All Performance 2026</p>
   </div>
 </div>
 
-<!-- Collapsible Week Selector -->
-<div class="week-selector">
-  <div class="ws-header" onclick="toggleWeekSelector()">
-    <div class="ws-header-left">
-      <span class="ws-icon">&#128197;</span>
-      <div>
-        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 11</div>
-        <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
-      </div>
+<!-- January Section -->
+<div class="weeks-container">
+  <div class="section-title">
+    <span class="st-icon">&#128197;</span>
+    <div>
+      ดูข้อมูลย้อนหลัง Week 1 - 11
+      <div class="st-sub">เลือก Week ที่ต้องการดู</div>
     </div>
-    <span class="ws-arrow" id="wsArrow">&#9660;</span>
   </div>
-  <div class="ws-body" id="wsBody">
-    <div class="ws-grid">
-        <a href="team_performance_week1.html">Week 1 (29 ธ.ค. 68 - 4 ม.ค. 69)</a>
-        <a href="team_performance_week2.html">Week 2 (5-11 ม.ค.)</a>
-        <a href="team_performance_week3.html">Week 3 (12-18 ม.ค.)</a>
-        <a href="team_performance_week4.html">Week 4 (19-25 ม.ค.)</a>
-        <a href="team_performance_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
-        <a href="team_performance_week6.html">Week 6 (2-8 ก.พ.)</a>
-        <a href="team_performance_week7.html">Week 7 (9-15 ก.พ.)</a>
-        <a href="team_performance_week8.html">Week 8 (16-22 ก.พ.)</a>
-        <a href="team_performance_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
-        <a href="team_performance_week10.html">Week 10 (2-8 มี.ค.)</a>
-        <a href="team_performance_week11.html" class="ws-active">Week 11 (9-15 มี.ค.)</a>
+
+  <div class="month-section">
+    <div class="month-label">มกราคม 2026</div>
+    <div class="weeks-grid">
+      <a href="team_performance_week1.html" class="week-card">
+        <div class="wc-badge" style="background:#EC5F27">ม.ค.</div>
+        <div class="wc-week">Week 1</div>
+        <div class="wc-date">29 ธ.ค. 68 - 4 ม.ค. 69</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week2.html" class="week-card">
+        <div class="wc-badge" style="background:#EC5F27">ม.ค.</div>
+        <div class="wc-week">Week 2</div>
+        <div class="wc-date">5-11 ม.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week3.html" class="week-card">
+        <div class="wc-badge" style="background:#EC5F27">ม.ค.</div>
+        <div class="wc-week">Week 3</div>
+        <div class="wc-date">12-18 ม.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week4.html" class="week-card">
+        <div class="wc-badge" style="background:#EC5F27">ม.ค.</div>
+        <div class="wc-week">Week 4</div>
+        <div class="wc-date">19-25 ม.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="month-section">
+    <div class="month-label">กุมภาพันธ์ 2026</div>
+    <div class="weeks-grid">
+      <a href="team_performance_week5.html" class="week-card">
+        <div class="wc-badge" style="background:#d44a18">ม.ค.-ก.พ.</div>
+        <div class="wc-week">Week 5</div>
+        <div class="wc-date">26 ม.ค. - 1 ก.พ.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week6.html" class="week-card">
+        <div class="wc-badge" style="background:#b8390f">ก.พ.</div>
+        <div class="wc-week">Week 6</div>
+        <div class="wc-date">2-8 ก.พ.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week7.html" class="week-card">
+        <div class="wc-badge" style="background:#b8390f">ก.พ.</div>
+        <div class="wc-week">Week 7</div>
+        <div class="wc-date">9-15 ก.พ.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week8.html" class="week-card">
+        <div class="wc-badge" style="background:#b8390f">ก.พ.</div>
+        <div class="wc-week">Week 8</div>
+        <div class="wc-date">16-22 ก.พ.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+    </div>
+  </div>
+
+  <div class="month-section">
+    <div class="month-label">มีนาคม 2026</div>
+    <div class="weeks-grid">
+      <a href="team_performance_week9.html" class="week-card">
+        <div class="wc-badge" style="background:#a03010">ก.พ.-มี.ค.</div>
+        <div class="wc-week">Week 9</div>
+        <div class="wc-date">23 ก.พ. - 1 มี.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week10.html" class="week-card">
+        <div class="wc-badge" style="background:#8c2808">มี.ค.</div>
+        <div class="wc-week">Week 10</div>
+        <div class="wc-date">2-8 มี.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
+      <a href="team_performance_week11.html" class="week-card latest-card">
+        <div class="wc-badge" style="background:#8c2808">มี.ค.</div>
+        <div class="wc-week">Week 11</div>
+        <div class="wc-date">9-15 มี.ค.</div>
+        <div class="wc-arrow">→</div>
+      </a>
     </div>
   </div>
 </div>
 
-<!-- Team boxes generated by JS -->
-<div id="teamBoxes">
-  <div class="loading-box"><div class="spinner"></div><br>กำลังโหลดข้อมูลจาก Google Sheet...</div>
-</div>
-
-<!-- Top 5 Rankings -->
-<div id="top5Container"></div>
-
-<div class="footer">Team Performance Dashboard Week 11 | 9-15 มี.ค. | Data: Google Sheet All Performance 2026</div>
-
-<script>
-Chart.defaults.color='#8c8680';
-Chart.defaults.font.family="'Noto Sans Thai',sans-serif";
-
-const WEEK_NUM = 11;
-const SHEET_ID = '1vuHDop1s4ZmydRIJsg0O26O1TsUKyeac0iU06Cl6NNY';
-const gold='#d97706';
-const gapC='rgba(220,38,38,0.15)';
-
-// Week metadata
-const ALL_WEEKS = [
-  {n:1, thai:'29 ธ.ค. 68 - 4 ม.ค. 69', start:'2025-12-29'},
-  {n:2, thai:'5-11 ม.ค.', start:'2026-01-05'},
-  {n:3, thai:'12-18 ม.ค.', start:'2026-01-12'},
-  {n:4, thai:'19-25 ม.ค.', start:'2026-01-19'},
-  {n:5, thai:'26 ม.ค. - 1 ก.พ.', start:'2026-01-26'},
-  {n:6, thai:'2-8 ก.พ.', start:'2026-02-02'},
-  {n:7, thai:'9-15 ก.พ.', start:'2026-02-09'},
-  {n:8, thai:'16-22 ก.พ.', start:'2026-02-16'},
-  {n:9, thai:'23 ก.พ. - 1 มี.ค.', start:'2026-02-23'},
-  {n:10, thai:'2-8 มี.ค.', start:'2026-03-02'},
-  {n:11, thai:'9-15 มี.ค.', start:'2026-03-09'}
-];
-
-// Display up to 4 weeks ending at WEEK_NUM
-const NUM_DISPLAY = Math.min(WEEK_NUM, 4);
-const WEEK_START = WEEK_NUM - NUM_DISPLAY + 1;
-const DISPLAY_WEEKS = ALL_WEEKS.filter(w => w.n >= WEEK_START && w.n <= WEEK_NUM);
-const WEEKLY_LABELS = DISPLAY_WEEKS.map(w => w.thai);
-
-const MONTHS_TO_SHOW = ['Jan', 'Feb', 'Mar'];
-const MONTHLY_LABELS = ['มกราคม', 'กุมภาพันธ์', 'มีนาคม*'];
-
-// Team configuration: id, display name, color, weekly PV target, monthly PV target
-const TEAM_CONFIG = [
-  {id:'OnlineWeb',   match:['online web','onlineweb'],                 name:'Online Web',       color:'rgba(236,95,39,0.85)',  wkPvT:103600, moPvT:450000},
-  {id:'OnlineOrig',  match:['online original','onlineoriginal','online originals','onlineoriginals'], name:'Online Original', color:'rgba(236,140,39,0.75)', wkPvT:23100,  moPvT:100000},
-  {id:'Channel',     match:['channel'],                                name:'Channel',          color:'rgba(236,95,39,0.85)',  wkPvT:20300,  moPvT:87500},
-  {id:'Economy',     match:['รายการเศรษฐกิจ','economy','econ'],       name:'รายการเศรษฐกิจ',   color:'rgba(236,95,39,0.64)',  wkPvT:20300,  moPvT:87500},
-  {id:'World',       match:['world'],                                  name:'World',            color:'rgba(203,44,48,0.85)',  wkPvT:23100,  moPvT:100000},
-  {id:'Wealth',      match:['wealth'],                                 name:'Wealth',           color:'rgba(14,65,116,0.85)',  wkPvT:20300,  moPvT:87500},
-  {id:'Health',      match:['health'],                                 name:'Health',           color:'rgba(232,28,155,0.85)', wkPvT:20300,  moPvT:87500},
-  {id:'Tech',        match:['tech'],                                   name:'Tech',             color:'rgba(34,211,202,0.85)', wkPvT:23100,  moPvT:100000},
-  {id:'Earth',       match:['earth'],                                  name:'Earth',            color:'rgba(34,147,62,0.85)',  wkPvT:20300,  moPvT:87500}
-];
-
-// ─── Fallback data from CSV (used when Google Sheet hasn't been updated yet) ───
-const CSV_FALLBACK = {
-  weekly: {
-    'OnlineWeb':  {10:{pv:58602,articles:163}, 11:{pv:42238,articles:194}},
-    'OnlineOrig': {10:{pv:1489,articles:16},   11:{pv:1016,articles:10}},
-    'Channel':    {10:{pv:851,articles:26},     11:{pv:2435,articles:48}},
-    'Economy':    {10:{pv:3276,articles:96},    11:{pv:2954,articles:99}},
-    'World':      {10:{pv:5906,articles:58},    11:{pv:4187,articles:59}},
-    'Wealth':     {10:{pv:3768,articles:61},    11:{pv:4397,articles:63}},
-    'Health':     {10:{pv:3626,articles:30},    11:{pv:6205,articles:33}},
-    'Tech':       {10:{pv:6790,articles:61},    11:{pv:3576,articles:72}},
-    'Earth':      {10:{pv:6691,articles:62},    11:{pv:3990,articles:62}}
-  },
-  monthly: {
-    'OnlineWeb':  {'Mar':{pv:100840,articles:357}},
-    'OnlineOrig': {'Mar':{pv:2505,articles:26}},
-    'Channel':    {'Mar':{pv:3286,articles:74}},
-    'Economy':    {'Mar':{pv:6230,articles:195}},
-    'World':      {'Mar':{pv:10093,articles:117}},
-    'Wealth':     {'Mar':{pv:8165,articles:124}},
-    'Health':     {'Mar':{pv:9831,articles:63}},
-    'Tech':       {'Mar':{pv:10366,articles:133}},
-    'Earth':      {'Mar':{pv:10681,articles:124}}
-  }
-};
-
-// ─── gviz fetch helper ───
-async function fetchGviz(sheetName, selectQuery) {
-  let url = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json&sheet=${encodeURIComponent(sheetName)}`;
-  if (selectQuery) url += `&tq=${encodeURIComponent(selectQuery)}`;
-  const resp = await fetch(url);
-  const text = await resp.text();
-  // Strip JSONP wrapper: google.visualization.Query.setResponse(Ellipsis)
-  const match = text.match(/google\.visualization\.Query\.setResponse\((\{.*\})\)/s);
-  if (!match) throw new Error('Invalid gviz response for ' + sheetName);
-  return JSON.parse(match[1]);
-}
-
-function gvizCellValue(cell) {
-  if (!cell) return null;
-  if (cell.v === null || cell.v === undefined) return null;
-  // Handle Date(...) strings
-  if (typeof cell.v === 'string' && cell.v.startsWith('Date(')) {
-    const parts = cell.v.match(/Date\((\d+),(\d+),(\d+)/);
-    if (parts) return new Date(+parts[1], +parts[2], +parts[3]);
-  }
-  return cell.v;
-}
-
-// ─── Match team name ───
-function matchTeam(rawName) {
-  if (!rawName) return null;
-  const lower = String(rawName).trim().toLowerCase();
-  for (const tc of TEAM_CONFIG) {
-    for (const m of tc.match) {
-      if (lower === m || lower.includes(m)) return tc;
-    }
-  }
-  return null;
-}
-
-// ─── Parse week number from row ───
-function parseWeekNum(cols, row) {
-  // Try to find a week number column
-  for (let i = 0; i < cols.length; i++) {
-    const label = (cols[i].label || cols[i].id || '').toLowerCase();
-    if (label.includes('week') && !label.includes('start') && !label.includes('label')) {
-      const v = gvizCellValue(row.c[i]);
-      if (typeof v === 'number') return v;
-      if (typeof v === 'string') {
-        const num = parseInt(v.replace(/[^\d]/g, ''));
-        if (!isNaN(num) && num >= 1 && num <= 53) return num;
-      }
-    }
-  }
-  // Fallback: look for week_start date column and compute ISO week
-  for (let i = 0; i < cols.length; i++) {
-    const label = (cols[i].label || cols[i].id || '').toLowerCase();
-    if (label.includes('week') && label.includes('start')) {
-      const v = gvizCellValue(row.c[i]);
-      if (v instanceof Date) return getISOWeek(v);
-    }
-  }
-  return null;
-}
-
-function getISOWeek(d) {
-  const date = new Date(d.getTime());
-  date.setHours(0,0,0,0);
-  date.setDate(date.getDate() + 3 - (date.getDay() + 6) % 7);
-  const week1 = new Date(date.getFullYear(), 0, 4);
-  return 1 + Math.round(((date - week1) / 86400000 - 3 + (week1.getDay() + 6) % 7) / 7);
-}
-
-// ─── Find column index by name pattern ───
-function findCol(cols, ...patterns) {
-  for (const pat of patterns) {
-    for (let i = 0; i < cols.length; i++) {
-      const label = (cols[i].label || cols[i].id || '').toLowerCase();
-      if (label.includes(pat.toLowerCase())) return i;
-    }
-  }
-  return -1;
-}
-
-// ─── Parse number from cell ───
-function parseNum(cell) {
-  const v = gvizCellValue(cell);
-  if (v === null) return 0;
-  if (typeof v === 'number') return v;
-  return parseInt(String(v).replace(/[^\d.-]/g, '')) || 0;
-}
-
-// ─── Main data loading ───
-async function loadData() {
-  try {
-    // Fetch both sheets in parallel using SELECT queries for fixed column positions
-    // Weekly: SELECT B,E,F,G,H → [0]=TeamName, [1]=week("week1"…), [2]=PVTarget, [3]=PVActual, [4]=Articles
-    // Monthly: SELECT B,C,E,F,G → [0]=TeamName, [1]=Month("Jan"…), [2]=PVTarget, [3]=PVActual, [4]=Articles
-    const [weeklyData, monthlyData] = await Promise.all([
-      fetchGviz('actual target team week', 'SELECT B,E,F,G,H'),
-      fetchGviz('actual target team month', 'SELECT B,C,E,F,G')
-    ]);
-
-    // --- Parse weekly data (fixed column indices) ---
-    const wRows = weeklyData.table.rows;
-    const weeklyByTeam = {};
-    for (const row of wRows) {
-      if (!row.c) continue;
-      const rawTeam = gvizCellValue(row.c[0]);
-      const tc = matchTeam(rawTeam);
-      if (!tc) continue;
-
-      // Week column: value is "week1", "week2", etc.
-      const weekStr = gvizCellValue(row.c[1]);
-      if (!weekStr) continue;
-      const weekNum = parseInt(String(weekStr).replace(/[^\d]/g, ''));
-      if (isNaN(weekNum) || weekNum < WEEK_START || weekNum > WEEK_NUM) continue;
-
-      const pvTarget = parseNum(row.c[2]);
-      const pvAct    = parseNum(row.c[3]);
-      const articles = parseNum(row.c[4]);
-
-      if (!weeklyByTeam[tc.id]) weeklyByTeam[tc.id] = {};
-      weeklyByTeam[tc.id][weekNum] = {
-        pv: pvAct,
-        pvTarget: pvTarget > 0 ? pvTarget : tc.wkPvT,
-        articles: articles
-      };
-    }
-
-    // --- Parse monthly data (fixed column indices) ---
-    const mRows = monthlyData.table.rows;
-    const monthlyByTeam = {};
-    for (const row of mRows) {
-      if (!row.c) continue;
-      const rawTeam = gvizCellValue(row.c[0]);
-      const tc = matchTeam(rawTeam);
-      if (!tc) continue;
-
-      let month = gvizCellValue(row.c[1]);
-      if (!month) continue;
-      month = String(month).trim().substring(0, 3); // 'Jan', 'Feb', 'Mar'
-      if (!MONTHS_TO_SHOW.includes(month)) continue;
-
-      const pvTarget = parseNum(row.c[2]);
-      const pvAct    = parseNum(row.c[3]);
-      const articles = parseNum(row.c[4]);
-
-      if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
-      monthlyByTeam[tc.id][month] = {
-        pv: pvAct,
-        pvTarget: pvTarget > 0 ? pvTarget : tc.moPvT,
-        articles: articles
-      };
-    }
-
-    // --- Apply CSV fallback for missing weekly data ---
-    for (const tc of TEAM_CONFIG) {
-      const fb = CSV_FALLBACK.weekly[tc.id];
-      if (!fb) continue;
-      if (!weeklyByTeam[tc.id]) weeklyByTeam[tc.id] = {};
-      for (const [wk, vals] of Object.entries(fb)) {
-        const wn = parseInt(wk);
-        const existing = weeklyByTeam[tc.id][wn];
-        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
-          weeklyByTeam[tc.id][wn] = {pv:vals.pv, pvTarget:tc.wkPvT, articles:vals.articles};
-        }
-      }
-    }
-
-    // --- Apply CSV fallback for missing monthly data ---
-    for (const tc of TEAM_CONFIG) {
-      const fb = CSV_FALLBACK.monthly[tc.id];
-      if (!fb) continue;
-      if (!monthlyByTeam[tc.id]) monthlyByTeam[tc.id] = {};
-      for (const [mo, vals] of Object.entries(fb)) {
-        const existing = monthlyByTeam[tc.id][mo];
-        if (!existing || (existing.pv === 0 && existing.articles === 0)) {
-          monthlyByTeam[tc.id][mo] = {pv:vals.pv, pvTarget:tc.moPvT, articles:vals.articles};
-        }
-      }
-    }
-
-    // --- Build TEAMS array ---
-    const TEAMS = [];
-    for (const tc of TEAM_CONFIG) {
-      const wData = weeklyByTeam[tc.id] || {};
-      const mData = monthlyByTeam[tc.id] || {};
-
-      const wkPV = [], wkArt = [];
-      for (let w = WEEK_START; w <= WEEK_NUM; w++) {
-        const d = wData[w] || {pv:0, articles:0};
-        wkPV.push(d.pv);
-        wkArt.push(d.articles);
-      }
-
-      const moPV = [], moArt = [];
-      for (const m of MONTHS_TO_SHOW) {
-        const d = mData[m] || {pv:0, articles:0};
-        moPV.push(d.pv);
-        moArt.push(d.articles);
-      }
-
-      // Use target from sheet if available, else fallback
-      let wkTarget = tc.wkPvT;
-      let moTarget = tc.moPvT;
-      const currentWeekData = wData[WEEK_NUM] || wData[Object.keys(wData)[0]];
-      if (currentWeekData && currentWeekData.pvTarget > 0) wkTarget = currentWeekData.pvTarget;
-      const firstMonthData = mData[MONTHS_TO_SHOW[0]];
-      if (firstMonthData && firstMonthData.pvTarget > 0) moTarget = firstMonthData.pvTarget;
-
-      TEAMS.push({
-        id: tc.id, name: tc.name, color: tc.color,
-        wkPvT: wkTarget, moPvT: moTarget,
-        wkPV: wkPV, moPV: moPV,
-        wkArt: wkArt, moArt: moArt
-      });
-    }
-
-    return TEAMS;
-  } catch(err) {
-    console.error('Data load error:', err);
-    throw err;
-  }
-}
-
-// ─── Chart creation functions ───
-const chartStore = {};
-
-function makeWeeklyPVChart(canvasId, data, labels, target, color) {
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const G=data.map(v=>Math.max(0,target-v));
-  const pct=data.map((v,i)=>i===0?null:(data[i-1]===0?null:(((v-data[i-1])/data[i-1])*100).toFixed(1)));
-  return new Chart(ctx,{
-    type:'bar',
-    data:{labels:labels,datasets:[
-      {label:'PV',data:data,backgroundColor:color,borderRadius:6,barPercentage:0.6},
-      {label:'Gap',data:G,backgroundColor:gapC,borderRadius:6,barPercentage:0.6}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      layout:{padding:{top:22}},
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{stacked:true,grid:{display:false}},
-        y:{stacked:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>(v/1000).toFixed(0)+'K'}}
-      },
-      animation:{onComplete:function(){
-        const c=this,x=c.ctx;x.save();x.textAlign='center';
-        c.data.datasets[0].data.forEach((v,i)=>{
-          const b=c.getDatasetMeta(0).data[i];
-          x.fillStyle='#2d2a26';x.font='bold 11px Noto Sans Thai';
-          x.fillText(v.toLocaleString(),b.x,b.y-24);
-          if(pct[i]!==null){
-            x.fillStyle=pct[i]>=0?'#16a34a':'#dc2626';
-            x.font='bold 10px Noto Sans Thai';
-            x.fillText((pct[i]>=0?'+':'')+pct[i]+'%',b.x,b.y-10);
-          }
-        });
-        const yS=c.scales.y,tY=yS.getPixelForValue(target);
-        x.strokeStyle=gold;x.lineWidth=2;x.setLineDash([6,4]);
-        x.beginPath();x.moveTo(c.chartArea.left,tY);x.lineTo(c.chartArea.right,tY);x.stroke();
-        x.fillStyle=gold;x.font='bold 10px Noto Sans Thai';x.textAlign='right';
-        x.fillText('Target: '+target.toLocaleString(),c.chartArea.right,tY-6);
-        x.restore();
-      }}
-    }
-  });
-}
-
-function makeMonthlyPVChart(canvasId, data, target, color) {
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const G=data.map(v=>Math.max(0,target-v));
-  const pct=data.map((v,i)=>i===0?null:(data[i-1]===0?null:(((v-data[i-1])/data[i-1])*100).toFixed(1)));
-  const bgColors=data.map((v,i)=>i===data.length-1?color.replace(/[\d.]+\)$/,'0.55)'):color);
-  return new Chart(ctx,{
-    type:'bar',
-    data:{labels:MONTHLY_LABELS,datasets:[
-      {label:'PV',data:data,backgroundColor:bgColors,borderRadius:6,barPercentage:0.5},
-      {label:'Gap',data:G,backgroundColor:gapC,borderRadius:6,barPercentage:0.5}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      layout:{padding:{top:22}},
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{stacked:true,grid:{display:false}},
-        y:{stacked:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>{
-          if(v>=1e6)return(v/1e6).toFixed(1)+'M';
-          return(v/1e3).toFixed(0)+'K';
-        }}}
-      },
-      animation:{onComplete:function(){
-        const c=this,x=c.ctx;x.save();x.textAlign='center';
-        c.data.datasets[0].data.forEach((v,i)=>{
-          const b=c.getDatasetMeta(0).data[i];
-          x.fillStyle='#2d2a26';x.font='bold 11px Noto Sans Thai';
-          x.fillText(v.toLocaleString(),b.x,b.y-24);
-          if(pct[i]!==null){
-            x.fillStyle=pct[i]>=0?'#16a34a':'#dc2626';
-            x.font='bold 10px Noto Sans Thai';
-            x.fillText((pct[i]>=0?'+':'')+pct[i]+'%',b.x,b.y-10);
-          }
-        });
-        const yS=c.scales.y,tY=yS.getPixelForValue(target);
-        x.strokeStyle=gold;x.lineWidth=2;x.setLineDash([6,4]);
-        x.beginPath();x.moveTo(c.chartArea.left,tY);x.lineTo(c.chartArea.right,tY);x.stroke();
-        x.fillStyle=gold;x.font='bold 10px Noto Sans Thai';x.textAlign='right';
-        x.fillText('Target: '+target.toLocaleString(),c.chartArea.right,tY-6);
-        x.restore();
-      }}
-    }
-  });
-}
-
-function makeWeeklyArtChart(canvasId, data, labels, color) {
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const pct=data.map((v,i)=>i===0?null:(data[i-1]===0?null:(((v-data[i-1])/data[i-1])*100).toFixed(1)));
-  return new Chart(ctx,{
-    type:'bar',
-    data:{labels:labels,datasets:[
-      {label:'Articles',data:data,backgroundColor:color,borderRadius:6,barPercentage:0.6}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      layout:{padding:{top:22}},
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{grid:{display:false}},
-        y:{grid:{color:'rgba(0,0,0,.05)'}}
-      },
-      animation:{onComplete:function(){
-        const c=this,x=c.ctx;x.save();x.textAlign='center';
-        c.data.datasets[0].data.forEach((v,i)=>{
-          const b=c.getDatasetMeta(0).data[i];
-          x.fillStyle='#2d2a26';x.font='bold 11px Noto Sans Thai';
-          x.fillText(v,b.x,b.y-14);
-          if(pct[i]!==null){
-            x.fillStyle=pct[i]>=0?'#16a34a':'#dc2626';
-            x.font='bold 10px Noto Sans Thai';
-            x.fillText((pct[i]>=0?'+':'')+pct[i]+'%',b.x,b.y-2);
-          }
-        });
-        x.restore();
-      }}
-    }
-  });
-}
-
-function makeMonthlyArtChart(canvasId, data, color) {
-  const ctx=document.getElementById(canvasId).getContext('2d');
-  const pct=data.map((v,i)=>i===0?null:(data[i-1]===0?null:(((v-data[i-1])/data[i-1])*100).toFixed(1)));
-  const bgColors=data.map((v,i)=>i===data.length-1?color.replace(/[\d.]+\)$/,'0.55)'):color);
-  return new Chart(ctx,{
-    type:'bar',
-    data:{labels:MONTHLY_LABELS,datasets:[
-      {label:'Articles',data:data,backgroundColor:bgColors,borderRadius:6,barPercentage:0.5}
-    ]},
-    options:{
-      responsive:true,maintainAspectRatio:false,
-      layout:{padding:{top:22}},
-      plugins:{legend:{display:false}},
-      scales:{
-        x:{grid:{display:false}},
-        y:{grid:{color:'rgba(0,0,0,.05)'}}
-      },
-      animation:{onComplete:function(){
-        const c=this,x=c.ctx;x.save();x.textAlign='center';
-        c.data.datasets[0].data.forEach((v,i)=>{
-          const b=c.getDatasetMeta(0).data[i];
-          x.fillStyle='#2d2a26';x.font='bold 11px Noto Sans Thai';
-          x.fillText(v,b.x,b.y-14);
-          if(pct[i]!==null){
-            x.fillStyle=pct[i]>=0?'#16a34a':'#dc2626';
-            x.font='bold 10px Noto Sans Thai';
-            x.fillText((pct[i]>=0?'+':'')+pct[i]+'%',b.x,b.y-2);
-          }
-        });
-        x.restore();
-      }}
-    }
-  });
-}
-
-// ─── Build team boxes HTML ───
-function buildTeamBoxes(TEAMS) {
-  const container=document.getElementById('teamBoxes');
-  let html='';
-  TEAMS.forEach(t=>{
-    html+=`
-    <div class="team-box" id="box_${t.id}">
-      <div class="team-box-header">
-        <div class="team-box-left">
-          <div class="team-dot" style="background:${t.color}"></div>
-          <div>
-            <div class="team-name">${t.name}</div>
-            <div class="team-targets">PV Target: ${t.wkPvT.toLocaleString()}/wk &middot; ${t.moPvT.toLocaleString()}/mo</div>
-          </div>
-        </div>
-      </div>
-      <div class="team-charts">
-        <div class="chart-cell">
-          <div class="chart-cell-title">Page Views Weekly</div>
-          <div class="chart-cell-sub">${NUM_DISPLAY} week${NUM_DISPLAY>1?'s':''} &middot; Target: ${t.wkPvT.toLocaleString()}/wk</div>
-          <div class="ch"><canvas id="wkPV_${t.id}"></canvas></div>
-        </div>
-        <div class="chart-cell">
-          <div class="chart-cell-title">Page Views Monthly</div>
-          <div class="chart-cell-sub">${MONTHLY_LABELS.join(', ')} &middot; Target: ${t.moPvT.toLocaleString()}/mo</div>
-          <div class="ch"><canvas id="moPV_${t.id}"></canvas></div>
-        </div>
-        <div class="chart-cell">
-          <div class="chart-cell-title">Articles Weekly</div>
-          <div class="chart-cell-sub">${NUM_DISPLAY} week${NUM_DISPLAY>1?'s':''}</div>
-          <div class="ch"><canvas id="wkArt_${t.id}"></canvas></div>
-        </div>
-        <div class="chart-cell">
-          <div class="chart-cell-title">Articles Monthly</div>
-          <div class="chart-cell-sub">${MONTHLY_LABELS.join(', ')}</div>
-          <div class="ch"><canvas id="moArt_${t.id}"></canvas></div>
-        </div>
-      </div>
-    </div>`;
-  });
-  container.innerHTML=html;
-}
-
-// ─── Build Top 5 ───
-function buildTop5(TEAMS) {
-  const currentWeekLabel = ALL_WEEKS.find(w=>w.n===WEEK_NUM).thai;
-  // Current week is the last item in each array
-  const lastIdx = NUM_DISPLAY - 1;
-
-  const pvRanking = TEAMS.map(t => ({name:t.name, val:t.wkPV[lastIdx]||0}))
-    .sort((a,b) => b.val - a.val).slice(0,5);
-  const artRanking = TEAMS.map(t => ({name:t.name, val:t.wkArt[lastIdx]||0}))
-    .sort((a,b) => b.val - a.val).slice(0,5);
-
-  function makeTable(rows, valLabel) {
-    let h = `<table class="kw-table"><thead><tr><th>#</th><th>Team</th><th style="text-align:right">${valLabel}</th></tr></thead><tbody>`;
-    rows.forEach((r,i) => {
-      h += `<tr><td>${i+1}</td><td class="kw-name">${r.name}</td><td class="kw-num">${r.val.toLocaleString()}</td></tr>`;
-    });
-    return h + '</tbody></table>';
-  }
-
-  const container = document.getElementById('top5Container');
-  container.innerHTML = `
-  <div class="top5-box">
-    <div class="top5-title">Top 5 Rankings - Week ${currentWeekLabel}</div>
-    <div class="grid3">
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#2d2a26;margin-bottom:12px;">Top 5 Team by PV</div>
-        <div style="font-size:10px;color:#a09890;margin-bottom:12px;">Week ${currentWeekLabel}</div>
-        ${makeTable(pvRanking, 'Views')}
-      </div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#2d2a26;margin-bottom:12px;">Top 5 Team by Articles</div>
-        <div style="font-size:10px;color:#a09890;margin-bottom:12px;">Week ${currentWeekLabel}</div>
-        ${makeTable(artRanking, 'Articles')}
-      </div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:#2d2a26;margin-bottom:12px;">ข้อมูลสรุป</div>
-        <div style="font-size:10px;color:#a09890;margin-bottom:12px;">Week ${WEEK_NUM} (${currentWeekLabel})</div>
-        <table class="kw-table"><thead><tr><th>รายการ</th><th style="text-align:right">ค่า</th></tr></thead><tbody>
-          <tr><td>ทีมที่แสดง</td><td class="kw-num">${TEAMS.filter(t=>(t.wkPV[lastIdx]||0)>0).length} / ${TEAMS.length}</td></tr>
-          <tr><td>รวม PV</td><td class="kw-num">${TEAMS.reduce((s,t)=>s+(t.wkPV[lastIdx]||0),0).toLocaleString()}</td></tr>
-          <tr><td>รวมบทความ</td><td class="kw-num">${TEAMS.reduce((s,t)=>s+(t.wkArt[lastIdx]||0),0).toLocaleString()}</td></tr>
-        </tbody></table>
-      </div>
-    </div>
-  </div>`;
-}
-
-// ─── Init charts ───
-function initCharts(TEAMS) {
-  TEAMS.forEach(t => {
-    chartStore['wkPV_'+t.id]=makeWeeklyPVChart('wkPV_'+t.id,t.wkPV,WEEKLY_LABELS,t.wkPvT,t.color);
-    chartStore['moPV_'+t.id]=makeMonthlyPVChart('moPV_'+t.id,t.moPV,t.moPvT,t.color);
-    chartStore['wkArt_'+t.id]=makeWeeklyArtChart('wkArt_'+t.id,t.wkArt,WEEKLY_LABELS,t.color);
-    chartStore['moArt_'+t.id]=makeMonthlyArtChart('moArt_'+t.id,t.moArt,t.color);
-  });
-}
-
-// ─── Week selector toggle ───
-function toggleWeekSelector() {
-  const body = document.getElementById('wsBody');
-  const arrow = document.getElementById('wsArrow');
-  body.classList.toggle('open');
-  arrow.classList.toggle('open');
-}
-
-// ─── Main ───
-(async function main() {
-  try {
-    const TEAMS = await loadData();
-    buildTeamBoxes(TEAMS);
-    initCharts(TEAMS);
-    buildTop5(TEAMS);
-  } catch(err) {
-    document.getElementById('teamBoxes').innerHTML =
-      '<div class="error-msg">ไม่สามารถโหลดข้อมูลจาก Google Sheet ได้<br><span style="font-size:11px;color:#a09890;font-weight:400">'+err.message+'</span></div>';
-  }
-})();
-</script>
+<div class="footer">Team Performance Dashboard 2026 | Data: Google Sheet All Performance 2026</div>
 
 <script>
 function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
