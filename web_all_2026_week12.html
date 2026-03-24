@@ -469,17 +469,17 @@
 <div class="grid3">
   <div class="card">
     <div class="card-title">Total Clicks (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 2-8 มี.ค.</div>
+    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 9-15 มี.ค.</div>
     <div class="ch sm"><canvas id="searchClicksChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Total Impressions (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 2-8 มี.ค.</div>
+    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 9-15 มี.ค.</div>
     <div class="ch sm"><canvas id="searchImpressionsChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Average CTR (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 2-8 มี.ค.</div>
+    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 9-15 มี.ค.</div>
     <div class="ch sm"><canvas id="searchCTRChart"></canvas></div>
   </div>
 </div>
@@ -501,20 +501,20 @@
       <tbody>
         <tr>
           <td class="kw-name">สภาพอากาศ</td>
-          <td class="kw-num">255,399</td>
-          <td class="kw-num">116</td>
+          <td class="kw-num">368,773</td>
+          <td class="kw-num">180</td>
           <td style="text-align:right; color:#a09890;">0%</td>
         </tr>
         <tr>
-          <td class="kw-name">ราคาทองวันนี้</td>
-          <td class="kw-num">241,664</td>
-          <td class="kw-num">404</td>
-          <td style="text-align:right; color:#a09890;">0.2%</td>
+          <td class="kw-name">ดาวโจนส์</td>
+          <td class="kw-num">116,809</td>
+          <td class="kw-num">39</td>
+          <td style="text-align:right; color:#a09890;">0%</td>
         </tr>
         <tr>
           <td class="kw-name">พยากรณ์อากาศ</td>
-          <td class="kw-num">68,479</td>
-          <td class="kw-num">59</td>
+          <td class="kw-num">103,011</td>
+          <td class="kw-num">69</td>
           <td style="text-align:right; color:#a09890;">0.1%</td>
         </tr>
       </tbody>
@@ -534,22 +534,22 @@
       </thead>
       <tbody>
         <tr>
-          <td class="kw-name">แอคมี่สามีใคร</td>
-          <td class="kw-num">2,844</td>
-          <td class="kw-num">11,784</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">24.1%</td>
-        </tr>
-        <tr>
-          <td class="kw-name">แอ็คมี่วรวัฒน์ภรรยา</td>
-          <td class="kw-num">997</td>
-          <td class="kw-num">5,233</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">19.1%</td>
+          <td class="kw-name">ราคาทองวันนี้ รูปพรรณ</td>
+          <td class="kw-num">1,009</td>
+          <td class="kw-num">19,443</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">5.2%</td>
         </tr>
         <tr>
           <td class="kw-name">tnn16</td>
-          <td class="kw-num">913</td>
-          <td class="kw-num">2,596</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">35.2%</td>
+          <td class="kw-num">851</td>
+          <td class="kw-num">2,725</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">31.2%</td>
+        </tr>
+        <tr>
+          <td class="kw-name">tnn</td>
+          <td class="kw-num">556</td>
+          <td class="kw-num">1,482</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">37.5%</td>
         </tr>
       </tbody>
     </table>
@@ -800,9 +800,9 @@ x.fillText(pLbl,b.x,b.y-6);
 // === SEARCH CONSOLE: CLICKS ===
 (()=>{
 const ctx=document.getElementById('searchClicksChart').getContext('2d');
-const prev=67700, curr=53700;
+const prev=53700, curr=49700;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['2-8 มี.ค.','16-22 มี.ค.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['9-15 มี.ค.','16-22 มี.ค.'],datasets:[
 {label:'Clicks',data:[prev,curr],backgroundColor:['rgba(59,130,246,0.45)','rgba(59,130,246,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{bottom:20}},
@@ -817,9 +817,9 @@ x.fillText(gap.toFixed(1)+'%',(c.getDatasetMeta(0).data[0].x+c.getDatasetMeta(0)
 // === SEARCH CONSOLE: IMPRESSIONS ===
 (()=>{
 const ctx=document.getElementById('searchImpressionsChart').getContext('2d');
-const prev=5100000, curr=4890000;
+const prev=4890000, curr=4980000;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['2-8 มี.ค.','16-22 มี.ค.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['9-15 มี.ค.','16-22 มี.ค.'],datasets:[
 {label:'Impressions',data:[prev,curr],backgroundColor:['rgba(16,185,129,0.45)','rgba(16,185,129,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{bottom:20}},
@@ -834,9 +834,9 @@ x.fillText(gap.toFixed(1)+'%',(c.getDatasetMeta(0).data[0].x+c.getDatasetMeta(0)
 // === SEARCH CONSOLE: CTR ===
 (()=>{
 const ctx=document.getElementById('searchCTRChart').getContext('2d');
-const prev=1.3, curr=1.1;
+const prev=1.1, curr=1.0;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['2-8 มี.ค.','16-22 มี.ค.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['9-15 มี.ค.','16-22 มี.ค.'],datasets:[
 {label:'CTR %',data:[prev,curr],backgroundColor:['rgba(139,92,246,0.45)','rgba(139,92,246,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{bottom:20}},
