@@ -406,7 +406,7 @@
     <div class="card-title">คู่แข่ง PV เปรียบเทียบรายปี</div>
     <div class="card-sub">2025 Full Year vs 2026 YTD | TrueHit</div>
     <div class="ch tall"><canvas id="competitorYearlyChart"></canvas></div>
-    <div class="chart-note">* ปี 2026 เป็นตัวเลขจริง YTD ณ วันที่ 15 มี.ค. 2569</div>
+    <div class="chart-note">* ปี 2026 เป็นตัวเลขจริง YTD ณ วันที่ 22 มี.ค. 2569</div>
   </div>
   <div class="card">
     <div class="card-title">Traffic Source (Google Analytics)</div>
@@ -737,7 +737,7 @@ x.fillText(pLbl,b.x,b.y-6);
 const ctx=document.getElementById('competitorYearlyChart').getContext('2d');
 const names=['TNN','PPTV','Nation','Bright','PostToday','Prachachat','BkkBiz','Thansettakij','BangkokPost','Amarin'];
 const full2025=[11240043,113551466,10499843,5083845,19587489,71959216,162745652,59589402,96946819,56139789];
-const ytd2026=[2304426,22412611,2192453,637790,4256063,7928582,23916911,4633291,15165008,8221869];
+const ytd2026=[2473196,22412611,2192453,637790,4256063,7928582,23916911,4633291,15165008,8221869];
 const gaps=ytd2026.map((v,i)=>((v-full2025[i])/full2025[i]*100));
 
 // Sort by 2025 full year PV descending
@@ -751,7 +751,7 @@ const colorMap={'TNN':'rgba(236,95,39,0.95)','PPTV':'rgba(59,130,246,0.85)','Nat
 
 new Chart(ctx,{type:'bar',data:{labels:sNames,datasets:[
 {label:'2025 Full Year',data:s2025,backgroundColor:idx.map(i=>colorMap[names[i]]).map(c=>c.replace(/0\.\d+\)/,'0.4)')),borderRadius:{topLeft:6,topRight:0,bottomLeft:6,bottomRight:0},barPercentage:.7,categoryPercentage:.8},
-{label:'2026 YTD (15 มี.ค.)',data:s2026,backgroundColor:idx.map(i=>colorMap[names[i]]),borderRadius:{topLeft:0,topRight:6,bottomLeft:0,bottomRight:6},barPercentage:.7,categoryPercentage:.8}
+{label:'2026 YTD (22 มี.ค.)',data:s2026,backgroundColor:idx.map(i=>colorMap[names[i]]),borderRadius:{topLeft:0,topRight:6,bottomLeft:0,bottomRight:6},barPercentage:.7,categoryPercentage:.8}
 ]},options:{responsive:true,maintainAspectRatio:false,
 plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:12,font:{size:11,weight:'600'}}}},
 scales:{x:{grid:{display:false},ticks:{font:{size:10,weight:'600'},maxRotation:45,minRotation:30}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'}}},
