@@ -300,7 +300,7 @@
 <div class="header">
   <div class="header-text">
     <h1>Website Performance</h1>
-    <p>ข้อมูลจาก TrueHit Analytics และ cms website | อัปเดตล่าสุด: 15 มีนาคม 2569 | สัปดาห์ที่ 16-22 มี.ค. 2569</p>
+    <p>ข้อมูลจาก TrueHit Analytics และ cms website | อัปเดตล่าสุด: 23 มีนาคม 2569 | สัปดาห์ที่12 (16-22 มี.ค. 2569)</p>
   </div>
 </div>
 
@@ -310,7 +310,7 @@
     <div class="ws-header-left">
       <span class="ws-icon">&#128197;</span>
       <div>
-        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 11</div>
+        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 12</div>
         <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
       </div>
     </div>
@@ -328,6 +328,7 @@
       <a href="web_all_2026_week8.html">Week 8 (16-22 ก.พ.)</a>
       <a href="web_all_2026_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
       <a href="web_all_2026_week10.html">Week 10 (2-8 มี.ค.)</a>
+      <a href="web_all_2026_week11.html">Week 11 (9-15 มี.ค.)</a>
       <a href="web_all_2026_week12.html" class="ws-active">Week 12 (16-22 มี.ค.)</a>
     </div>
   </div>
@@ -364,12 +365,12 @@
     <div class="kpi-sub">เทียบสัปดาห์ก่อน 246 views/ข่าว</div>
   </div>
   <div class="kpi-card" style="position:relative;overflow:visible;">
-    <div class="kpi-label">สัดส่วน CMS / Google Analytics</div>
-    <div class="kpi-val" style="font-size:28px;color:#EC5F27;">53,058 <span style="font-size:16px;color:#6B7280;">/ 163,851</span></div>
+    <div class="kpi-label">สัดส่วน CMS / TrueHit Analytics</div>
+    <div class="kpi-val" style="font-size:28px;color:#EC5F27;">53,058 <span style="font-size:16px;color:#6B7280;">/ 168,770</span></div>
     <div style="margin:6px 0 4px;background:#e5e7eb;border-radius:6px;height:10px;overflow:hidden;width:100%;">
-      <div style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:32.4%;height:100%;border-radius:6px;"></div>
+      <div style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:31.4%;height:100%;border-radius:6px;"></div>
     </div>
-    <div class="kpi-sub">ส่วนต่าง 110,793 PV (67.6%) | สัดส่วน CMS 32.4%</div>
+    <div class="kpi-sub">ส่วนต่าง -115,712 PV (68.6%) | CMS 53,058 / Truehit 168,770</div>
   </div>
 </div>
 
@@ -398,7 +399,7 @@
 <div class="grid3">
   <div class="card">
     <div class="card-title">เปรียบเทียบ PV คู่แข่ง (16-22 มี.ค.)</div>
-    <div class="card-sub">% เปลี่ยนแปลงจากสัปดาห์ 2-8 มี.ค. 2569</div>
+    <div class="card-sub">% เปลี่ยนแปลงจากสัปดาห์ 9-15 มี.ค. 2569</div>
     <div class="ch tall"><canvas id="competitorChart"></canvas></div>
   </div>
   <div class="card">
@@ -409,7 +410,7 @@
   </div>
   <div class="card">
     <div class="card-title">Traffic Source (Google Analytics)</div>
-    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 2-8 มี.ค. | Sessions</div>
+    <div class="card-sub">สัปดาห์ 16-22 มี.ค. vs 9-15 มี.ค. | Sessions</div>
     <div class="ch tall"><canvas id="trafficChart"></canvas></div>
   </div>
 </div>
@@ -703,8 +704,8 @@ x.fillText('2026 Target: 15M',c.chartArea.right,tY-6);x.restore();}}}});
 (()=>{
 const ctx=document.getElementById('competitorChart').getContext('2d');
 const names=['TNN','PPTV','Nation','Bright','PostToday','Prachachat','BkkBiz','Thansettakij','BangkokPost','Amarin'];
-const curr=[179463,1086496,145159,51784,358116,554023,2438526,530732,1361483,800978];
-const prev=[189601,972974,151272,32006,267283,666244,2332126,463261,1234506,793080];
+const curr=[168770,1086496,145159,51784,358116,554023,2438526,530732,1361483,800978];
+const prev=[179463,1086496,145159,51784,358116,554023,2438526,530732,1361483,800978];
 const pcts=curr.map((v,i)=>((v-prev[i])/prev[i]*100));
 
 // Sort by current PV descending
@@ -770,8 +771,8 @@ x.restore();}}}});
 (()=>{
 const ctx=document.getElementById('trafficChart').getContext('2d');
 const channels=['Organic Search','Direct','Organic Social','Referral','Unassigned','Paid Social','Mobile Push','Organic Video'];
-const currW=[67104,35844,35401,3678,1595,84,36,12];
-const prevW=[87155,46972,27758,3874,1822,0,48,15];
+const currW=[62166,30261,27049,4051,1571,56,29,11];
+const prevW=[67104,35844,35401,3678,1595,84,36,12];
 const pcts=currW.map((v,i)=>prevW[i]>0?((v-prevW[i])/prevW[i]*100):100);
 const chColors=[
 'rgba(59,130,246,0.85)','rgba(236,95,39,0.85)','rgba(16,185,129,0.85)',
@@ -780,7 +781,7 @@ const chColors=[
 ];
 const prevColors=chColors.map(c=>c.replace(/[\d.]+\)$/,'0.35)'));
 new Chart(ctx,{type:'bar',data:{labels:channels,datasets:[
-{label:'สัปดาห์ 2-8 มี.ค.',data:prevW,backgroundColor:prevColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65},
+{label:'สัปดาห์ 9-15 มี.ค.',data:prevW,backgroundColor:prevColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65},
 {label:'สัปดาห์ 16-22 มี.ค.',data:currW,backgroundColor:chColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65}
 ]},options:{responsive:true,maintainAspectRatio:false,
 plugins:{legend:{position:'top',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:12,weight:'600'}}}},
