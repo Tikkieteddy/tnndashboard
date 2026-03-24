@@ -822,8 +822,8 @@ const gap=((curr-prev)/prev*100);
 new Chart(ctx,{type:'bar',data:{labels:['9-15 มี.ค.','16-22 มี.ค.'],datasets:[
 {label:'Impressions',data:[prev,curr],backgroundColor:['rgba(16,185,129,0.45)','rgba(16,185,129,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
-layout:{padding:{bottom:20}},
-scales:{x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}}},
+layout:{padding:{top:24,bottom:20}},
+scales:{x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}},y:{grid:{color:'rgba(0,0,0,.05)'},suggestedMax:Math.max(prev,curr)*1.12,ticks:{callback:v=>(v/1e6).toFixed(1)+'M'}}},
 animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign='center';
 [prev,curr].forEach((v,i)=>{const b=c.getDatasetMeta(0).data[i];
 x.fillStyle='#2d2a26';x.font='bold 14px Noto Sans Thai';x.fillText((v/1e6).toFixed(2)+'M',b.x,b.y-10);});
