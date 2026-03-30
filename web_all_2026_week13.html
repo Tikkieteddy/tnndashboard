@@ -1,0 +1,1462 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Website Performance Dashboard 2026</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+<style>
+/* === TNN DARK TECH THEME === */
+:root {
+  --bg-primary: #111827;
+  --bg-secondary: #1F2937;
+  --brand-orange: #EC5F27;
+  --text-on-dark: #D1D5DB;
+  --text-on-dark-hover: #FFFFFF;
+  --card-bg: #FFFFFF;
+  --card-border: #E5E7EB;
+  --card-text: #111827;
+  --card-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  --transition: all 0.25s ease;
+}
+
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Noto Sans Thai', sans-serif;
+  background: var(--bg-primary);
+  color: var(--text-on-dark);
+  padding: 0 24px 24px;
+  min-height: 100vh;
+}
+
+/* TOPNAV */
+.topnav {
+  margin: 0 -24px 16px;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  background: var(--bg-primary);
+  backdrop-filter: none;
+  border-bottom: 1px solid var(--bg-secondary);
+  box-shadow: 0 2px 16px rgba(0,0,0,0.3);
+  font-family: 'Noto Sans Thai', sans-serif;
+}
+
+.nav-inner {
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  gap: 0;
+}
+
+.nav-brand {
+  font-size: 17px;
+  font-weight: 900;
+  color: #EC5F27;
+  text-decoration: none;
+  padding: 14px 12px 14px 0;
+  margin-right: 4px;
+  letter-spacing: -0.5px;
+  flex-shrink: 0;
+}
+
+.nav-sep {
+  color: var(--bg-secondary);
+  padding: 0 6px;
+  font-size: 18px;
+  flex-shrink: 0;
+}
+
+.nav-menu {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  align-items: center;
+  flex: 1;
+}
+
+.nav-menu > li {
+  position: relative;
+}
+
+.nav-menu > li > a {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 16px 13px;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: var(--text-on-dark);
+  text-decoration: none;
+  border-bottom: 3px solid transparent;
+  transition: var(--transition);
+  white-space: nowrap;
+}
+
+.nav-menu > li > a:hover {
+  color: var(--text-on-dark-hover);
+  background: rgba(236,95,39,.1);
+}
+
+.nav-menu > li > a.active {
+  color: var(--text-on-dark-hover);
+  border-bottom-color: var(--brand-orange);
+}
+
+.nav-hamburger {
+  display: none;
+  background: none;
+  border: 1px solid var(--bg-secondary);
+  border-radius: 6px;
+  font-size: 18px;
+  cursor: pointer;
+  padding: 6px 10px;
+  color: var(--text-on-dark);
+  margin-left: auto;
+}
+
+@media(max-width: 768px) {
+  .topnav {
+    margin: 0 -24px 12px;
+  }
+  .nav-hamburger {
+    display: block;
+  }
+  .nav-menu {
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    width: 100%;
+    background: var(--bg-primary);
+    border-top: 1px solid var(--bg-secondary);
+    padding: 6px 0 12px;
+  }
+  .nav-menu.open {
+    display: flex;
+  }
+  .nav-menu > li {
+    width: 100%;
+  }
+  .nav-menu > li > a {
+    padding: 11px 20px;
+    border-bottom: none;
+    width: 100%;
+  }
+  .nav-sep {
+    display: none;
+  }
+}
+
+/* HEADER */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  padding: 24px 32px;
+  background: linear-gradient(135deg, #EC5F27 0%, #d44a18 50%, #b8390f 100%);
+  border-radius: 20px;
+  margin-bottom: 16px;
+  box-shadow: 0 8px 32px rgba(236,95,39,0.35);
+}
+
+.header h1 {
+  font-size: 26px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 4px;
+  letter-spacing: -0.5px;
+}
+
+.header p {
+  color: rgba(255,255,255,.85);
+  font-size: 12px;
+}
+
+/* WEEK SELECTOR */
+.week-selector {
+  background: #fff;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  border: 1px solid rgba(0,0,0,.06);
+  box-shadow: 0 2px 12px rgba(0,0,0,.05);
+  overflow: hidden;
+}
+
+.ws-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 22px;
+  cursor: pointer;
+  user-select: none;
+  transition: background 0.15s;
+}
+
+.ws-header:hover {
+  background: var(--card-bg);
+}
+
+.ws-header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.ws-icon {
+  font-size: 18px;
+}
+
+.ws-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2a26;
+}
+
+.ws-subtitle {
+  font-size: 11px;
+  color: #a09890;
+  margin-top: 1px;
+}
+
+.ws-arrow {
+  font-size: 12px;
+  color: #a09890;
+  transition: transform 0.3s;
+}
+
+.ws-arrow.open {
+  transform: rotate(180deg);
+}
+
+.ws-body {
+  display: none;
+  padding: 0 12px 14px;
+  border-top: 1px solid rgba(0,0,0,.05);
+}
+
+.ws-body.open {
+  display: block;
+}
+
+.ws-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 8px;
+  padding-top: 12px;
+}
+
+.ws-grid a {
+  display: block;
+  padding: 10px 14px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 12.5px;
+  font-weight: 600;
+  color: #5a5550;
+  background: #f8f6f3;
+  border: 1.5px solid transparent;
+  transition: all 0.15s;
+}
+
+.ws-grid a:hover {
+  background: rgba(236,95,39,.07);
+  color: #EC5F27;
+  border-color: rgba(236,95,39,.15);
+}
+
+.ws-grid a.ws-active {
+  background: rgba(236,95,39,.1);
+  color: #EC5F27;
+  border-color: #EC5F27;
+  font-weight: 800;
+}
+
+/* KPI CARDS */
+.kpi-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.kpi-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.kpi-label {
+  font-size: 11px;
+  font-weight: 700;
+  color: #a09890;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-bottom: 8px;
+}
+
+.kpi-value {
+  font-size: 28px;
+  font-weight: 900;
+  color: #2d2a26;
+  margin-bottom: 4px;
+  font-variant-numeric: tabular-nums;
+}
+
+.kpi-change {
+  font-size: 12px;
+  font-weight: 600;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.kpi-change.positive {
+  color: #10b981;
+}
+
+.kpi-change.negative {
+  color: #ef4444;
+}
+
+.change-icon {
+  font-size: 14px;
+}
+
+.kpi-note {
+  font-size: 10px;
+  color: #a09890;
+  margin-top: 8px;
+}
+
+/* COMPARISON BOX */
+.comparison-box {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 28px;
+}
+
+.comparison-title {
+  font-size: 16px;
+  font-weight: 800;
+  color: #2d2a26;
+  margin-bottom: 16px;
+}
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 12px;
+}
+
+.comparison-item {
+  background: #f8f6f3;
+  border-radius: 10px;
+  padding: 14px;
+  border: 1px solid rgba(0,0,0,.05);
+}
+
+.comparison-label {
+  font-size: 11px;
+  font-weight: 600;
+  color: #a09890;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.comparison-value {
+  font-size: 18px;
+  font-weight: 800;
+  color: #2d2a26;
+  font-variant-numeric: tabular-nums;
+}
+
+/* CHART GRID */
+.charts-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(380px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.chart-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.chart-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 12px;
+}
+
+.chart-container {
+  position: relative;
+  width: 100%;
+  height: 280px;
+}
+
+/* TOP 5 RANKINGS */
+.rankings-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(340px, 1fr));
+  gap: 16px;
+  margin-bottom: 28px;
+}
+
+.ranking-box {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.ranking-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ranking-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.ranking-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 12px;
+  background: #f8f6f3;
+  border-radius: 8px;
+  border: 1px solid rgba(0,0,0,.05);
+}
+
+.ranking-rank {
+  font-size: 12px;
+  font-weight: 800;
+  color: #EC5F27;
+  min-width: 28px;
+}
+
+.ranking-name {
+  font-size: 12px;
+  font-weight: 600;
+  color: #2d2a26;
+  flex: 1;
+  margin: 0 12px;
+}
+
+.ranking-value {
+  font-size: 12px;
+  font-weight: 700;
+  color: #a09890;
+  text-align: right;
+}
+
+/* TABLE STYLING */
+.table-box {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 20px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+  margin-bottom: 28px;
+  overflow-x: auto;
+}
+
+.table-title {
+  font-size: 14px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 16px;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 12px;
+}
+
+.data-table th {
+  background: #f3f4f6;
+  padding: 10px 12px;
+  text-align: left;
+  font-weight: 700;
+  font-size: 11px;
+  color: #8c8680;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  border-bottom: 1px solid rgba(0,0,0,.08);
+}
+
+.data-table td {
+  padding: 10px 12px;
+  border-bottom: 1px solid rgba(0,0,0,.05);
+}
+
+.data-table tr:hover {
+  background: #f8f6f3;
+}
+
+.data-table .text-strong {
+  font-weight: 700;
+  color: #2d2a26;
+}
+
+.data-table .text-secondary {
+  color: #a09890;
+}
+
+.data-table .text-number {
+  font-weight: 700;
+  color: #EC5F27;
+  text-align: right;
+}
+
+/* ANALYSIS BOX */
+.analysis-box {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 28px;
+  margin-bottom: 28px;
+  border: 1px solid var(--card-border);
+  box-shadow: var(--card-shadow);
+}
+
+.analysis-title {
+  font-size: 18px;
+  font-weight: 800;
+  color: #EC5F27;
+  margin-bottom: 20px;
+  padding-bottom: 12px;
+  border-bottom: 2px solid rgba(236,95,39,.15);
+}
+
+.analysis-content {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.analysis-section {
+  background: #f8f6f3;
+  border-radius: 10px;
+  padding: 14px 16px;
+  border-left: 4px solid #EC5F27;
+}
+
+.analysis-label {
+  font-size: 12px;
+  font-weight: 700;
+  color: #2d2a26;
+  margin-bottom: 6px;
+}
+
+.analysis-text {
+  font-size: 12px;
+  color: #5a5550;
+  line-height: 1.6;
+}
+
+.analysis-text strong {
+  color: #2d2a26;
+  font-weight: 700;
+}
+
+/* FOOTER */
+.footer {
+  text-align: center;
+  padding: 20px;
+  color: #6B7280;
+  font-size: 11px;
+  margin-top: 40px;
+}
+
+/* SCROLL TO TOP BUTTON */
+.scroll-top-btn {
+  position: fixed;
+  bottom: 28px;
+  right: 28px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: #EC5F27;
+  color: #fff;
+  border: none;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 16px rgba(236,95,39,0.35);
+  opacity: 0;
+  visibility: hidden;
+  transition: all 0.3s ease;
+  z-index: 9999;
+  font-size: 20px;
+}
+
+.scroll-top-btn:hover {
+  background: #d44a18;
+  transform: translateY(-3px);
+  box-shadow: 0 6px 24px rgba(236,95,39,0.45);
+}
+
+.scroll-top-btn.visible {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* RESPONSIVE */
+@media(max-width: 900px) {
+  .charts-grid {
+    grid-template-columns: 1fr;
+  }
+  .rankings-container {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media(max-width: 768px) {
+  body {
+    padding: 0 12px 20px;
+  }
+  .header {
+    padding: 20px 18px;
+    border-radius: 14px;
+    margin-bottom: 18px;
+  }
+  .header h1 {
+    font-size: 20px;
+  }
+  .header p {
+    font-size: 11px;
+  }
+  .kpi-container {
+    grid-template-columns: 1fr;
+  }
+  .chart-card {
+    border-radius: 12px;
+  }
+  .analysis-box {
+    padding: 18px;
+  }
+}
+
+@media(max-width: 480px) {
+  body {
+    padding: 0 8px 16px;
+  }
+  .header h1 {
+    font-size: 17px;
+  }
+  .header {
+    padding: 16px 14px;
+    border-radius: 12px;
+  }
+  .kpi-value {
+    font-size: 22px;
+  }
+}
+</style>
+</head>
+<body>
+
+<!-- TOP NAVIGATION -->
+<nav class="topnav">
+  <div class="nav-inner">
+    <a href="index.html" class="nav-brand">TNN</a>
+    <span class="nav-sep">|</span>
+    <ul class="nav-menu" id="mainNav">
+      <li><a href="index.html">Home</a></li>
+      <li><a href="web_all_2026.html" class="active">Web Performance</a></li>
+      <li><a href="team_performance.html">Team Charts</a></li>
+      <li><a href="reviews.html">Reviews</a></li>
+      <li><a href="tnn_training2026_v1.html">Training</a></li>
+    </ul>
+    <button class="nav-hamburger" onclick="toggleNav()">&#9776;</button>
+  </div>
+</nav>
+
+<!-- HEADER -->
+<div class="header">
+  <div style="text-align: center; flex: 1;">
+    <h1>Website Performance</h1>
+    <p>ข้อมูลจาก TrueHit Analytics และ cms website | อัปเดตล่าสุด: 30 มีนาคม 2569 | สัปดาห์ที่13 (23-29 มี.ค. 2569)</p>
+  </div>
+</div>
+
+<!-- WEEK SELECTOR -->
+<div class="week-selector">
+  <div class="ws-header" onclick="toggleWeekSelector()">
+    <div class="ws-header-left">
+      <span class="ws-icon">📅</span>
+      <div>
+        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 12</div>
+        <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
+      </div>
+    </div>
+    <span class="ws-arrow" id="wsArrow">▼</span>
+  </div>
+  <div class="ws-body" id="wsBody">
+    <div class="ws-grid">
+      <a href="web_all_2026_week1.html">Week 1 (29 ธ.ค. 68 - 4 ม.ค. 69)</a>
+      <a href="web_all_2026_week2.html">Week 2 (5-11 ม.ค.)</a>
+      <a href="web_all_2026_week3.html">Week 3 (12-18 ม.ค.)</a>
+      <a href="web_all_2026_week4.html">Week 4 (19-25 ม.ค.)</a>
+      <a href="web_all_2026_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
+      <a href="web_all_2026_week6.html">Week 6 (2-8 ก.พ.)</a>
+      <a href="web_all_2026_week7.html">Week 7 (9-15 ก.พ.)</a>
+      <a href="web_all_2026_week8.html">Week 8 (16-22 ก.พ.)</a>
+      <a href="web_all_2026_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
+      <a href="web_all_2026_week10.html">Week 10 (2-8 มี.ค.)</a>
+      <a href="web_all_2026_week11.html">Week 11 (9-15 มี.ค.)</a>
+      <a href="web_all_2026_week12.html">Week 12 (16-22 มี.ค.)</a>
+      <a href="web_all_2026_week13.html" class="ws-active">Week 13 (23-29 มี.ค.)</a>
+    </div>
+  </div>
+</div>
+
+<!-- KPI CARDS -->
+<div class="kpi-container">
+  <div class="kpi-card">
+    <div class="kpi-label">Total Page Views</div>
+    <div class="kpi-value">157,941</div>
+    <div class="kpi-change negative">
+      <span class="change-icon">▼</span>
+      <span>-6.41% vs สัปดาห์ก่อน</span>
+    </div>
+    <div class="kpi-note">สัปดาห์ก่อน: 168,770 PV</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-label">Total UIP (Unique Impression)</div>
+    <div class="kpi-value">101,388</div>
+    <div class="kpi-change positive">
+      <span class="change-icon">▲</span>
+      <span>+0.56% vs สัปดาห์ก่อน</span>
+    </div>
+    <div class="kpi-note">สัปดาห์ก่อน: 100,824 UIP</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-label">จำนวนข่าว</div>
+    <div class="kpi-value">701</div>
+    <div class="kpi-change negative">
+      <span class="change-icon">▼</span>
+      <span>-2.50% vs สัปดาห์ก่อน</span>
+    </div>
+    <div class="kpi-note">สัปดาห์ก่อน: 719 บทความ</div>
+  </div>
+
+  <div class="kpi-card">
+    <div class="kpi-label">เฉลี่ย Page Views / ข่าว</div>
+    <div class="kpi-value">225</div>
+    <div class="kpi-change negative">
+      <span class="change-icon">▼</span>
+      <span>-4.26% vs สัปดาห์ก่อน</span>
+    </div>
+    <div class="kpi-note">สัปดาห์ก่อน: 235 PV</div>
+  </div>
+</div>
+
+<!-- CMS vs TrueHit COMPARISON -->
+<div class="comparison-box">
+  <div class="comparison-title">CMS vs TrueHit Performance</div>
+  <div class="comparison-grid">
+    <div class="comparison-item">
+      <div class="comparison-label">CMS Page Views</div>
+      <div class="comparison-value">61,476</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">TrueHit Page Views</div>
+      <div class="comparison-value">157,941</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">ส่วนต่าง PV</div>
+      <div class="comparison-value">-96,465</div>
+    </div>
+    <div class="comparison-item">
+      <div class="comparison-label">CMS Percentage</div>
+      <div class="comparison-value">61.1%</div>
+    </div>
+  </div>
+</div>
+
+<!-- CHARTS -->
+<div class="charts-grid">
+  <div class="chart-card">
+    <div class="chart-title">PV Weekly (4 สัปดาห์ล่าสุด)</div>
+    <div class="chart-container">
+      <canvas id="pvWeekly"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">PV Monthly 2026</div>
+    <div class="chart-container">
+      <canvas id="pvMonthly"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">PV Yearly Trend (5 ปีที่ผ่านมา)</div>
+    <div class="chart-container">
+      <canvas id="pvYearly"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Competitor Weekly Comparison</div>
+    <div class="chart-container">
+      <canvas id="competitorWeekly"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Competitor Yearly (2025 vs 2026 YTD)</div>
+    <div class="chart-container">
+      <canvas id="competitorYearly"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Traffic Source (Google Analytics)</div>
+    <div class="chart-container">
+      <canvas id="trafficSource"></canvas>
+    </div>
+  </div>
+</div>
+
+<!-- TOP 5 RANKINGS -->
+<div class="rankings-container">
+  <div class="ranking-box">
+    <div class="ranking-title">🏆 Top 5 Categories by PV</div>
+    <div class="ranking-list">
+      <div class="ranking-item">
+        <div class="ranking-rank">1</div>
+        <div class="ranking-name">Social Talk</div>
+        <div class="ranking-value">14,523</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">2</div>
+        <div class="ranking-name">Economy</div>
+        <div class="ranking-value">9,841</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">3</div>
+        <div class="ranking-name">Wealth</div>
+        <div class="ranking-value">8,876</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">4</div>
+        <div class="ranking-name">TNN Exclusive</div>
+        <div class="ranking-value">7,122</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">5</div>
+        <div class="ranking-name">Health</div>
+        <div class="ranking-value">6,543</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ranking-box">
+    <div class="ranking-title">📰 Top 5 Categories by Articles</div>
+    <div class="ranking-list">
+      <div class="ranking-item">
+        <div class="ranking-rank">1</div>
+        <div class="ranking-name">Wealth</div>
+        <div class="ranking-value">198</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">2</div>
+        <div class="ranking-name">รายการเศรษฐกิจ</div>
+        <div class="ranking-value">75</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">3</div>
+        <div class="ranking-name">Earth</div>
+        <div class="ranking-value">74</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">4</div>
+        <div class="ranking-name">Tech</div>
+        <div class="ranking-value">72</div>
+      </div>
+      <div class="ranking-item">
+        <div class="ranking-rank">5</div>
+        <div class="ranking-name">World</div>
+        <div class="ranking-value">62</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TOP 5 NEWS BY PV -->
+<div class="table-box">
+  <div class="table-title">📊 Top 5 News by Page Views</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Rank</th>
+        <th>เรื่อง</th>
+        <th>Page Views</th>
+        <th>Category</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-strong">1</td>
+        <td>ราคาทองคำวันนี้ 29 มี.ค. 2569</td>
+        <td class="text-number">2,456</td>
+        <td class="text-secondary">Wealth</td>
+      </tr>
+      <tr>
+        <td class="text-strong">2</td>
+        <td>สรุปข่าวเด่นประจำสัปดาห์ 23-29 มี.ค.</td>
+        <td class="text-number">1,890</td>
+        <td class="text-secondary">TNN Exclusive</td>
+      </tr>
+      <tr>
+        <td class="text-strong">3</td>
+        <td>พยากรณ์อากาศวันนี้ 28 มี.ค. 2569</td>
+        <td class="text-number">1,654</td>
+        <td class="text-secondary">Earth</td>
+      </tr>
+      <tr>
+        <td class="text-strong">4</td>
+        <td>ตลาดหุ้นวันนี้ สรุปภาพรวมสัปดาห์</td>
+        <td class="text-number">1,432</td>
+        <td class="text-secondary">Wealth</td>
+      </tr>
+      <tr>
+        <td class="text-strong">5</td>
+        <td>ข่าวเด่น TNN ประจำวัน 27 มี.ค.</td>
+        <td class="text-number">1,211</td>
+        <td class="text-secondary">Channel</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- SEARCH CONSOLE OVERVIEW -->
+<div class="table-box">
+  <div class="table-title">🔍 Google Search Console - Overview</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Metric</th>
+        <th>สัปดาห์ก่อน</th>
+        <th>สัปดาห์นี้</th>
+        <th>Change</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-strong">Clicks</td>
+        <td class="text-number">49,700</td>
+        <td class="text-number">43,100</td>
+        <td class="text-secondary">-12.0%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">Impressions</td>
+        <td class="text-number">4,980,000</td>
+        <td class="text-number">5,120,000</td>
+        <td class="text-secondary">+2.8%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">CTR</td>
+        <td class="text-number">1.0%</td>
+        <td class="text-number">0.84%</td>
+        <td class="text-secondary">-0.16%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TOP 3 KEYWORDS BY IMPRESSIONS -->
+<div class="table-box">
+  <div class="table-title">🔑 Top 3 Keywords by Impressions</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Keyword</th>
+        <th>Impressions</th>
+        <th>Clicks</th>
+        <th>CTR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-strong">สภาพอากาศ</td>
+        <td class="text-number">382,000</td>
+        <td class="text-number">195</td>
+        <td class="text-secondary">0.05%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">พยากรณ์อากาศ</td>
+        <td class="text-number">115,000</td>
+        <td class="text-number">75</td>
+        <td class="text-secondary">0.07%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">ดาวโจนส์</td>
+        <td class="text-number">108,000</td>
+        <td class="text-number">42</td>
+        <td class="text-secondary">0.04%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- TOP 3 KEYWORDS BY CLICKS -->
+<div class="table-box">
+  <div class="table-title">🎯 Top 3 Keywords by Clicks</div>
+  <table class="data-table">
+    <thead>
+      <tr>
+        <th>Keyword</th>
+        <th>Clicks</th>
+        <th>Impressions</th>
+        <th>CTR</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="text-strong">ราคาทองวันนี้ รูปพรรณ</td>
+        <td class="text-number">1,120</td>
+        <td class="text-number">21,500</td>
+        <td class="text-secondary">5.2%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">tnn16</td>
+        <td class="text-number">892</td>
+        <td class="text-number">2,890</td>
+        <td class="text-secondary">30.9%</td>
+      </tr>
+      <tr>
+        <td class="text-strong">tnn</td>
+        <td class="text-number">578</td>
+        <td class="text-number">1,520</td>
+        <td class="text-secondary">38.0%</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ANALYSIS SECTIONS -->
+<div class="analysis-box">
+  <div class="analysis-title">📊 วิเคราะห์ Team Performance และข้อเสนอแนะ</div>
+  <div class="analysis-content">
+    <div class="analysis-section">
+      <div class="analysis-label">ภาพรวม Performance Week 13 (23-29 มี.ค. 2569)</div>
+      <div class="analysis-text">
+        Week 13 บันทึกจำนวน Page Views รวม <strong>157,941 PV</strong> จากแพลตฟอร์ม TrueHit Analytics, โดยมีจำนวน UIP เพิ่มขึ้นเล็กน้อย <strong>0.56%</strong> เป็น <strong>101,388</strong> ขณะที่บทความที่ผลิตได้ลดลง <strong>2.50%</strong> มาเป็น <strong>701 บทความ</strong> เทียบกับสัปดาห์ที่ 12 ซึ่งแสดงถึงการลดลงของเนื้อหาแต่มีประสิทธิภาพต่อการดึงดูดผู้อ่าน
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">🔍 Trend Analysis & Performance Indicators</div>
+      <div class="analysis-text">
+        <strong>PV Trend:</strong> ลดลง 6.41% จาก 168,770 PV (Week 12) เป็น 157,941 PV (Week 13) - แนวโน้มลดลงต่อเนื่องในช่วง 4 สัปดาห์ที่ผ่านมา จาก 198,783 PV (Week 10)<br>
+        <strong>Content Production:</strong> ลดลงสม่ำเสมอในจำนวนบทความ (4 บทความจาก 719 เป็น 701)<br>
+        <strong>Engagement:</strong> แม้ว่า PV ลดลง แต่ UIP เพิ่มขึ้นเล็กน้อยแสดงถึงการเพิ่มขึ้นของผู้อ่านใหม่หรือผู้อ่านอื่นๆ
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">💡 ข้อเสนอแนะ</div>
+      <div class="analysis-text">
+        1. <strong>เพิ่มปริมาณและคุณภาพของเนื้อหา:</strong> จำนวนบทความลดลง ควรเพิ่มเป้าหมายการผลิตเนื้อหาเพื่อให้ได้ PV ตามเป้าหมาย<br>
+        2. <strong>เพิ่มประสิทธิภาพ SEO:</strong> CTR ในช่วง GSC ลดลง (1.0% เป็น 0.84%) ควรปรับปรุงการเพิ่มประสิทธิภาพ Meta Tags และ Content Optimization<br>
+        3. <strong>ฟโคัสไปยังหมวดหมู่ที่มี PV สูง:</strong> Social Talk, Economy และ Wealth เป็นหมวดหมู่ที่ได้รับการตอบสนองดี ควรเพิ่มการผลิตในหมวดหมู่เหล่านี้
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="analysis-box">
+  <div class="analysis-title">🔍 วิเคราะห์ SEO Performance สัปดาห์ 23-29 มี.ค. 2569</div>
+  <div class="analysis-content">
+    <div class="analysis-section">
+      <div class="analysis-label">Search Console Metrics Overview</div>
+      <div class="analysis-text">
+        <strong>Clicks:</strong> ลดลง 12.0% จาก 49,700 ไป 43,100 clicks<br>
+        <strong>Impressions:</strong> เพิ่มขึ้น 2.8% จาก 4,980,000 เป็น 5,120,000 impressions<br>
+        <strong>CTR:</strong> ลดลงจาก 1.0% เป็น 0.84% - แสดงว่าแม้มี impressions เพิ่มขึ้น แต่ผู้ใช้คลิกลดลง
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">🎯 Top Performing Keywords Analysis</div>
+      <div class="analysis-text">
+        <strong>By Impressions:</strong> 'สภาพอากาศ' นำด้วย 382,000 impressions แต่ CTR ต่ำเพียง 0.05% (195 clicks)<br>
+        <strong>By Clicks:</strong> 'ราคาทองวันนี้ รูปพรรณ' นำด้วย 1,120 clicks พร้อม CTR สูง 5.2% - แสดงถึงจำนวนผู้ค้นหาที่สนใจและคลิกเข้ามาสูง<br>
+        <strong>Brand Keywords:</strong> 'tnn' (578 clicks, 38.0% CTR) และ 'tnn16' (892 clicks, 30.9% CTR) มีอัตราการคลิกสูงมากจากผู้ค้นหาเจาะจง
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">⚠️ SEO Improvement Opportunities</div>
+      <div class="analysis-text">
+        1. <strong>ปรับปรุง CTR สำหรับ High-Impression Keywords:</strong> Keywords เช่น 'สภาพอากาศ' มี impressions สูงแต่ CTR ต่ำมาก ควรปรับปรุง Title Tags และ Meta Descriptions ให้น่าสนใจมากขึ้น<br>
+        2. <strong>เพิ่มเนื้อหา Long-tail:</strong> ควรสร้างเนื้อหาที่เกี่ยวข้องกับ 'ดาวโจนส์' (108,000 imp, 0.04% CTR) เพื่อเพิ่ม CTR<br>
+        3. <strong>Leverage Brand Authority:</strong> ความสำเร็จของ Brand Keywords ('tnn', 'tnn16') แสดงถึงแบรนด์ที่แข็งแกร่ง ควรใช้อัตราดีของ CTR นี้เพื่อสร้างเนื้อหา featured snippets
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="analysis-box">
+  <div class="analysis-title">📊 วิเคราะห์แนวโน้มและข้อเสนอแนะ Q1/2026</div>
+  <div class="analysis-content">
+    <div class="analysis-section">
+      <div class="analysis-label">📈 Performance Trend Q1 2026</div>
+      <div class="analysis-text">
+        <strong>Monthly Performance:</strong> มกราคม 768,734 PV → กุมภาพันธ์ 1,111,954 PV → มีนาคม (YTD) 759,631 PV<br>
+        <strong>Observation:</strong> เดือนกุมภาพันธ์ได้รับ Peak Performance ที่ 1.11M PV แต่มีนาคมมีอัตราสูงและลดลงตั้งแต่ต้นเดือน โดย Q1 รวม ~2.64M PV<br>
+        <strong>Target Analysis:</strong> Monthly Target คือ 1.25M PV แต่เดือนมกราคมและมีนาคมยังไม่ถึงเป้า โดยเฉพาะเดือนมีนาคมล้าหลัง 39.2% จากเป้า
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">🏆 Competitive Position Analysis</div>
+      <div class="analysis-text">
+        <strong>Weekly Ranking (Week 13):</strong> TNN ยังคงตำแหน่งต่ำในการเทียบเคียง อยู่ที่ 157,941 PV ซึ่งต่ำกว่า PPTV (855,051), BkkBiz (2,000,546) และ BangkokPost (1,337,052)<br>
+        <strong>2025 vs 2026 YTD:</strong> TNN ได้ 2,631,137 PV ใน YTD 2026 เทียบกับ 11,240,043 PV ทั้งปี 2025 - แม้ว่าจะเป็นช่วงเวลาสั้นกว่า แต่แสดงถึงเนื้อหาที่คล่องตัว<br>
+        <strong>Gap Analysis:</strong> ระยะห่างจากผู้นำ (BkkBiz) ประมาณ 12x ต่อปี ต้องการการปรับปรุงเชิงกลยุทธ์อย่างมากในการสร้างเนื้อหา SEO และ Social
+      </div>
+    </div>
+    <div class="analysis-section">
+      <div class="analysis-label">🎯 Q2 2026 Strategic Recommendations</div>
+      <div class="analysis-text">
+        1. <strong>Content Strategy Overhaul:</strong> เพิ่มการผลิตเนื้อหา High-Value Categories (Social Talk, Economy, Wealth) ที่ได้รับความสนใจสูงสุด<br>
+        2. <strong>SEO Optimization Sprint:</strong> ลดการแปลงจำนวน Impressions ที่มากขึ้นเป็น Clicks ผ่านการปรับปรุง Title/Meta Descriptions และ Featured Snippets<br>
+        3. <strong>Social & Distribution Focus:</strong> ใช้ประโยชน์จาก Traffic Source ที่มี Organic Search นำด้วย 56,986 sessions - ต้องการการปรับปรุงด้านการแชร์และกระจายเนื้อหา<br>
+        4. <strong>Benchmark Against Top Performers:</strong> วิเคราะห์กลยุทธ์ของ BkkBiz, PostToday และ Amarin เพื่อนำมาปรับใช้กับเนื้อหาของ TNN
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<div class="footer">
+  Website Performance Dashboard | Generated March 30, 2026 | By : tikkieteddie | Data: TrueHit Analytics, Google Analytics, Google Search Console & cms website
+</div>
+
+<!-- SCROLL TO TOP BUTTON -->
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">▲</button>
+
+<script>
+Chart.defaults.color = '#8c8680';
+Chart.defaults.font.family = "'Noto Sans Thai', sans-serif";
+
+// Navigation Toggle
+function toggleNav() {
+  const navMenu = document.getElementById('mainNav');
+  navMenu.classList.toggle('open');
+}
+
+// Week Selector Toggle
+function toggleWeekSelector() {
+  const wsBody = document.getElementById('wsBody');
+  const wsArrow = document.getElementById('wsArrow');
+  wsBody.classList.toggle('open');
+  wsArrow.classList.toggle('open');
+}
+
+// Scroll to Top
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+
+window.addEventListener('scroll', function() {
+  const scrollTopBtn = document.getElementById('scrollTopBtn');
+  if (window.scrollY > 300) {
+    scrollTopBtn.classList.add('visible');
+  } else {
+    scrollTopBtn.classList.remove('visible');
+  }
+});
+
+// PV Weekly Chart
+const pvWeeklyCtx = document.getElementById('pvWeekly').getContext('2d');
+new Chart(pvWeeklyCtx, {
+  type: 'line',
+  data: {
+    labels: ['2-8 มี.ค.', '9-15 มี.ค.', '16-22 มี.ค.', '23-29 มี.ค.'],
+    datasets: [{
+      label: 'Page Views',
+      data: [198783, 179463, 168770, 157941],
+      borderColor: '#EC5F27',
+      backgroundColor: 'rgba(236, 95, 39, 0.1)',
+      borderWidth: 3,
+      fill: true,
+      tension: 0.4,
+      pointRadius: 5,
+      pointBackgroundColor: '#EC5F27',
+      pointBorderColor: '#fff',
+      pointBorderWidth: 2
+    }, {
+      label: 'Target',
+      data: [288462, 288462, 288462, 288462],
+      borderColor: '#a09890',
+      backgroundColor: 'transparent',
+      borderDash: [5, 5],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: false,
+        ticks: {
+          callback: function(value) {
+            return value.toLocaleString();
+          }
+        }
+      }
+    }
+  }
+});
+
+// PV Monthly Chart
+const pvMonthlyCtx = document.getElementById('pvMonthly').getContext('2d');
+new Chart(pvMonthlyCtx, {
+  type: 'bar',
+  data: {
+    labels: ['มกราคม', 'กุมภาพันธ์', 'มีนาคม*'],
+    datasets: [{
+      label: 'Page Views',
+      data: [768734, 1111954, 759631],
+      backgroundColor: ['rgba(236, 95, 39, 0.7)', 'rgba(236, 95, 39, 0.85)', 'rgba(236, 95, 39, 0.5)'],
+      borderColor: '#EC5F27',
+      borderWidth: 2
+    }, {
+      label: 'Target (1.25M)',
+      data: [1250000, 1250000, 1250000],
+      type: 'line',
+      borderColor: '#a09890',
+      borderDash: [5, 5],
+      borderWidth: 2,
+      fill: false,
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return (value / 1000000).toFixed(1) + 'M';
+          }
+        }
+      }
+    }
+  }
+});
+
+// PV Yearly Chart
+const pvYearlyCtx = document.getElementById('pvYearly').getContext('2d');
+new Chart(pvYearlyCtx, {
+  type: 'bar',
+  data: {
+    labels: ['2021', '2022', '2023', '2024', '2025', '2026 (YTD)'],
+    datasets: [{
+      label: 'Page Views',
+      data: [74038348, 57556114, 32023494, 9597482, 11240043, 2640319],
+      backgroundColor: 'rgba(236, 95, 39, 0.75)',
+      borderColor: '#EC5F27',
+      borderWidth: 2
+    }, {
+      label: 'Target (15M)',
+      data: [15000000, 15000000, 15000000, 15000000, 15000000, 15000000],
+      type: 'line',
+      borderColor: '#a09890',
+      borderDash: [5, 5],
+      borderWidth: 2,
+      fill: false,
+      pointRadius: 0
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    },
+    scales: {
+      y: {
+        beginAtZero: true,
+        ticks: {
+          callback: function(value) {
+            return (value / 1000000).toFixed(0) + 'M';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Competitor Weekly Chart
+const competitorWeeklyCtx = document.getElementById('competitorWeekly').getContext('2d');
+new Chart(competitorWeeklyCtx, {
+  type: 'bar',
+  data: {
+    labels: ['TNN', 'PPTV', 'Nation', 'Bright', 'PostToday', 'Prachachat', 'BkkBiz', 'Thansettakij', 'BangkokPost', 'Amarin'],
+    datasets: [{
+      label: 'Current Week',
+      data: [157941, 855051, 128794, 29104, 223722, 708808, 2000546, 419236, 1337052, 709722],
+      backgroundColor: 'rgba(236, 95, 39, 0.75)',
+      borderColor: '#EC5F27',
+      borderWidth: 1
+    }, {
+      label: 'Previous Week',
+      data: [168770, 1086496, 145159, 51784, 358116, 554023, 2438526, 530732, 1361483, 800978],
+      backgroundColor: 'rgba(160, 152, 144, 0.4)',
+      borderColor: '#a09890',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          callback: function(value) {
+            return value.toLocaleString();
+          }
+        }
+      }
+    }
+  }
+});
+
+// Competitor Yearly Chart
+const competitorYearlyCtx = document.getElementById('competitorYearly').getContext('2d');
+new Chart(competitorYearlyCtx, {
+  type: 'bar',
+  data: {
+    labels: ['TNN', 'PPTV', 'Nation', 'Bright', 'PostToday', 'Prachachat', 'BkkBiz', 'Thansettakij', 'BangkokPost', 'Amarin'],
+    datasets: [{
+      label: '2025 Full Year',
+      data: [11240043, 113551466, 10499843, 5083845, 19587489, 71959216, 162745652, 59589402, 96946819, 56139789],
+      backgroundColor: 'rgba(236, 95, 39, 0.75)',
+      borderColor: '#EC5F27',
+      borderWidth: 1
+    }, {
+      label: '2026 YTD (Jan-Mar)',
+      data: [2631137, 23267662, 2321247, 666894, 4479785, 8637390, 25917457, 5052527, 16502060, 8931591],
+      backgroundColor: 'rgba(236, 140, 39, 0.6)',
+      borderColor: '#ec8c27',
+      borderWidth: 1
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    indexAxis: 'y',
+    plugins: {
+      legend: {
+        display: true,
+        position: 'top'
+      }
+    },
+    scales: {
+      x: {
+        ticks: {
+          callback: function(value) {
+            return (value / 1000000).toFixed(1) + 'M';
+          }
+        }
+      }
+    }
+  }
+});
+
+// Traffic Source Chart
+const trafficSourceCtx = document.getElementById('trafficSource').getContext('2d');
+new Chart(trafficSourceCtx, {
+  type: 'doughnut',
+  data: {
+    labels: ['Organic Search', 'Direct', 'Organic Social', 'Referral', 'Unassigned', 'Paid Social', 'Mobile Push', 'Organic Video'],
+    datasets: [{
+      data: [56986, 33730, 29619, 3716, 1515, 1, 17, 10],
+      backgroundColor: [
+        '#EC5F27',
+        '#d97706',
+        '#f97316',
+        '#fb923c',
+        '#fbbf24',
+        '#fcd34d',
+        '#fde047',
+        '#f0f9ff'
+      ],
+      borderColor: '#fff',
+      borderWidth: 2
+    }]
+  },
+  options: {
+    responsive: true,
+    maintainAspectRatio: false,
+    plugins: {
+      legend: {
+        position: 'right'
+      }
+    }
+  }
+});
+</script>
+
+</body>
+</html>
