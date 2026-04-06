@@ -739,7 +739,7 @@ function renderCharts(data) {
   const sheets = data.sheets;
 
   // Weekly Chart
-  if (sheets.weeklyPV && sheets.weeklyPV.length > 0) {
+  if (Array.isArray(sheets.weeklyPV) && sheets.weeklyPV.length > 0) {
     const weeklyLabels = sheets.weeklyPV.map(d => d.weekLabel || 'N/A');
     const weeklyValues = sheets.weeklyPV.map(d => d.pv || 0);
     const weeklyTarget = sheets.targets?.weeklyPV || 0;
@@ -749,7 +749,7 @@ function renderCharts(data) {
   }
 
   // Monthly Chart
-  if (sheets.monthlyPV && sheets.monthlyPV.length > 0) {
+  if (Array.isArray(sheets.monthlyPV) && sheets.monthlyPV.length > 0) {
     const monthlyLabels = sheets.monthlyPV.map(d => d.monthLabel || 'N/A');
     const monthlyValues = sheets.monthlyPV.map(d => d.pv || 0);
     const monthlyTarget = sheets.targets?.monthlyPV || 0;
@@ -759,12 +759,12 @@ function renderCharts(data) {
   }
 
   // Competitor Chart
-  if (sheets.competitors && sheets.competitors.length > 0) {
+  if (Array.isArray(sheets.competitors) && sheets.competitors.length > 0) {
     renderCompetitorChart(sheets.competitors);
   }
 
   // Competitor Yearly Chart
-  if (sheets.competitors && sheets.competitors.length > 0) {
+  if (Array.isArray(sheets.competitors) && sheets.competitors.length > 0) {
     renderCompetitorYearlyChart(sheets.competitors);
   }
 
@@ -1120,7 +1120,7 @@ function renderArticles(sheets) {
   const list = document.getElementById('topArticlesList');
   list.innerHTML = '';
 
-  (sheets.topArticles || []).slice(0, 5).forEach((article, idx) => {
+  (Array.isArray(sheets.topArticles) ? sheets.topArticles : []).slice(0, 5).forEach((article, idx) => {
     const li = document.createElement('li');
     li.className = 'article-item';
     li.innerHTML = `
@@ -1144,7 +1144,7 @@ function renderKeywordTables(gsc) {
   const impBody = document.getElementById('keywordsByImpressionsBody');
   impBody.innerHTML = '';
 
-  (gsc.topKeywordsByImpressions || []).slice(0, 5).forEach(kw => {
+  (Array.isArray(gsc.topKeywordsByImpressions) ? gsc.topKeywordsByImpressions : []).slice(0, 5).forEach(kw => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td class="kw-name">${kw.keyword || 'N/A'}</td>
@@ -1159,7 +1159,7 @@ function renderKeywordTables(gsc) {
   const clickBody = document.getElementById('keywordsByClicksBody');
   clickBody.innerHTML = '';
 
-  (gsc.topKeywordsByClicks || []).slice(0, 5).forEach(kw => {
+  (Array.isArray(gsc.topKeywordsByClicks) ? gsc.topKeywordsByClicks : []).slice(0, 5).forEach(kw => {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td class="kw-name">${kw.keyword || 'N/A'}</td>

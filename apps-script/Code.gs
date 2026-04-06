@@ -96,7 +96,7 @@ function getSheetsData(weekParam) {
  */
 function getTeamPerformance(ss, weekParam) {
   const sheet = ss.getSheetByName('actual target team week');
-  if (!sheet) return { error: 'Sheet "actual target team week" not found' };
+  if (!sheet) return { week: '', teams: [] };
 
   const data = sheet.getDataRange().getValues();
   const header = data[0];
@@ -144,7 +144,7 @@ function getTeamPerformance(ss, weekParam) {
  */
 function getWeeklyPV(ss) {
   const sheet = ss.getSheetByName('total week truehit');
-  if (!sheet) return { error: 'Sheet "total week truehit" not found' };
+  if (!sheet) return [];
 
   const data = sheet.getDataRange().getValues();
   // Adapt based on actual column structure
@@ -169,7 +169,7 @@ function getWeeklyPV(ss) {
  */
 function getMonthlyPV(ss) {
   const sheet = ss.getSheetByName('total month truehit');
-  if (!sheet) return { error: 'Sheet "total month truehit" not found' };
+  if (!sheet) return [];  // Return empty array if sheet not found
 
   const data = sheet.getDataRange().getValues();
   const months = [];
@@ -190,7 +190,7 @@ function getMonthlyPV(ss) {
  */
 function getCompetitors(ss, weekParam) {
   const sheet = ss.getSheetByName('competitor truehit');
-  if (!sheet) return { error: 'Sheet "competitor truehit" not found' };
+  if (!sheet) return [];
 
   const data = sheet.getDataRange().getValues();
   // Return raw data for frontend to process
@@ -202,7 +202,7 @@ function getCompetitors(ss, weekParam) {
  */
 function getTopCategories(ss, weekParam) {
   const sheet = ss.getSheetByName('All Performance2026 only') || ss.getSheetByName('All Performance2026');
-  if (!sheet) return { error: 'Performance sheet not found' };
+  if (!sheet) return { week: '', byPV: [], byArticles: [] };
 
   const data = sheet.getDataRange().getValues();
   const header = data[0];
@@ -212,7 +212,7 @@ function getTopCategories(ss, weekParam) {
   const colPV = findCol(header, ['Page View', 'PV', 'pageview']);
   const colWeekLabel = findCol(header, ['week_label']);
 
-  if (colCat < 0 || colPV < 0) return { error: 'Cannot find Category/PV columns' };
+  if (colCat < 0 || colPV < 0) return { week: '', byPV: [], byArticles: [] };
 
   // Find latest week
   let latestWeek = '';
@@ -384,7 +384,7 @@ function queryGSC(startDate, endDate, dimension) {
     );
     return JSON.parse(response.getContentText());
   } catch (e) {
-    return { error: e.message };
+    return { error: e.message, rows: [] };
   }
 }
 
@@ -416,7 +416,7 @@ function queryGSCKeywords(startDate, endDate, sortBy, limit) {
       position: round2(r.position),
     }));
   } catch (e) {
-    return { error: e.message };
+    return [];  // Return empty array instead of error object
   }
 }
 
@@ -446,7 +446,7 @@ function aggregateGSC(result) {
 
 function getGA4Data(weekParam) {
   if (!CONFIG.GA4_PROPERTY_ID) {
-    return { error: 'GA4_PROPERTY_ID not configured. Set it in CONFIG.' };
+    return { currentWeek: { channels: [] }, previousWeek: { channels: [] } };
   }
 
   const { currStart, currEnd, prevStart, prevEnd } = getWeekDates(weekParam);
@@ -484,7 +484,7 @@ function queryGA4Sessions(startDate, endDate) {
       sessions: parseInt(r.metricValues[0].value, 10),
     }));
   } catch (e) {
-    return { error: e.message };
+    return [];  // Return empty array instead of error object
   }
 }
 
