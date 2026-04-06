@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Website Performance Dashboard 2026 — Live</title>
+<title>Website Performance Dashboard 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   /* === TNN DARK TECH THEME === */
@@ -44,7 +44,7 @@
   .header h1 { font-size:26px; font-weight:800; color:#fff; margin-bottom:4px; letter-spacing:-.5px; }
   .header p { color:rgba(255,255,255,.85); font-size:12px; }
 
-  /* --- KPI ROW (5 cols) --- */
+  /* --- KPI ROW (4 cols) --- */
   .kpi-row { display:grid; grid-template-columns:1.2fr 1fr 1fr 1fr 1fr; gap:16px; margin-bottom:28px; }
 
   /* HERO card (Total PV) */
@@ -113,7 +113,7 @@
   .grid3 .card-title { font-size:13px; }
   .grid3 .card-sub { font-size:10px; margin-bottom:10px; }
 
-  /* --- TOP ARTICLES --- */
+  /* --- TOP ARTICLES (compact for grid3) --- */
   .article-list { list-style:none; }
   .article-item {
     display:grid;
@@ -148,6 +148,8 @@
   .article-author {
     font-size:9px; color:#8c8680; white-space:nowrap;
   }
+
+  /* --- Chart annotations --- */
   .chart-note { font-size:10px; color:#a09890; font-style:italic; margin-top:6px; line-height:1.4; }
 
   /* --- KEYWORD TABLES --- */
@@ -181,7 +183,6 @@
     .grid2,.grid3 { grid-template-columns:1fr; }
     .kpi-hero .kpi-val { font-size:30px; }
   }
-
 /* === TOPNAV === */
 .topnav{margin:0 -24px 16px;position:sticky;top:0;z-index:1000;background: var(--bg-primary);backdrop-filter: none;border-bottom: 1px solid var(--bg-secondary);box-shadow: 0 2px 16px rgba(0,0,0,0.3);font-family:'Noto Sans Thai',sans-serif;}
 .nav-inner{display:flex;align-items:center;padding:0 20px;gap:0;}
@@ -192,6 +193,12 @@
 .nav-menu>li>a{display:inline-flex;align-items:center;gap:4px;padding:16px 13px;font-size:12.5px;font-weight:600;color:var(--text-on-dark);text-decoration:none;border-bottom:3px solid transparent;transition:var(--transition);white-space:nowrap;}
 .nav-menu>li>a:hover{color:var(--text-on-dark-hover);background:rgba(236,95,39,.1);}
 .nav-menu>li>a.active{color:var(--text-on-dark-hover);border-bottom-color:var(--brand-orange);}
+.has-dropdown>a::after{content:' ▾';font-size:9px;opacity:0.7;}
+.dropdown{display:none;position:absolute;top:100%;left:0;background:#fff;border:1px solid rgba(0,0,0,.09);border-radius:12px;box-shadow:0 8px 28px rgba(0,0,0,.13);min-width:170px;padding:8px 0;list-style:none;z-index:999;}
+.has-dropdown:hover .dropdown{display:block;}
+.dropdown li a{display:block;padding:10px 18px;font-size:12.5px;font-weight:500;color:#5a5550;text-decoration:none;transition:all 0.15s;white-space:nowrap;}
+.dropdown li a:hover{background:rgba(236,95,39,.07);color:#EC5F27;}
+.dropdown li a.active{color:#EC5F27;font-weight:700;background:rgba(236,95,39,.05);}
 .nav-hamburger{display:none;background:none;border:1px solid var(--bg-secondary);border-radius:6px;font-size:18px;cursor:pointer;padding:6px 10px;color:var(--text-on-dark);margin-left:auto;}
 @media(max-width:768px){
   .nav-hamburger{display:block;}
@@ -199,84 +206,113 @@
   .nav-menu.open{display:flex;}
   .nav-menu>li{width:100%;}
   .nav-menu>li>a{padding:11px 20px;border-bottom:none;width:100%;}
+  .dropdown{position:static;box-shadow:none;border:none;border-radius:0;padding:0;background:var(--bg-secondary);display:none;}
+  .has-dropdown:hover .dropdown{display:none;}
+  .has-dropdown.open .dropdown{display:block;}
+  .dropdown li a{padding:9px 36px;}
   .nav-sep{display:none;}
 }
+
+  /* ─── WEEK SELECTOR ─── */
+  .week-selector {
+    background:#fff; border-radius:14px; margin-bottom:20px;
+    border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
+    overflow:hidden;
+  }
+  .ws-header {
+    display:flex; align-items:center; justify-content:space-between;
+    padding:14px 22px; cursor:pointer; user-select:none;
+    transition:background 0.15s;
+  }
+  .ws-header:hover { background:var(--card-bg); }
+  .ws-header-left { display:flex; align-items:center; gap:10px; }
+  .ws-icon { font-size:18px; }
+  .ws-title { font-size:14px; font-weight:700; color:#2d2a26; }
+  .ws-subtitle { font-size:11px; color:#a09890; margin-top:1px; }
+  .ws-arrow {
+    font-size:12px; color:#a09890; transition:transform 0.3s;
+  }
+  .ws-arrow.open { transform:rotate(180deg); }
+  .ws-body {
+    display:none; padding:0 12px 14px;
+    border-top:1px solid rgba(0,0,0,.05);
+  }
+  .ws-body.open { display:block; }
+  .ws-grid {
+    display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:8px;
+    padding-top:12px;
+  }
+  .ws-grid a {
+    display:block; padding:10px 14px; border-radius:10px; text-decoration:none;
+    font-size:12.5px; font-weight:600; color:#5a5550;
+    background:#f8f6f3; border:1.5px solid transparent;
+    transition:all 0.15s;
+  }
+  .ws-grid a:hover { background:rgba(236,95,39,.07); color:#EC5F27; border-color:rgba(236,95,39,.15); }
+  .ws-grid a.ws-active {
+    background:rgba(236,95,39,.1); color:#EC5F27; border-color:#EC5F27;
+    font-weight:800;
+  }
+  @media(max-width:900px) {
+    .ws-grid { grid-template-columns:1fr 1fr; }
+  }
 
 /* Scroll to top button */
 .scroll-top-btn{position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:#EC5F27;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(236,95,39,0.35);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:9999;font-size:20px;}
 .scroll-top-btn:hover{background:#d44a18;transform:translateY(-3px);box-shadow:0 6px 24px rgba(236,95,39,0.45);}
 .scroll-top-btn.visible{opacity:1;visibility:visible;}
 
-/* === LOADING OVERLAY === */
-.loading-overlay {
-  position:fixed; top:0; left:0; right:0; bottom:0;
-  background:rgba(17,24,39,0.95);
-  display:flex; flex-direction:column; align-items:center; justify-content:center;
-  z-index:10000; transition:opacity 0.5s;
-}
-.loading-overlay.hidden { opacity:0; pointer-events:none; }
-.loading-spinner {
-  width:60px; height:60px; border:4px solid rgba(236,95,39,0.2);
-  border-top-color:#EC5F27; border-radius:50%;
-  animation:spin 0.8s linear infinite;
-}
-@keyframes spin { to { transform:rotate(360deg); } }
-.loading-text { color:#D1D5DB; margin-top:20px; font-size:14px; font-weight:600; }
-.loading-sub { color:#6B7280; margin-top:6px; font-size:12px; }
+  /* === RESPONSIVE DARK THEME ENHANCEMENTS === */
+  @media(max-width:768px){
+    body { padding: 0 12px 20px; }
+    .header { padding: 20px 18px; border-radius: 14px; margin-bottom: 18px; }
+    .header h1 { font-size: 20px; }
+    .header p { font-size: 11px; }
+    .weeks-container { padding: 16px; border-radius: 12px; }
+    .team-box { border-radius: 12px; }
+    .analysis-box { padding: 18px; border-radius: 12px; }
+    .top5-box { border-radius: 12px; }
+  }
+  @media(max-width:480px){
+    body { padding: 0 8px 16px; }
+    .header h1 { font-size: 17px; }
+    .header { padding: 16px 14px; border-radius: 12px; }
+  }
 
-/* === DATA STATUS BAR === */
-.data-status {
-  display:flex; align-items:center; gap:8px;
-  background:#1F2937; border:1px solid #374151; border-radius:10px;
-  padding:8px 16px; margin-bottom:16px; font-size:11px; color:#9CA3AF;
-}
-.data-status .dot { width:8px; height:8px; border-radius:50%; background:#10B981; flex-shrink:0; }
-.data-status .dot.error { background:#EF4444; }
-.data-status .dot.loading { background:#F59E0B; animation:pulse 1s infinite; }
-@keyframes pulse { 0%,100%{opacity:1;} 50%{opacity:0.4;} }
+  /* === LOADING OVERLAY === */
+  .loading-overlay {
+    position:fixed; top:0; left:0; right:0; bottom:0;
+    background:rgba(17,24,39,0.85); backdrop-filter:blur(2px);
+    display:flex; align-items:center; justify-content:center;
+    z-index:9999; opacity:0; visibility:hidden;
+    transition:all 0.3s ease;
+  }
+  .loading-overlay.active {
+    opacity:1; visibility:visible;
+  }
+  .loading-spinner {
+    width:50px; height:50px; border:4px solid rgba(236,95,39,0.3);
+    border-top-color:#EC5F27; border-radius:50%;
+    animation:spin 1s linear infinite;
+  }
+  @keyframes spin {
+    to { transform:rotate(360deg); }
+  }
 
-/* === WEEK SELECTOR (dynamic) === */
-.week-selector-bar {
-  display:flex; align-items:center; gap:12px;
-  background:#fff; border-radius:14px; padding:12px 20px;
-  margin-bottom:20px; border:1px solid rgba(0,0,0,.06);
-  box-shadow:0 2px 12px rgba(0,0,0,.05);
-  flex-wrap:wrap;
-}
-.week-selector-bar label { font-size:13px; font-weight:700; color:#2d2a26; }
-.week-selector-bar select {
-  padding:8px 14px; border-radius:8px; border:1.5px solid #E5E7EB;
-  font-size:13px; font-weight:600; color:#2d2a26;
-  font-family:'Noto Sans Thai',sans-serif;
-  cursor:pointer; background:#F9FAFB;
-}
-.week-selector-bar select:focus { border-color:#EC5F27; outline:none; }
-.week-selector-bar .refresh-btn {
-  padding:8px 16px; border-radius:8px; border:none;
-  background:#EC5F27; color:#fff; font-size:12px; font-weight:700;
-  cursor:pointer; font-family:'Noto Sans Thai',sans-serif;
-  transition:all 0.15s;
-}
-.week-selector-bar .refresh-btn:hover { background:#d44a18; }
-
-/* Skeleton loading for cards */
-.skeleton { background:linear-gradient(90deg,#f0f0f0 25%,#e0e0e0 50%,#f0f0f0 75%); background-size:200% 100%; animation:shimmer 1.5s infinite; border-radius:8px; }
-@keyframes shimmer { 0%{background-position:200% 0;} 100%{background-position:-200% 0;} }
-
-@media(max-width:768px){
-  body { padding: 0 12px 20px; }
-  .header { padding: 20px 18px; border-radius: 14px; margin-bottom: 18px; }
-  .header h1 { font-size: 20px; }
-}
+  /* === STATUS BAR === */
+  .status-bar {
+    background:#f8f6f3; border-radius:10px; padding:10px 16px;
+    margin-bottom:16px; display:flex; align-items:center; justify-content:space-between;
+    border:1px solid rgba(0,0,0,.05); font-size:11px; color:#8c8680;
+  }
+  .status-bar.loading { background:rgba(236,95,39,0.08); color:#EC5F27; }
+  .status-bar.error { background:rgba(220,38,38,0.08); color:#dc2626; }
 </style>
 </head>
 <body>
 
-<!-- LOADING OVERLAY -->
 <div class="loading-overlay" id="loadingOverlay">
   <div class="loading-spinner"></div>
-  <div class="loading-text">กำลังโหลดข้อมูล Dashboard...</div>
-  <div class="loading-sub">ดึงข้อมูลจาก Google Sheets, Search Console และ Analytics</div>
 </div>
 
 <nav class="topnav">
@@ -285,155 +321,170 @@
     <span class="nav-sep">|</span>
     <ul class="nav-menu" id="mainNav">
       <li><a href="index.html">Home</a></li>
-      <li><a href="web_all_dynamic.html" class="active">Web Performance (Live)</a></li>
-      <li><a href="web_all_2026.html">Web Performance</a></li>
+      <li><a href="web_all_2026.html" class="active">Web Performance</a></li>
       <li><a href="team_performance.html">Team Charts</a></li>
       <li><a href="reviews.html">Reviews</a></li>
       <li><a href="tnn_training2026_v1.html">Training</a></li>
     </ul>
-    <button class="nav-hamburger" onclick="document.getElementById('mainNav').classList.toggle('open')">&#9776;</button>
+    <button class="nav-hamburger" onclick="toggleNav()">☰</button>
   </div>
 </nav>
 
 <div class="header">
   <div class="header-text">
-    <h1>Website Performance — Live Dashboard</h1>
-    <p id="headerSubtext">กำลังโหลด...</p>
+    <h1>Website Performance</h1>
+    <p id="headerSubtitle">ข้อมูลจาก TrueHit Analytics และ cms website | โหลดข้อมูล...</p>
   </div>
 </div>
 
-<!-- Data Status Bar -->
-<div class="data-status" id="dataStatus">
-  <span class="dot loading" id="statusDot"></span>
-  <span id="statusText">กำลังเชื่อมต่อ API...</span>
+<!-- Week Selector -->
+<div class="week-selector">
+  <div class="ws-header" onclick="toggleWeekSelector()">
+    <div class="ws-header-left">
+      <span class="ws-icon">&#128197;</span>
+      <div>
+        <div class="ws-title" id="weekSelectorTitle">ดูข้อมูลย้อนหลัง Week 1 - 13</div>
+        <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
+      </div>
+    </div>
+    <span class="ws-arrow" id="wsArrow">&#9660;</span>
+  </div>
+  <div class="ws-body" id="wsBody">
+    <div class="ws-grid" id="weekGrid">
+    </div>
+  </div>
 </div>
 
-<!-- Week Selector -->
-<div class="week-selector-bar">
-  <label>&#128197; เลือก Week:</label>
-  <select id="weekSelect" onchange="loadWeek(this.value)">
-    <option value="">ล่าสุด (อัตโนมัติ)</option>
-    <option value="week1">Week 1</option>
-    <option value="week2">Week 2</option>
-    <option value="week3">Week 3</option>
-    <option value="week4">Week 4</option>
-    <option value="week5">Week 5</option>
-    <option value="week6">Week 6</option>
-    <option value="week7">Week 7</option>
-    <option value="week8">Week 8</option>
-    <option value="week9">Week 9</option>
-    <option value="week10">Week 10</option>
-    <option value="week11">Week 11</option>
-    <option value="week12">Week 12</option>
-    <option value="week13">Week 13</option>
-  </select>
-  <button class="refresh-btn" onclick="loadWeek(document.getElementById('weekSelect').value)">&#8635; รีเฟรช</button>
-  <span id="lastUpdated" style="font-size:11px;color:#6B7280;margin-left:auto;"></span>
+<!-- Status Bar -->
+<div class="status-bar" id="statusBar">
+  <span id="statusText">กำลังโหลดข้อมูล...</span>
+  <span id="statusTime"></span>
 </div>
 
 <!-- KPI Row -->
 <div class="kpi-row">
-  <div class="kpi-hero" id="kpiHero">
+  <div class="kpi-hero">
     <div class="kpi-label">Total Page Views สัปดาห์ล่าสุด</div>
-    <div class="kpi-val" id="kpiPV">---</div>
+    <div class="kpi-val" id="kpiTotalPV">-</div>
     <div class="hero-sub">
-      <span class="hero-badge" id="kpiPVBadge">---</span>
-      <span class="hero-compare" id="kpiPVCompare">---</span>
+      <span class="hero-badge" id="kpiPVChange">-</span>
+      <span class="hero-compare" id="kpiPVCompare">-</span>
     </div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">Total UIP สัปดาห์ล่าสุด</div>
-    <div class="kpi-val" id="kpiUIP">---</div>
-    <span class="badge down" id="kpiUIPBadge">---</span>
-    <div class="kpi-sub" id="kpiUIPSub">---</div>
+    <div class="kpi-val" id="kpiTotalUIP">-</div>
+    <span class="badge" id="kpiUIPBadge">-</span>
+    <div class="kpi-sub" id="kpiUIPCompare">-</div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">จำนวนข่าว สัปดาห์ล่าสุด</div>
-    <div class="kpi-val" id="kpiArticles">---</div>
-    <span class="badge down" id="kpiArticlesBadge">---</span>
-    <div class="kpi-sub" id="kpiArticlesSub">---</div>
+    <div class="kpi-val" id="kpiArticles">-</div>
+    <span class="badge" id="kpiArticlesBadge">-</span>
+    <div class="kpi-sub" id="kpiArticlesCompare">-</div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">เฉลี่ย Page Views / ข่าว</div>
-    <div class="kpi-val" id="kpiPPA">---</div>
-    <span class="badge down" id="kpiPPABadge">---</span>
-    <div class="kpi-sub" id="kpiPPASub">---</div>
+    <div class="kpi-val" id="kpiPVPerArticle">-</div>
+    <span class="badge" id="kpiPVPerArticleBadge">-</span>
+    <div class="kpi-sub" id="kpiPVPerArticleCompare">-</div>
   </div>
   <div class="kpi-card" style="position:relative;overflow:visible;">
     <div class="kpi-label">สัดส่วน CMS / TrueHit Analytics</div>
-    <div class="kpi-val" id="kpiCMS" style="font-size:28px;color:#EC5F27;">---</div>
+    <div class="kpi-val" style="font-size:28px;color:#EC5F27;"><span id="kpiCMSVal">-</span> <span style="font-size:16px;color:#6B7280;" id="kpiTrueHitVal">/ -</span></div>
     <div style="margin:6px 0 4px;background:#e5e7eb;border-radius:6px;height:10px;overflow:hidden;width:100%;">
-      <div id="cmsBar" style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:0%;height:100%;border-radius:6px;transition:width 0.8s ease;"></div>
+      <div id="kpiCMSBar" style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:0%;height:100%;border-radius:6px;"></div>
     </div>
-    <div class="kpi-sub" id="kpiCMSSub">---</div>
+    <div class="kpi-sub" id="kpiCMSCompare">-</div>
   </div>
 </div>
 
-<!-- Weekly / Monthly / Yearly charts -->
+<!-- Weekly / Monthly / Yearly — one row -->
 <div class="grid3">
   <div class="card">
     <div class="card-title">PV รายสัปดาห์ (4 สัปดาห์)</div>
-    <div class="card-sub" id="weeklyChartSub">Target 288,462/สัปดาห์</div>
+    <div class="card-sub" id="weeklyTarget">Target -/สัปดาห์</div>
     <div class="ch sm"><canvas id="weeklyChart"></canvas></div>
+    <div class="chart-note" id="weeklyNote">-</div>
   </div>
   <div class="card">
-    <div class="card-title">PV รายเดือน</div>
-    <div class="card-sub">Target 1,250,000/เดือน</div>
+    <div class="card-title">PV รายเดือน (ม.ค.-มี.ค.)</div>
+    <div class="card-sub" id="monthlyTarget">Target -/เดือน</div>
     <div class="ch sm"><canvas id="monthlyChart"></canvas></div>
+    <div class="chart-note" id="monthlyNote">-</div>
   </div>
   <div class="card">
-    <div class="card-title">Team Performance (CMS PV)</div>
-    <div class="card-sub" id="teamChartSub">ข้อมูลจาก CMS</div>
-    <div class="ch sm"><canvas id="teamChart"></canvas></div>
+    <div class="card-title">PV รายปี (5 ปีย้อนหลัง)</div>
+    <div class="card-sub">Target 2026: 15M | uip-pv yoy truehit</div>
+    <div class="ch sm"><canvas id="yearlyChart"></canvas></div>
   </div>
 </div>
 
-<!-- Top Categories + Top Articles -->
+<!-- Competitor (3-column: Weekly + Yearly + Traffic) — one row -->
+<div class="grid3">
+  <div class="card">
+    <div class="card-title">เปรียบเทียบ PV คู่แข่ง (สัปดาห์ปัจจุบัน)</div>
+    <div class="card-sub">% เปลี่ยนแปลงจากสัปดาห์ก่อนหน้า</div>
+    <div class="ch tall"><canvas id="competitorChart"></canvas></div>
+  </div>
+  <div class="card">
+    <div class="card-title">คู่แข่ง PV เปรียบเทียบรายปี</div>
+    <div class="card-sub">2025 Full Year vs 2026 YTD | TrueHit</div>
+    <div class="ch tall"><canvas id="competitorYearlyChart"></canvas></div>
+    <div class="chart-note">* ปี 2026 เป็นตัวเลขจริง YTD</div>
+  </div>
+  <div class="card">
+    <div class="card-title">Traffic Source (Google Analytics)</div>
+    <div class="card-sub" id="trafficSubtitle">สัปดาห์ปัจจุบัน vs สัปดาห์ก่อนหน้า | Sessions</div>
+    <div class="ch tall"><canvas id="trafficChart"></canvas></div>
+  </div>
+</div>
+
+<!-- Categories + Top 5 Articles — one row -->
 <div class="grid3">
   <div class="card">
     <div class="card-title">Top 5 Categories ตาม PV</div>
-    <div class="card-sub" id="catPVSub">---</div>
+    <div class="card-sub" id="catViewsSubtitle">สัปดาห์ปัจจุบัน</div>
     <div class="ch sm"><canvas id="catViewsChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Top 5 Categories ตามจำนวนข่าว</div>
-    <div class="card-sub" id="catArticlesSub">---</div>
+    <div class="card-sub" id="catArticlesSubtitle">สัปดาห์ปัจจุบัน</div>
     <div class="ch sm"><canvas id="catArticlesChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Top 5 ข่าวยอดวิวสูงสุด</div>
-    <div class="card-sub" id="topArticlesSub">---</div>
+    <div class="card-sub" id="topArticlesSubtitle">สัปดาห์ปัจจุบัน</div>
     <ul class="article-list" id="topArticlesList">
-      <li class="article-item"><div style="grid-column:1/-1;text-align:center;color:#a09890;font-size:12px;">กำลังโหลด...</div></li>
     </ul>
   </div>
 </div>
 
-<!-- GSC Charts -->
+<!-- Google Search Console Performance — 3 charts in a row -->
 <div class="grid3">
   <div class="card">
     <div class="card-title">Total Clicks (Search Console)</div>
-    <div class="card-sub" id="gscClicksSub">---</div>
+    <div class="card-sub" id="searchClicksSubtitle">สัปดาห์ปัจจุบัน vs สัปดาห์ก่อนหน้า</div>
     <div class="ch sm"><canvas id="searchClicksChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Total Impressions (Search Console)</div>
-    <div class="card-sub" id="gscImpSub">---</div>
+    <div class="card-sub" id="searchImpressionsSubtitle">สัปดาห์ปัจจุบัน vs สัปดาห์ก่อนหน้า</div>
     <div class="ch sm"><canvas id="searchImpressionsChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Average CTR (Search Console)</div>
-    <div class="card-sub" id="gscCtrSub">---</div>
+    <div class="card-sub" id="searchCTRSubtitle">สัปดาห์ปัจจุบัน vs สัปดาห์ก่อนหน้า</div>
     <div class="ch sm"><canvas id="searchCTRChart"></canvas></div>
   </div>
 </div>
 
-<!-- Top Keywords Tables -->
+<!-- Top Keywords Tables — 2 side by side -->
 <div class="grid2">
   <div class="card">
     <div class="card-title">Top 5 Keywords by Impressions</div>
-    <div class="card-sub" id="kwImpSub">---</div>
-    <table class="kw-table">
+    <div class="card-sub" id="keywordsByImpressionsSubtitle">สัปดาห์ปัจจุบัน</div>
+    <table class="kw-table" id="keywordsByImpressionsTable">
       <thead>
         <tr>
           <th>Keyword</th>
@@ -442,15 +493,14 @@
           <th style="text-align:right;">CTR</th>
         </tr>
       </thead>
-      <tbody id="kwImpBody">
-        <tr><td colspan="4" style="text-align:center;color:#a09890;">กำลังโหลด...</td></tr>
+      <tbody id="keywordsByImpressionsBody">
       </tbody>
     </table>
   </div>
   <div class="card">
     <div class="card-title">Top 5 Keywords by Clicks</div>
-    <div class="card-sub" id="kwClicksSub">---</div>
-    <table class="kw-table">
+    <div class="card-sub" id="keywordsByClicksSubtitle">สัปดาห์ปัจจุบัน</div>
+    <table class="kw-table" id="keywordsByClicksTable">
       <thead>
         <tr>
           <th>Keyword</th>
@@ -459,599 +509,746 @@
           <th style="text-align:right;">CTR</th>
         </tr>
       </thead>
-      <tbody id="kwClicksBody">
-        <tr><td colspan="4" style="text-align:center;color:#a09890;">กำลังโหลด...</td></tr>
+      <tbody id="keywordsByClicksBody">
       </tbody>
     </table>
   </div>
 </div>
 
-<!-- Analysis placeholder -->
-<div class="analysis" id="analysisSection">
-  <h2>&#128202; วิเคราะห์ Performance</h2>
-  <p id="analysisContent" style="color:#a09890;">กำลังวิเคราะห์ข้อมูล...</p>
+<!-- Team Performance Section -->
+<div class="grid1">
+  <div class="card">
+    <div class="card-title">Team Performance</div>
+    <div class="card-sub" id="teamPerformanceSubtitle">สัปดาห์ปัจจุบัน</div>
+    <table class="kw-table" id="teamPerformanceTable">
+      <thead>
+        <tr>
+          <th>Team</th>
+          <th style="text-align:right;">PV Actual</th>
+          <th style="text-align:right;">PV Target</th>
+          <th style="text-align:right;">Articles</th>
+          <th style="text-align:right;">Article Target</th>
+          <th style="text-align:right;">PV/Article</th>
+          <th style="text-align:right;">Gap %</th>
+        </tr>
+      </thead>
+      <tbody id="teamPerformanceBody">
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Analysis Box -->
+<div class="analysis" id="analysisBox">
+  <h2>ข้อสรุปสัปดาห์</h2>
+  <p id="analysisText">กำลังโหลดข้อมูล...</p>
 </div>
 
 <div class="footer">
-  Website Performance Dashboard | Live Data | By : tikkieteddie | Data: TrueHit Analytics, Google Analytics, Google Search Console &amp; CMS
+  <p>© 2026 TNN Dashboard | Data from TrueHit Analytics, Google Analytics & Google Search Console | Auto-refresh enabled</p>
 </div>
 
-<button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})">&#9650;</button>
+<button class="scroll-top-btn" id="scrollTopBtn" onclick="scrollToTop()">↑</button>
 
 <script>
-/* ═══════════════════════════════════════════════════════
-   TNN DASHBOARD — DYNAMIC DATA LOADER
-   ═══════════════════════════════════════════════════════ */
+// Configuration
+const API_URL = 'https://script.google.com/macros/s/AKfycbxnYZ7qHdFHPKutohScLlU9_2eljVWTGU3__lKhUXJuHZJ8WkyuJbF7LOa4U2JsCmHJww/exec';
+const WEEKS_COUNT = 13;
 
-// ★★★ IMPORTANT: Replace this URL after deploying Apps Script ★★★
-const API_BASE = 'https://script.google.com/macros/s/AKfycbxnYZ7qHdFHPKutohScLlU9_2eljVWTGU3__lKhUXJuHZJ8WkyuJbF7LOa4U2JsCmHJww/exec';
+// Global state
+let currentWeek = getWeekFromURL() || 13;
+let allCharts = {};
+let currentData = null;
 
-Chart.defaults.color = '#8c8680';
-Chart.defaults.font.family = "'Noto Sans Thai',sans-serif";
+// Initialize
+window.addEventListener('DOMContentLoaded', () => {
+  initWeekSelector();
+  loadData();
+  setupScrollTop();
+});
 
-const O = 'rgba(236,95,39,';
-const gapC = 'rgba(220,38,38,0.15)';
-const gold = '#d97706';
-
-// Store chart instances for cleanup
-let charts = {};
-
-// ─── HELPER FUNCTIONS ────────────────────────────────
-function fmt(n) { return n ? n.toLocaleString() : '0'; }
-function pctChange(curr, prev) {
-  if (!prev || prev === 0) return 0;
-  return ((curr - prev) / prev * 100);
-}
-function pctStr(val) {
-  const sign = val >= 0 ? '+' : '';
-  return sign + val.toFixed(2) + '%';
-}
-function setBadge(el, val) {
-  const arrow = val >= 0 ? '\u25B2' : '\u25BC';
-  el.textContent = arrow + ' ' + pctStr(val);
-  el.className = 'badge ' + (val >= 0 ? 'up' : 'down');
-}
-function setHeroBadge(el, val) {
-  const arrow = val >= 0 ? '\u25B2' : '\u25BC';
-  el.textContent = arrow + ' ' + pctStr(val);
-  el.className = 'hero-badge ' + (val >= 0 ? 'up' : '');
+// Get week from URL parameter
+function getWeekFromURL() {
+  const params = new URLSearchParams(window.location.search);
+  const week = params.get('week');
+  return week ? parseInt(week) : null;
 }
 
-function destroyChart(id) {
-  if (charts[id]) { charts[id].destroy(); delete charts[id]; }
+// Initialize week selector grid
+function initWeekSelector() {
+  const weekGrid = document.getElementById('weekGrid');
+  weekGrid.innerHTML = '';
+
+  for (let w = 1; w <= WEEKS_COUNT; w++) {
+    const link = document.createElement('a');
+    link.textContent = `Week ${w}`;
+    link.href = `?week=${w}`;
+    if (w === currentWeek) {
+      link.classList.add('ws-active');
+    }
+    link.onclick = (e) => {
+      e.preventDefault();
+      currentWeek = w;
+      window.history.pushState(null, '', `?week=${w}`);
+      closeWeekSelector();
+      loadData();
+    };
+    weekGrid.appendChild(link);
+  }
 }
 
-// ─── MAIN LOADER ─────────────────────────────────────
-async function loadWeek(weekParam) {
-  const statusDot = document.getElementById('statusDot');
-  const statusText = document.getElementById('statusText');
-  statusDot.className = 'dot loading';
-  statusText.textContent = 'กำลังดึงข้อมูล...';
+// Toggle week selector
+function toggleWeekSelector() {
+  const body = document.getElementById('wsBody');
+  const arrow = document.getElementById('wsArrow');
+  body.classList.toggle('open');
+  arrow.classList.toggle('open');
+}
 
-  const url = API_BASE + '?action=all' + (weekParam ? '&week=' + weekParam : '');
+function closeWeekSelector() {
+  const body = document.getElementById('wsBody');
+  const arrow = document.getElementById('wsArrow');
+  body.classList.remove('open');
+  arrow.classList.remove('open');
+}
+
+// Load data from API
+async function loadData() {
+  showLoading(true);
+  updateStatusBar('loading', 'กำลังโหลดข้อมูล...');
 
   try {
-    const resp = await fetch(url);
-    if (!resp.ok) throw new Error('HTTP ' + resp.status);
-    const data = await resp.json();
+    const url = `${API_URL}?action=all&week=week${currentWeek}`;
+    const response = await fetch(url);
 
-    if (data.error) throw new Error(data.error);
+    if (!response.ok) {
+      throw new Error(`API returned ${response.status}`);
+    }
 
-    // Update all sections
-    updateKPI(data.sheets);
-    updateWeeklyChart(data.sheets);
-    updateMonthlyChart(data.sheets);
-    updateTeamChart(data.sheets);
-    updateTopCategories(data.sheets);
-    updateTopArticles(data.sheets);
-    updateGSC(data.gsc);
-    updateKeywords(data.gsc);
-    updateAnalysis(data);
+    const data = await response.json();
+    currentData = data;
 
-    // Update status
-    statusDot.className = 'dot';
-    const time = data.generatedAt ? new Date(data.generatedAt).toLocaleString('th-TH') : new Date().toLocaleString('th-TH');
-    statusText.textContent = 'ข้อมูลอัพเดทล่าสุด: ' + time;
-    document.getElementById('lastUpdated').textContent = 'อัพเดท: ' + time;
+    // Render all components
+    renderKPIs(data.sheets);
+    renderCharts(data);
+    renderArticles(data.sheets);
+    renderKeywordTables(data.gsc);
+    renderTeamPerformance(data.sheets);
+    renderAnalysis(data);
 
     // Update header
-    const weekLabel = weekParam || 'ล่าสุด';
-    document.getElementById('headerSubtext').textContent =
-      'ข้อมูลจาก TrueHit Analytics, GSC และ GA4 | ดึงข้อมูลอัตโนมัติ | ' + weekLabel;
+    updateHeader(data);
 
-  } catch (err) {
-    statusDot.className = 'dot error';
-    statusText.textContent = 'เกิดข้อผิดพลาด: ' + err.message;
-    console.error('Dashboard load error:', err);
+    // Update status
+    updateStatusBar('success', `อัปเดตล่าสุด: ${new Date().toLocaleTimeString('th-TH')}`);
 
-    // Show config instructions if API_BASE not set
-    if (API_BASE === 'YOUR_APPS_SCRIPT_WEB_APP_URL') {
-      statusText.textContent = 'กรุณาตั้งค่า API_BASE URL ก่อน — ดู SETUP_GUIDE.md';
-      document.getElementById('analysisContent').innerHTML =
-        '<strong style="color:#EC5F27;">ยังไม่ได้ตั้งค่า API</strong><br><br>' +
-        'ไฟล์นี้ต้องเชื่อมต่อกับ Google Apps Script backend เพื่อดึงข้อมูลอัตโนมัติ<br><br>' +
-        '<strong>วิธีตั้งค่า:</strong><br>' +
-        '1. เปิด <a href="https://script.google.com" target="_blank" style="color:#EC5F27;">script.google.com</a> สร้างโปรเจกต์ใหม่<br>' +
-        '2. Copy โค้ดจาก <code>apps-script/Code.gs</code> ไปวาง<br>' +
-        '3. Deploy เป็น Web App<br>' +
-        '4. Copy URL มาแทนที่ <code>YOUR_APPS_SCRIPT_WEB_APP_URL</code> ในไฟล์นี้<br><br>' +
-        'ดูรายละเอียดที่ <code>apps-script/SETUP_GUIDE.md</code>';
-    }
+  } catch (error) {
+    console.error('Error loading data:', error);
+    updateStatusBar('error', `เกิดข้อผิดพลาด: ${error.message}`);
+  } finally {
+    showLoading(false);
   }
-
-  // Hide loading overlay
-  document.getElementById('loadingOverlay').classList.add('hidden');
 }
 
-// ─── KPI CARDS ───────────────────────────────────────
-function updateKPI(sheets) {
+// Update header subtitle
+function updateHeader(data) {
+  if (data.sheets && data.sheets.kpi) {
+    const headerSub = document.getElementById('headerSubtitle');
+    headerSub.textContent = `ข้อมูลจาก TrueHit Analytics และ cms website | อัปเดตล่าสุด: ${new Date().toLocaleDateString('th-TH')} | สัปดาห์ที่${currentWeek}`;
+  }
+}
+
+// Format number with Thai locale
+function formatNumber(num) {
+  if (!num && num !== 0) return 'ไม่มีข้อมูล';
+  return num.toLocaleString('th-TH');
+}
+
+// Format percentage
+function formatPercent(val) {
+  if (!val && val !== 0) return '-';
+  const sign = val >= 0 ? '▲' : '▼';
+  return `${sign} ${Math.abs(val).toFixed(2)}%`;
+}
+
+// Render KPIs
+function renderKPIs(sheets) {
   if (!sheets || !sheets.kpi) return;
-  const k = sheets.kpi;
 
-  document.getElementById('kpiPV').textContent = fmt(k.totalPV);
-  setHeroBadge(document.getElementById('kpiPVBadge'), k.totalPVChange);
-  document.getElementById('kpiPVCompare').textContent = 'vs สัปดาห์ก่อน ' + fmt(k.totalPVPrev);
+  const kpi = sheets.kpi;
+  const totalPV = kpi.totalPV || 0;
+  const totalPVPrev = kpi.totalPVPrev || 0;
+  const pvChange = totalPV && totalPVPrev ? ((totalPV - totalPVPrev) / totalPVPrev * 100) : 0;
 
-  document.getElementById('kpiUIP').textContent = fmt(k.totalUIP);
-  setBadge(document.getElementById('kpiUIPBadge'), k.totalUIPChange);
-  document.getElementById('kpiUIPSub').textContent = 'เทียบสัปดาห์ก่อน ' + fmt(k.totalUIPPrev);
+  // Total PV
+  document.getElementById('kpiTotalPV').textContent = formatNumber(totalPV);
+  document.getElementById('kpiPVChange').textContent = formatPercent(pvChange);
+  document.getElementById('kpiPVChange').classList.toggle('up', pvChange >= 0);
+  document.getElementById('kpiPVCompare').textContent = `vs สัปดาห์ก่อน ${formatNumber(totalPVPrev)}`;
 
-  document.getElementById('kpiArticles').textContent = fmt(k.articles);
-  setBadge(document.getElementById('kpiArticlesBadge'), k.articlesChange);
-  document.getElementById('kpiArticlesSub').textContent = 'เทียบสัปดาห์ก่อน ' + fmt(k.articlesPrev) + ' ข่าว';
+  // Total UIP
+  const totalUIP = kpi.totalUIP || 0;
+  const totalUIPPrev = kpi.totalUIPPrev || 0;
+  const uipChange = totalUIP && totalUIPPrev ? ((totalUIP - totalUIPPrev) / totalUIPPrev * 100) : 0;
 
-  document.getElementById('kpiPPA').textContent = fmt(k.pvPerArticle);
-  const ppaChange = pctChange(k.pvPerArticle, k.pvPerArticlePrev);
-  setBadge(document.getElementById('kpiPPABadge'), ppaChange);
-  document.getElementById('kpiPPASub').textContent = 'เทียบสัปดาห์ก่อน ' + fmt(k.pvPerArticlePrev) + ' views/ข่าว';
+  document.getElementById('kpiTotalUIP').textContent = formatNumber(totalUIP);
+  const uipBadge = document.getElementById('kpiUIPBadge');
+  uipBadge.textContent = formatPercent(uipChange);
+  uipBadge.classList.toggle('up', uipChange >= 0);
+  uipBadge.classList.toggle('down', uipChange < 0);
+  document.getElementById('kpiUIPCompare').textContent = `เทียบสัปดาห์ก่อน ${formatNumber(totalUIPPrev)}`;
 
-  // CMS ratio (from team performance total)
-  if (sheets.teamPerformance && sheets.teamPerformance.teams) {
-    const cmsPV = sheets.teamPerformance.teams.reduce((s, t) => s + t.pvActual, 0);
-    const truehitPV = k.totalPV;
-    const gap = truehitPV - cmsPV;
-    const gapPct = truehitPV > 0 ? ((gap / truehitPV) * 100).toFixed(1) : 0;
-    const ratio = truehitPV > 0 ? ((cmsPV / truehitPV) * 100).toFixed(1) : 0;
+  // Articles
+  const articles = kpi.articles || 0;
+  const articlesPrev = kpi.articlesPrev || 0;
+  const articlesChange = articles && articlesPrev ? ((articles - articlesPrev) / articlesPrev * 100) : 0;
 
-    document.getElementById('kpiCMS').innerHTML = fmt(cmsPV) + ' <span style="font-size:16px;color:#6B7280;">/ ' + fmt(truehitPV) + '</span>';
-    document.getElementById('cmsBar').style.width = ratio + '%';
-    document.getElementById('kpiCMSSub').textContent =
-      'ส่วนต่าง -' + fmt(gap) + ' PV (' + gapPct + '%) | CMS ' + fmt(cmsPV) + ' / Truehit ' + fmt(truehitPV);
+  document.getElementById('kpiArticles').textContent = formatNumber(articles);
+  const articlesBadge = document.getElementById('kpiArticlesBadge');
+  articlesBadge.textContent = formatPercent(articlesChange);
+  articlesBadge.classList.toggle('up', articlesChange >= 0);
+  articlesBadge.classList.toggle('down', articlesChange < 0);
+  document.getElementById('kpiArticlesCompare').textContent = `เทียบสัปดาห์ก่อน ${formatNumber(articlesPrev)} ข่าว`;
+
+  // PV per Article
+  const pvPerArticle = kpi.pvPerArticle || 0;
+  const pvPerArticlePrev = kpi.pvPerArticlePrev || 0;
+  const pvPerArticleChange = pvPerArticle && pvPerArticlePrev ? ((pvPerArticle - pvPerArticlePrev) / pvPerArticlePrev * 100) : 0;
+
+  document.getElementById('kpiPVPerArticle').textContent = Math.round(pvPerArticle);
+  const pvPerArticleBadge = document.getElementById('kpiPVPerArticleBadge');
+  pvPerArticleBadge.textContent = formatPercent(pvPerArticleChange);
+  pvPerArticleBadge.classList.toggle('up', pvPerArticleChange >= 0);
+  pvPerArticleBadge.classList.toggle('down', pvPerArticleChange < 0);
+  document.getElementById('kpiPVPerArticleCompare').textContent = `เทียบสัปดาห์ก่อน ${Math.round(pvPerArticlePrev)} views/ข่าว`;
+
+  // CMS Ratio
+  const cmsVal = kpi.cmsPV || 0;
+  const cmsPercent = totalPV ? (cmsVal / totalPV * 100) : 0;
+
+  document.getElementById('kpiCMSVal').textContent = formatNumber(cmsVal);
+  document.getElementById('kpiTrueHitVal').textContent = `/ ${formatNumber(totalPV)}`;
+  document.getElementById('kpiCMSBar').style.width = cmsPercent + '%';
+  document.getElementById('kpiCMSCompare').textContent = `ส่วนต่าง ${formatNumber(totalPV - cmsVal)} PV (${cmsPercent.toFixed(1)}%) | CMS ${formatNumber(cmsVal)} / Truehit ${formatNumber(totalPV)}`;
+}
+
+// Render charts
+function renderCharts(data) {
+  if (!data.sheets) return;
+
+  const sheets = data.sheets;
+
+  // Weekly Chart
+  if (sheets.weeklyPV && sheets.weeklyPV.length > 0) {
+    const weeklyLabels = sheets.weeklyPV.map(d => d.weekLabel || 'N/A');
+    const weeklyValues = sheets.weeklyPV.map(d => d.pv || 0);
+    const weeklyTarget = sheets.targets?.weeklyPV || 0;
+
+    document.getElementById('weeklyTarget').textContent = `Target ${formatNumber(weeklyTarget)}/สัปดาห์`;
+    renderWeeklyChart(weeklyLabels, weeklyValues, weeklyTarget);
+  }
+
+  // Monthly Chart
+  if (sheets.monthlyPV && sheets.monthlyPV.length > 0) {
+    const monthlyLabels = sheets.monthlyPV.map(d => d.monthLabel || 'N/A');
+    const monthlyValues = sheets.monthlyPV.map(d => d.pv || 0);
+    const monthlyTarget = sheets.targets?.monthlyPV || 0;
+
+    document.getElementById('monthlyTarget').textContent = `Target ${formatNumber(monthlyTarget)}/เดือน`;
+    renderMonthlyChart(monthlyLabels, monthlyValues, monthlyTarget);
+  }
+
+  // Competitor Chart
+  if (sheets.competitors && sheets.competitors.length > 0) {
+    renderCompetitorChart(sheets.competitors);
+  }
+
+  // Competitor Yearly Chart
+  if (sheets.competitors && sheets.competitors.length > 0) {
+    renderCompetitorYearlyChart(sheets.competitors);
+  }
+
+  // Traffic Chart
+  if (data.ga4) {
+    renderTrafficChart(data.ga4);
+  }
+
+  // Category Charts
+  if (sheets.topCategories) {
+    renderCategoryCharts(sheets.topCategories);
+  }
+
+  // Search Console Charts
+  if (data.gsc) {
+    renderSearchConsoleCharts(data.gsc);
   }
 }
 
-// ─── WEEKLY PV CHART ─────────────────────────────────
-function updateWeeklyChart(sheets) {
-  if (!sheets || !sheets.weeklyPV || !Array.isArray(sheets.weeklyPV)) return;
-  const weekly = sheets.weeklyPV;
-
-  destroyChart('weekly');
+// Chart rendering functions
+function renderWeeklyChart(labels, values, target) {
   const ctx = document.getElementById('weeklyChart').getContext('2d');
-  const T = 288462;
-  const D = weekly.map(w => w.pv);
-  const L = weekly.map(w => w.weekLabel);
-  const G = D.map(v => Math.max(0, T - v));
-  const P = D.map(v => (((v - T) / T) * 100).toFixed(1));
 
-  charts.weekly = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: L,
-      datasets: [
-        { label: 'PV', data: D, backgroundColor: O + '0.85)', borderRadius: 6, barPercentage: .6 },
-        { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: .6 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { stacked: true, grid: { display: false } },
-        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1000).toFixed(0) + 'K' } }
-      },
-      animation: {
-        onComplete: function () {
-          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
-          c.data.datasets[0].data.forEach((v, i) => {
-            const b = c.getDatasetMeta(0).data[i];
-            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai'; x.fillText(v.toLocaleString(), b.x, b.y - 24);
-            x.fillStyle = '#dc2626'; x.font = 'bold 10px Noto Sans Thai'; x.fillText('Gap: ' + P[i] + '%', b.x, b.y - 10);
-          });
-          const yS = c.scales.y, tY = yS.getPixelForValue(T);
-          x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
-          x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
-          x.fillStyle = gold; x.font = 'bold 11px Noto Sans Thai'; x.textAlign = 'right';
-          x.fillText('Target: 288,462', c.chartArea.right, tY - 6);
-          x.restore();
-        }
-      }
-    }
-  });
-}
+  if (allCharts.weekly) allCharts.weekly.destroy();
 
-// ─── MONTHLY PV CHART ────────────────────────────────
-function updateMonthlyChart(sheets) {
-  if (!sheets || !sheets.monthlyPV || !Array.isArray(sheets.monthlyPV)) return;
-  const monthly = sheets.monthlyPV;
-
-  destroyChart('monthly');
-  const ctx = document.getElementById('monthlyChart').getContext('2d');
-  const T = 1250000;
-  const D = monthly.map(m => m.pv);
-  const L = monthly.map(m => m.monthLabel);
-  const G = D.map(v => Math.max(0, T - v));
-
-  charts.monthly = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: L,
-      datasets: [
-        { label: 'PV', data: D, backgroundColor: O + '0.85)', borderRadius: 6, barPercentage: .5 },
-        { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: .5 }
-      ]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { stacked: true, grid: { display: false } },
-        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1e6).toFixed(1) + 'M' } }
-      },
-      animation: {
-        onComplete: function () {
-          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
-          D.forEach((v, i) => {
-            const b = c.getDatasetMeta(0).data[i];
-            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
-            x.fillText(v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : v.toLocaleString(), b.x, b.y - 14);
-          });
-          const yS = c.scales.y, tY = yS.getPixelForValue(T);
-          x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
-          x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
-          x.fillStyle = gold; x.font = 'bold 11px Noto Sans Thai'; x.textAlign = 'right';
-          x.fillText('Target: 1,250,000', c.chartArea.right, tY - 6);
-          x.restore();
-        }
-      }
-    }
-  });
-}
-
-// ─── TEAM PERFORMANCE CHART ──────────────────────────
-function updateTeamChart(sheets) {
-  if (!sheets || !sheets.teamPerformance || !sheets.teamPerformance.teams) return;
-  const teams = sheets.teamPerformance.teams;
-
-  destroyChart('team');
-  const ctx = document.getElementById('teamChart').getContext('2d');
-  const L = teams.map(t => t.team);
-  const D = teams.map(t => t.pvActual);
-  const targets = sheets.targets || {};
-
-  document.getElementById('teamChartSub').textContent = 'สัปดาห์ ' + (sheets.teamPerformance.week || '---');
-
-  const teamColors = [
-    'rgba(236,95,39,0.85)', 'rgba(59,130,235,0.85)', 'rgba(16,185,129,0.85)',
-    'rgba(245,158,11,0.85)', 'rgba(139,92,235,0.85)', 'rgba(236,72,153,0.85)',
-    'rgba(14,165,233,0.85)', 'rgba(34,197,94,0.85)', 'rgba(99,102,241,0.85)',
-    'rgba(244,63,94,0.85)', 'rgba(168,162,158,0.85)'
-  ];
-
-  charts.team = new Chart(ctx, {
-    type: 'bar',
-    data: {
-      labels: L,
-      datasets: [{
-        label: 'CMS PV',
-        data: D,
-        backgroundColor: teamColors.slice(0, L.length),
-        borderRadius: 6,
-        barPercentage: .7,
-      }]
-    },
-    options: {
-      responsive: true, maintainAspectRatio: false,
-      indexAxis: 'y',
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1000).toFixed(0) + 'K' } },
-        y: { grid: { display: false } }
-      },
-      animation: {
-        onComplete: function () {
-          const c = this, x = c.ctx; x.save();
-          c.data.datasets[0].data.forEach((v, i) => {
-            const b = c.getDatasetMeta(0).data[i];
-            x.fillStyle = '#2d2a26'; x.font = 'bold 10px Noto Sans Thai';
-            x.textAlign = 'left'; x.textBaseline = 'middle';
-            x.fillText(v.toLocaleString(), b.x + 6, b.y);
-          });
-          x.restore();
-        }
-      }
-    }
-  });
-}
-
-// ─── TOP CATEGORIES CHARTS ───────────────────────────
-function updateTopCategories(sheets) {
-  if (!sheets || !sheets.topCategories) return;
-  const tc = sheets.topCategories;
-
-  const weekLabel = tc.week || '---';
-  document.getElementById('catPVSub').textContent = weekLabel;
-  document.getElementById('catArticlesSub').textContent = weekLabel;
-
-  // By PV
-  if (tc.byPV && tc.byPV.length > 0) {
-    destroyChart('catPV');
-    const ctx = document.getElementById('catViewsChart').getContext('2d');
-    const colors = [O + '0.95)', O + '0.75)', O + '0.6)', O + '0.45)', O + '0.3)'];
-    charts.catPV = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: tc.byPV.map(c => c.category),
-        datasets: [{ data: tc.byPV.map(c => c.pv), backgroundColor: colors, borderRadius: 6, barPercentage: .6 }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1000).toFixed(0) + 'K' } } },
-        animation: {
-          onComplete: function () {
-            const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
-            c.data.datasets[0].data.forEach((v, i) => {
-              const b = c.getDatasetMeta(0).data[i];
-              x.fillStyle = '#2d2a26'; x.font = 'bold 10px Noto Sans Thai';
-              x.fillText(v.toLocaleString(), b.x, b.y - 8);
-            }); x.restore();
-          }
-        }
-      }
-    });
-  }
-
-  // By Articles
-  if (tc.byArticles && tc.byArticles.length > 0) {
-    destroyChart('catArticles');
-    const ctx = document.getElementById('catArticlesChart').getContext('2d');
-    const colors = ['rgba(59,130,235,0.9)', 'rgba(59,130,235,0.7)', 'rgba(59,130,235,0.55)', 'rgba(59,130,235,0.4)', 'rgba(59,130,235,0.28)'];
-    charts.catArticles = new Chart(ctx, {
-      type: 'bar',
-      data: {
-        labels: tc.byArticles.map(c => c.category),
-        datasets: [{ data: tc.byArticles.map(c => c.articles), backgroundColor: colors, borderRadius: 6, barPercentage: .6 }]
-      },
-      options: {
-        responsive: true, maintainAspectRatio: false,
-        plugins: { legend: { display: false } },
-        scales: { x: { grid: { display: false } }, y: { grid: { color: 'rgba(0,0,0,.05)' } } },
-        animation: {
-          onComplete: function () {
-            const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
-            c.data.datasets[0].data.forEach((v, i) => {
-              const b = c.getDatasetMeta(0).data[i];
-              x.fillStyle = '#2d2a26'; x.font = 'bold 10px Noto Sans Thai';
-              x.fillText(v.toLocaleString(), b.x, b.y - 8);
-            }); x.restore();
-          }
-        }
-      }
-    });
-  }
-}
-
-// ─── TOP 5 ARTICLES ──────────────────────────────────
-function updateTopArticles(sheets) {
-  const list = document.getElementById('topArticlesList');
-  if (!sheets || !sheets.topArticles || !Array.isArray(sheets.topArticles) || sheets.topArticles.length === 0) {
-    list.innerHTML = '<li class="article-item"><div style="grid-column:1/-1;text-align:center;color:#a09890;font-size:12px;">ไม่มีข้อมูล</div></li>';
-    return;
-  }
-
-  document.getElementById('topArticlesSub').textContent = sheets.topCategories ? (sheets.topCategories.week || '') : '';
-
-  list.innerHTML = sheets.topArticles.slice(0, 5).map((a, i) =>
-    '<li class="article-item">' +
-    '<div class="article-rank">' + (i + 1) + '</div>' +
-    '<div class="article-title">' + escHtml(a.title) + '</div>' +
-    '<div class="article-views"><span class="pv-num">' + fmt(a.pv) + '</span><span class="pv-unit">pv</span></div>' +
-    '<div class="article-meta-row"><span class="article-tag">' + escHtml(a.category) + '</span>' +
-    (a.author ? '<span class="article-author">' + escHtml(a.author) + '</span>' : '') + '</div>' +
-    '</li>'
-  ).join('');
-}
-
-function escHtml(s) {
-  const d = document.createElement('div');
-  d.textContent = s || '';
-  return d.innerHTML;
-}
-
-// ─── GSC CHARTS ──────────────────────────────────────
-function updateGSC(gsc) {
-  if (!gsc || gsc.error) return;
-
-  const curr = gsc.currentWeek || {};
-  const prev = gsc.previousWeek || {};
-
-  // Clicks
-  buildGSCChart('searchClicksChart', 'gscClicks',
-    [prev.clicks || 0, curr.clicks || 0],
-    [prev.start || 'ก่อนหน้า', curr.start || 'ปัจจุบัน'],
-    v => (v / 1000).toFixed(0) + 'K');
-  document.getElementById('gscClicksSub').textContent =
-    (curr.start || '') + ' vs ' + (prev.start || '');
-
-  // Impressions
-  buildGSCChart('searchImpressionsChart', 'gscImp',
-    [prev.impressions || 0, curr.impressions || 0],
-    [prev.start || 'ก่อนหน้า', curr.start || 'ปัจจุบัน'],
-    v => (v / 1e6).toFixed(1) + 'M');
-  document.getElementById('gscImpSub').textContent =
-    (curr.start || '') + ' vs ' + (prev.start || '');
-
-  // CTR
-  buildGSCChart('searchCTRChart', 'gscCtr',
-    [prev.ctr || 0, curr.ctr || 0],
-    [prev.start || 'ก่อนหน้า', curr.start || 'ปัจจุบัน'],
-    v => v.toFixed(1) + '%', true);
-  document.getElementById('gscCtrSub').textContent =
-    (curr.start || '') + ' vs ' + (prev.start || '');
-}
-
-function buildGSCChart(canvasId, chartKey, data, labels, tickFmt, isCTR) {
-  destroyChart(chartKey);
-  const ctx = document.getElementById(canvasId).getContext('2d');
-  const colors = [O + '0.5)', O + '0.9)'];
-
-  charts[chartKey] = new Chart(ctx, {
+  allCharts.weekly = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [{ data: data, backgroundColor: colors, borderRadius: 8, barPercentage: .5 }]
+      datasets: [{
+        label: 'PV',
+        data: values,
+        backgroundColor: '#EC5F27',
+        borderRadius: 6,
+        barThickness: 'flex'
+      }]
     },
     options: {
-      responsive: true, maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        x: { grid: { display: false } },
-        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: tickFmt }, beginAtZero: true }
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false }
       },
-      animation: {
-        onComplete: function () {
-          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
-          c.data.datasets[0].data.forEach((v, i) => {
-            const b = c.getDatasetMeta(0).data[i];
-            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai';
-            if (isCTR) x.fillText(v.toFixed(1) + '%', b.x, b.y - 8);
-            else x.fillText(v.toLocaleString(), b.x, b.y - 8);
-          });
-          // Change % annotation
-          if (data.length >= 2 && data[0] > 0) {
-            const change = ((data[1] - data[0]) / data[0] * 100).toFixed(1);
-            const b1 = c.getDatasetMeta(0).data[1];
-            x.fillStyle = parseFloat(change) >= 0 ? '#16a34a' : '#dc2626';
-            x.font = 'bold 10px Noto Sans Thai';
-            x.fillText((parseFloat(change) >= 0 ? '+' : '') + change + '%', b1.x, b1.y - 22);
-          }
-          x.restore();
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
         }
       }
     }
   });
 }
 
-// ─── KEYWORD TABLES ──────────────────────────────────
-function updateKeywords(gsc) {
+function renderMonthlyChart(labels, values, target) {
+  const ctx = document.getElementById('monthlyChart').getContext('2d');
+
+  if (allCharts.monthly) allCharts.monthly.destroy();
+
+  allCharts.monthly = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'PV',
+        data: values,
+        backgroundColor: '#EC5F27',
+        borderRadius: 6,
+        barThickness: 'flex'
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
+        }
+      }
+    }
+  });
+}
+
+function renderCompetitorChart(competitors) {
+  const ctx = document.getElementById('competitorChart').getContext('2d');
+
+  if (allCharts.competitor) allCharts.competitor.destroy();
+
+  const labels = competitors.map(c => c.name || 'N/A');
+  const values = competitors.map(c => c.weeklyPV || 0);
+
+  allCharts.competitor = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [{
+        label: 'PV',
+        data: values,
+        backgroundColor: values.map((v, i) => i === 0 ? '#EC5F27' : '#9CA3AF'),
+        borderRadius: 6
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
+        }
+      }
+    }
+  });
+}
+
+function renderCompetitorYearlyChart(competitors) {
+  const ctx = document.getElementById('competitorYearlyChart').getContext('2d');
+
+  if (allCharts.competitorYearly) allCharts.competitorYearly.destroy();
+
+  const labels = competitors.map(c => c.name || 'N/A');
+  const values2025 = competitors.map(c => c.yearly2025 || 0);
+  const values2026 = competitors.map(c => c.yearly2026 || 0);
+
+  allCharts.competitorYearly = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        {
+          label: '2025',
+          data: values2025,
+          backgroundColor: '#D1D5DB',
+          borderRadius: 4
+        },
+        {
+          label: '2026 YTD',
+          data: values2026,
+          backgroundColor: '#EC5F27',
+          borderRadius: 4
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { position: 'bottom' } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
+        }
+      }
+    }
+  });
+}
+
+function renderTrafficChart(ga4) {
+  const ctx = document.getElementById('trafficChart').getContext('2d');
+
+  if (allCharts.traffic) allCharts.traffic.destroy();
+
+  const sources = ga4.currentWeek?.sources || [];
+  const labels = sources.map(s => s.source || 'N/A');
+  const values = sources.map(s => s.sessions || 0);
+
+  allCharts.traffic = new Chart(ctx, {
+    type: 'doughnut',
+    data: {
+      labels: labels,
+      datasets: [{
+        data: values,
+        backgroundColor: ['#EC5F27', '#F97316', '#FBBF24', '#60A5FA', '#8B5CF6']
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom' }
+      }
+    }
+  });
+}
+
+function renderCategoryCharts(topCat) {
+  if (!topCat) return;
+
+  // Top 5 by PV
+  if (topCat.byPV && topCat.byPV.length > 0) {
+    const ctx = document.getElementById('catViewsChart').getContext('2d');
+    if (allCharts.catViews) allCharts.catViews.destroy();
+
+    const labels = topCat.byPV.map(c => c.category || 'N/A');
+    const values = topCat.byPV.map(c => c.pv || 0);
+
+    allCharts.catViews = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'PV',
+          data: values,
+          backgroundColor: '#EC5F27',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { callback: v => v.toLocaleString('th-TH') }
+          }
+        }
+      }
+    });
+  }
+
+  // Top 5 by Articles
+  if (topCat.byArticles && topCat.byArticles.length > 0) {
+    const ctx = document.getElementById('catArticlesChart').getContext('2d');
+    if (allCharts.catArticles) allCharts.catArticles.destroy();
+
+    const labels = topCat.byArticles.map(c => c.category || 'N/A');
+    const values = topCat.byArticles.map(c => c.articles || 0);
+
+    allCharts.catArticles = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: labels,
+        datasets: [{
+          label: 'Articles',
+          data: values,
+          backgroundColor: '#EC5F27',
+          borderRadius: 6
+        }]
+      },
+      options: {
+        indexAxis: 'y',
+        responsive: true,
+        maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        scales: {
+          x: {
+            beginAtZero: true,
+            ticks: { callback: v => v.toLocaleString('th-TH') }
+          }
+        }
+      }
+    });
+  }
+}
+
+function renderSearchConsoleCharts(gsc) {
+  if (!gsc) return;
+
+  const current = gsc.currentWeek || {};
+  const previous = gsc.previousWeek || {};
+
+  // Clicks Chart
+  const clicksCtx = document.getElementById('searchClicksChart').getContext('2d');
+  if (allCharts.searchClicks) allCharts.searchClicks.destroy();
+
+  allCharts.searchClicks = new Chart(clicksCtx, {
+    type: 'bar',
+    data: {
+      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
+      datasets: [{
+        data: [previous.clicks || 0, current.clicks || 0],
+        backgroundColor: ['#9CA3AF', '#EC5F27'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
+        }
+      }
+    }
+  });
+
+  // Impressions Chart
+  const impressionsCtx = document.getElementById('searchImpressionsChart').getContext('2d');
+  if (allCharts.searchImpressions) allCharts.searchImpressions.destroy();
+
+  allCharts.searchImpressions = new Chart(impressionsCtx, {
+    type: 'bar',
+    data: {
+      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
+      datasets: [{
+        data: [previous.impressions || 0, current.impressions || 0],
+        backgroundColor: ['#9CA3AF', '#EC5F27'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => v.toLocaleString('th-TH') }
+        }
+      }
+    }
+  });
+
+  // CTR Chart
+  const ctrCtx = document.getElementById('searchCTRChart').getContext('2d');
+  if (allCharts.searchCTR) allCharts.searchCTR.destroy();
+
+  allCharts.searchCTR = new Chart(ctrCtx, {
+    type: 'bar',
+    data: {
+      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
+      datasets: [{
+        data: [previous.ctr || 0, current.ctr || 0],
+        backgroundColor: ['#9CA3AF', '#EC5F27'],
+        borderRadius: 6
+      }]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        y: {
+          beginAtZero: true,
+          ticks: { callback: v => (v * 100).toFixed(2) + '%' }
+        }
+      }
+    }
+  });
+}
+
+// Render articles
+function renderArticles(sheets) {
+  if (!sheets || !sheets.topArticles) return;
+
+  const list = document.getElementById('topArticlesList');
+  list.innerHTML = '';
+
+  (sheets.topArticles || []).slice(0, 5).forEach((article, idx) => {
+    const li = document.createElement('li');
+    li.className = 'article-item';
+    li.innerHTML = `
+      <div class="article-rank">${idx + 1}</div>
+      <div class="article-title">${article.title || 'N/A'}</div>
+      <div class="article-views"><span class="pv-num">${formatNumber(article.pv)}</span><span class="pv-unit">pv</span></div>
+      <div class="article-meta-row">
+        <span class="article-tag">${article.category || 'N/A'}</span>
+        <span class="article-author">${article.author || 'N/A'}</span>
+      </div>
+    `;
+    list.appendChild(li);
+  });
+}
+
+// Render keyword tables
+function renderKeywordTables(gsc) {
   if (!gsc) return;
 
   // By Impressions
-  const kwImpBody = document.getElementById('kwImpBody');
-  if (gsc.topKeywordsByImpressions && Array.isArray(gsc.topKeywordsByImpressions) && gsc.topKeywordsByImpressions.length > 0) {
-    document.getElementById('kwImpSub').textContent = (gsc.currentWeek ? gsc.currentWeek.start : '') + ' - ' + (gsc.currentWeek ? gsc.currentWeek.end : '');
-    kwImpBody.innerHTML = gsc.topKeywordsByImpressions.map(k =>
-      '<tr>' +
-      '<td class="kw-name">' + escHtml(k.keyword) + '</td>' +
-      '<td class="kw-num">' + fmt(k.impressions) + '</td>' +
-      '<td class="kw-num">' + fmt(k.clicks) + '</td>' +
-      '<td style="text-align:right;' + (k.ctr > 2 ? 'color:#16a34a;font-weight:700;' : 'color:#a09890;') + '">' + k.ctr + '%</td>' +
-      '</tr>'
-    ).join('');
-  } else {
-    kwImpBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#a09890;">ไม่มีข้อมูล GSC</td></tr>';
-  }
+  const impBody = document.getElementById('keywordsByImpressionsBody');
+  impBody.innerHTML = '';
+
+  (gsc.topKeywordsByImpressions || []).slice(0, 5).forEach(kw => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="kw-name">${kw.keyword || 'N/A'}</td>
+      <td class="kw-num">${formatNumber(kw.impressions)}</td>
+      <td class="kw-num">${formatNumber(kw.clicks)}</td>
+      <td class="kw-num">${((kw.ctr || 0) * 100).toFixed(2)}%</td>
+    `;
+    impBody.appendChild(tr);
+  });
 
   // By Clicks
-  const kwClicksBody = document.getElementById('kwClicksBody');
-  if (gsc.topKeywordsByClicks && Array.isArray(gsc.topKeywordsByClicks) && gsc.topKeywordsByClicks.length > 0) {
-    document.getElementById('kwClicksSub').textContent = (gsc.currentWeek ? gsc.currentWeek.start : '') + ' - ' + (gsc.currentWeek ? gsc.currentWeek.end : '');
-    kwClicksBody.innerHTML = gsc.topKeywordsByClicks.map(k =>
-      '<tr>' +
-      '<td class="kw-name">' + escHtml(k.keyword) + '</td>' +
-      '<td class="kw-num">' + fmt(k.clicks) + '</td>' +
-      '<td class="kw-num">' + fmt(k.impressions) + '</td>' +
-      '<td style="text-align:right;' + (k.ctr > 2 ? 'color:#16a34a;font-weight:700;' : 'color:#a09890;') + '">' + k.ctr + '%</td>' +
-      '</tr>'
-    ).join('');
+  const clickBody = document.getElementById('keywordsByClicksBody');
+  clickBody.innerHTML = '';
+
+  (gsc.topKeywordsByClicks || []).slice(0, 5).forEach(kw => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="kw-name">${kw.keyword || 'N/A'}</td>
+      <td class="kw-num">${formatNumber(kw.clicks)}</td>
+      <td class="kw-num">${formatNumber(kw.impressions)}</td>
+      <td class="kw-num">${((kw.ctr || 0) * 100).toFixed(2)}%</td>
+    `;
+    clickBody.appendChild(tr);
+  });
+}
+
+// Render team performance
+function renderTeamPerformance(sheets) {
+  if (!sheets || !sheets.teamPerformance) return;
+
+  const team = sheets.teamPerformance;
+  const body = document.getElementById('teamPerformanceBody');
+  body.innerHTML = '';
+
+  (team.teams || []).forEach(t => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="kw-name">${t.team || 'N/A'}</td>
+      <td class="kw-num">${formatNumber(t.pvActual)}</td>
+      <td class="kw-num">${formatNumber(t.pvTarget)}</td>
+      <td class="kw-num">${formatNumber(t.articles)}</td>
+      <td class="kw-num">${formatNumber(t.articlesTarget)}</td>
+      <td class="kw-num">${Math.round(t.pvPerArticle || 0)}</td>
+      <td class="kw-num" style="color: ${t.gapPct >= 0 ? '#16a34a' : '#dc2626'};">${(t.gapPct || 0).toFixed(1)}%</td>
+    `;
+    body.appendChild(tr);
+  });
+}
+
+// Render analysis
+function renderAnalysis(data) {
+  const analysisBox = document.getElementById('analysisBox');
+  const analysisText = document.getElementById('analysisText');
+
+  if (data.sheets && data.sheets.analysis) {
+    analysisText.innerHTML = data.sheets.analysis;
   } else {
-    kwClicksBody.innerHTML = '<tr><td colspan="4" style="text-align:center;color:#a09890;">ไม่มีข้อมูล GSC</td></tr>';
+    analysisText.textContent = 'ข้อมูลวิเคราะห์ไม่พร้อมใช้งาน';
   }
 }
 
-// ─── AUTO-GENERATE ANALYSIS ──────────────────────────
-function updateAnalysis(data) {
-  const el = document.getElementById('analysisContent');
-  const s = data.sheets || {};
-  const gsc = data.gsc || {};
-
-  let html = '';
-
-  // KPI summary
-  if (s.kpi) {
-    const k = s.kpi;
-    html += '<p><strong>ภาพรวม TrueHit Performance:</strong></p>';
-    html += '<p>TrueHit PV: <span class="' + (k.totalPVChange >= 0 ? 'hl-g' : 'hl-r') + '">' + fmt(k.totalPV) + '</span> (' +
-      '<span class="' + (k.totalPVChange >= 0 ? 'hl-g' : 'hl-r') + '">' + pctStr(k.totalPVChange) + '</span> จากสัปดาห์ก่อน ' + fmt(k.totalPVPrev) + ') ' +
-      'UIP: <span class="hl-y">' + fmt(k.totalUIP) + '</span> (' + pctStr(k.totalUIPChange) + ') ' +
-      'จำนวนข่าว: <span class="hl-y">' + fmt(k.articles) + '</span> PV/ข่าว: <span class="hl-y">' + fmt(k.pvPerArticle) + '</span></p>';
+// Helper functions
+function showLoading(visible) {
+  const overlay = document.getElementById('loadingOverlay');
+  if (visible) {
+    overlay.classList.add('active');
+  } else {
+    overlay.classList.remove('active');
   }
-
-  // Team Performance
-  if (s.teamPerformance && s.teamPerformance.teams && s.teamPerformance.teams.length > 0) {
-    const teams = s.teamPerformance.teams;
-    html += '<p><strong>Performance ระดับทีม (CMS PV):</strong></p><p>';
-    teams.forEach(t => {
-      const color = t.gapPct >= 30 ? 'hl-g' : t.gapPct >= 15 ? 'hl-y' : 'hl-r';
-      html += '<span class="' + color + '">' + t.team + '</span>: ' + fmt(t.pvActual) + ' PV (' + t.articles + ' ข่าว, ' + fmt(t.pvPerArticle) + ' PV/ข่าว, ' + t.gapPct.toFixed(1) + '% of target) | ';
-    });
-    html += '</p>';
-  }
-
-  // GSC
-  if (gsc.currentWeek && !gsc.error) {
-    const c = gsc.currentWeek;
-    const p = gsc.previousWeek;
-    const clicksChange = p && p.clicks ? pctChange(c.clicks, p.clicks) : 0;
-    const impChange = p && p.impressions ? pctChange(c.impressions, p.impressions) : 0;
-
-    html += '<p><strong>SEO Performance (GSC):</strong></p>';
-    html += '<p>Clicks: <span class="' + (clicksChange >= 0 ? 'hl-g' : 'hl-r') + '">' + fmt(c.clicks) + ' (' + pctStr(clicksChange) + ')</span> | ';
-    html += 'Impressions: <span class="' + (impChange >= 0 ? 'hl-g' : 'hl-r') + '">' + fmt(c.impressions) + ' (' + pctStr(impChange) + ')</span> | ';
-    html += 'CTR: <span class="hl-y">' + (c.ctr || 0) + '%</span></p>';
-  }
-
-  // GA4
-  if (data.ga4 && data.ga4.currentWeek && data.ga4.currentWeek.channels && Array.isArray(data.ga4.currentWeek.channels)) {
-    html += '<p><strong>Traffic Source (GA4):</strong></p><p>';
-    data.ga4.currentWeek.channels.forEach(ch => {
-      html += ch.channel + ': <span class="hl-y">' + fmt(ch.sessions) + '</span> sessions | ';
-    });
-    html += '</p>';
-  }
-
-  if (!html) {
-    html = '<p style="color:#a09890;">ไม่มีข้อมูลเพียงพอสำหรับการวิเคราะห์</p>';
-  }
-
-  el.innerHTML = html;
 }
 
-// ─── SCROLL TO TOP ───────────────────────────────────
-window.addEventListener('scroll', function () {
+function updateStatusBar(status, text) {
+  const bar = document.getElementById('statusBar');
+  const statusText = document.getElementById('statusText');
+
+  bar.classList.remove('loading', 'error', 'success');
+  if (status === 'loading') {
+    bar.classList.add('loading');
+  } else if (status === 'error') {
+    bar.classList.add('error');
+  }
+
+  statusText.textContent = text;
+}
+
+function toggleNav() {
+  const menu = document.getElementById('mainNav');
+  menu.classList.toggle('open');
+}
+
+function setupScrollTop() {
   const btn = document.getElementById('scrollTopBtn');
-  btn.classList.toggle('visible', window.scrollY > 400);
-});
+  window.addEventListener('scroll', () => {
+    if (window.scrollY > 300) {
+      btn.classList.add('visible');
+    } else {
+      btn.classList.remove('visible');
+    }
+  });
+}
 
-// ─── INIT ────────────────────────────────────────────
-document.addEventListener('DOMContentLoaded', function () {
-  // Check URL params for week
-  const params = new URLSearchParams(window.location.search);
-  const week = params.get('week') || '';
-  if (week) document.getElementById('weekSelect').value = week;
-
-  loadWeek(week);
-});
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' });
+}
 </script>
 </body>
 </html>
