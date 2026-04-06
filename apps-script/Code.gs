@@ -54,7 +54,7 @@ function doGet(e) {
 // ─── COMBINED ─────────────────────────────────────────────
 function getAllData(weekParam) {
   const cache = CacheService.getScriptCache();
-  const cacheKey = 'allData_v3_' + (weekParam || 'latest');
+  const cacheKey = 'allData_v5_' + (weekParam || 'latest');
   const cached = cache.get(cacheKey);
   if (cached) {
     try { return JSON.parse(cached); } catch(e) { /* corrupt cache, continue */ }
@@ -87,6 +87,7 @@ function getSheetsData(weekParam) {
     teamPerformance: getTeamPerformance(ss, weekParam),
     weeklyPV: getWeeklyPV(ss),
     monthlyPV: getMonthlyPV(ss),
+    yearlyPV: getYearlyPV(ss),
     competitors: getCompetitors(ss, weekParam),
     topCategories: getTopCategories(ss, weekParam),
     topArticles: getTopArticles(ss, weekParam),
@@ -209,7 +210,7 @@ function getWeeklyPV(ss) {
       }
     }
 
-    return weeks.slice(-4); // last 4 weeks
+    return weeks; // return ALL weeks — frontend will slice for chart display
   } catch (e) {
     return [];
   }
@@ -281,6 +282,71 @@ function getMonthlyPV(ss) {
     }
 
     return months;
+  } catch (e) {
+    return [];
+  }
+}
+
+/**
+ * Yearly PV — ดึงจากชีต "uip-pv yoy truehit"
+ * Returns array of { year, pv } for yearly trend chart
+ */
+function getYearlyPV(ss) {
+  try {
+    let sheet = ss.getSheetByName('uip-pv yoy truehit');
+    if (!sheet) {
+      // Try to find sheet with similar name
+      const sheets = ss.getSheets();
+      for (let i = 0; i < sheets.length; i++) {
+        const name = sheets[i].getName().toLowerCase();
+        if (name.includes('yoy') && name.includes('truehit')) {
+          sheet = sheets[i];
+          break;
+        }
+      }
+    }
+    if (!sheet) return [];
+
+    const data = sheet.getDataRange().getValues();
+    if (data.length < 2) return [];
+
+    const header = data[0];
+    const colYear = findCol(header, ['year', 'ปี', 'year_label']);
+    const colPV = findCol(header, ['pageview', 'page view', 'pv', 'total pv', 'total pageview']);
+
+    const years = [];
+    for (let i = 1; i < data.length; i++) {
+      const row = data[i];
+
+      let yearLabel = '';
+      if (colYear >= 0) {
+        yearLabel = String(row[colYear]);
+      } else if (row[0]) {
+        yearLabel = String(row[0]);
+      }
+
+      if (!yearLabel || yearLabel.trim() === '') continue;
+
+      let pv = 0;
+      if (colPV >= 0) {
+        pv = parseNum(row[colPV]);
+      } else {
+        // Find first large number
+        for (let j = 1; j < row.length; j++) {
+          const val = parseNum(row[j]);
+          if (val > 10000) {
+            pv = val;
+            break;
+          }
+        }
+      }
+
+      if (pv > 0 || yearLabel) {
+        years.push({ year: yearLabel, pv: pv });
+      }
+    }
+
+    return years;
   } catch (e) {
     return [];
   }
@@ -463,7 +529,21 @@ function getTopCategories(ss, weekParam) {
     if (colWeekLabel >= 0) {
       const allWeeks = [...new Set(data.slice(1).map(r => String(r[colWeekLabel])).filter(w => w && w.trim() !== ''))];
       allWeeks.sort();
-      latestWeek = weekParam || (allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '');
+
+      // If weekParam is "weekN" format, get the Nth week or fallback to latest
+      if (weekParam && weekParam.match(/^week(\d+)$/i)) {
+        const weekNum = parseInt(weekParam.match(/^week(\d+)$/i)[1], 10);
+        // allWeeks are sorted chronologically, so weekN = allWeeks[N-1]
+        if (weekNum > 0 && weekNum <= allWeeks.length) {
+          latestWeek = allWeeks[weekNum - 1];
+        } else {
+          latestWeek = allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '';
+        }
+      } else if (weekParam && allWeeks.includes(weekParam)) {
+        latestWeek = weekParam;
+      } else {
+        latestWeek = allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '';
+      }
     }
 
     // Aggregate by category for target week
@@ -525,7 +605,21 @@ function getTopArticles(ss, weekParam) {
     if (colWeekLabel >= 0) {
       const allWeeks = [...new Set(data.slice(1).map(r => String(r[colWeekLabel])).filter(w => w && w.trim() !== ''))];
       allWeeks.sort();
-      latestWeek = weekParam || (allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '');
+
+      // If weekParam is "weekN" format, get the Nth week or fallback to latest
+      if (weekParam && weekParam.match(/^week(\d+)$/i)) {
+        const weekNum = parseInt(weekParam.match(/^week(\d+)$/i)[1], 10);
+        // allWeeks are sorted chronologically, so weekN = allWeeks[N-1]
+        if (weekNum > 0 && weekNum <= allWeeks.length) {
+          latestWeek = allWeeks[weekNum - 1];
+        } else {
+          latestWeek = allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '';
+        }
+      } else if (weekParam && allWeeks.includes(weekParam)) {
+        latestWeek = weekParam;
+      } else {
+        latestWeek = allWeeks.length > 0 ? allWeeks[allWeeks.length - 1] : '';
+      }
     }
 
     const articles = [];
@@ -557,28 +651,38 @@ function getTopArticles(ss, weekParam) {
 function getKPI(ss, weekParam) {
   try {
     const weekly = getWeeklyPV(ss);
-    if (!Array.isArray(weekly) || weekly.length < 2) {
-      // If less than 2 weeks, return what we have
-      if (weekly.length === 1) {
-        return {
-          totalPV: weekly[0].pv,
-          totalPVPrev: 0,
-          totalPVChange: 0,
-          totalUIP: weekly[0].uip,
-          totalUIPPrev: 0,
-          totalUIPChange: 0,
-          articles: weekly[0].articles,
-          articlesPrev: 0,
-          articlesChange: 0,
-          pvPerArticle: weekly[0].articles > 0 ? Math.round(weekly[0].pv / weekly[0].articles) : 0,
-          pvPerArticlePrev: 0,
-        };
+    if (!Array.isArray(weekly) || weekly.length === 0) return {};
+
+    // Determine which week index to use based on weekParam
+    let currIdx = weekly.length - 1; // default: latest
+    if (weekParam && weekParam.match(/^week(\d+)$/i)) {
+      const weekNum = parseInt(weekParam.match(/^week(\d+)$/i)[1], 10);
+      if (weekNum > 0 && weekNum <= weekly.length) {
+        currIdx = weekNum - 1;
       }
-      return {};
     }
 
-    const curr = weekly[weekly.length - 1];
-    const prev = weekly[weekly.length - 2];
+    const prevIdx = currIdx > 0 ? currIdx - 1 : -1;
+
+    if (prevIdx < 0) {
+      // Only one week available
+      return {
+        totalPV: weekly[currIdx].pv,
+        totalPVPrev: 0,
+        totalPVChange: 0,
+        totalUIP: weekly[currIdx].uip,
+        totalUIPPrev: 0,
+        totalUIPChange: 0,
+        articles: weekly[currIdx].articles,
+        articlesPrev: 0,
+        articlesChange: 0,
+        pvPerArticle: weekly[currIdx].articles > 0 ? Math.round(weekly[currIdx].pv / weekly[currIdx].articles) : 0,
+        pvPerArticlePrev: 0,
+      };
+    }
+
+    const curr = weekly[currIdx];
+    const prev = weekly[prevIdx];
 
     return {
       totalPV: curr.pv,

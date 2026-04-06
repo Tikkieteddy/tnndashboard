@@ -878,7 +878,10 @@ async function init() {
             }
             currentWeek = Math.max(...weeks);
         } catch (e) {
-            currentWeek = 13;
+            // Auto-detect current week
+            const firstMonday = new Date(2025, 11, 29);
+            const now = new Date();
+            currentWeek = Math.max(1, Math.ceil((now - firstMonday) / (7 * 24 * 60 * 60 * 1000)));
         }
     }
 

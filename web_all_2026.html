@@ -553,10 +553,19 @@
 <script>
 // Configuration
 const API_URL = 'https://script.google.com/macros/s/AKfycbxnYZ7qHdFHPKutohScLlU9_2eljVWTGU3__lKhUXJuHZJ8WkyuJbF7LOa4U2JsCmHJww/exec';
-const WEEKS_COUNT = 13;
+
+// Auto-calculate current week number based on date (Week 1 = Dec 29, 2025)
+function getCurrentWeekNumber() {
+  const firstMonday = new Date(2025, 11, 29); // Dec 29 2025
+  const now = new Date();
+  const diff = now - firstMonday;
+  const weekNum = Math.ceil(diff / (7 * 24 * 60 * 60 * 1000));
+  return Math.max(1, weekNum);
+}
+const WEEKS_COUNT = getCurrentWeekNumber();
 
 // Global state
-let currentWeek = getWeekFromURL() || 13;
+let currentWeek = getWeekFromURL() || WEEKS_COUNT;
 let allCharts = {};
 let currentData = null;
 
@@ -732,6 +741,26 @@ function renderKPIs(sheets) {
   document.getElementById('kpiCMSCompare').textContent = `ส่วนต่าง ${formatNumber(totalPV - cmsVal)} PV (${cmsPercent.toFixed(1)}%) | CMS ${formatNumber(cmsVal)} / Truehit ${formatNumber(totalPV)}`;
 }
 
+// Chart constants
+const O = 'rgba(236,95,39,';
+const gapC = 'rgba(220,38,38,0.15)';
+const gold = '#d97706';
+const competitorColorMap = {
+  'TNN':'rgba(236,95,39,0.95)','PPTV':'rgba(59,130,235,0.85)','Nation':'rgba(16,185,129,0.85)',
+  'Bright':'rgba(245,158,11,0.85)','PostToday':'rgba(139,92,235,0.85)','Prachachat':'rgba(236,72,153,0.85)',
+  'BkkBiz':'rgba(14,165,233,0.85)','Thansettakij':'rgba(34,197,94,0.85)','BangkokPost':'rgba(99,102,241,0.85)',
+  'Amarin':'rgba(244,63,94,0.85)','Khaosod':'rgba(251,191,36,0.85)'
+};
+const catColors = ['rgba(6,214,160,.85)','rgba(59,130,235,.85)','rgba(139,92,235,.85)','rgba(251,191,36,.85)','rgba(236,72,153,.85)'];
+const chColors = [
+  'rgba(59,130,235,0.85)','rgba(236,95,39,0.85)','rgba(16,185,129,0.85)',
+  'rgba(139,92,235,0.85)','rgba(156,163,175,0.7)','rgba(236,72,153,0.85)',
+  'rgba(245,158,11,0.85)','rgba(244,63,94,0.85)'
+];
+
+Chart.defaults.color = '#8c8680';
+Chart.defaults.font.family = "'Noto Sans Thai',sans-serif";
+
 // Render charts
 function renderCharts(data) {
   if (!data.sheets) return;
@@ -748,10 +777,14 @@ function renderCharts(data) {
     });
   }
 
-  // Weekly Chart
+  // Weekly Chart — show last 4 weeks ending at selected week
   if (Array.isArray(sheets.weeklyPV) && sheets.weeklyPV.length > 0) {
-    const weeklyLabels = sheets.weeklyPV.map(d => d.weekLabel || 'N/A');
-    const weeklyValues = sheets.weeklyPV.map(d => d.pv || 0);
+    // Get 4 weeks ending at currentWeek (or last 4 if less data)
+    const endIdx = Math.min(currentWeek, sheets.weeklyPV.length);
+    const startIdx = Math.max(0, endIdx - 4);
+    const last4 = sheets.weeklyPV.slice(startIdx, endIdx);
+    const weeklyLabels = last4.map(d => d.weekLabel || 'N/A');
+    const weeklyValues = last4.map(d => d.pv || 0);
 
     document.getElementById('weeklyTarget').textContent = `Target ${formatNumber(totalWeeklyTarget)}/สัปดาห์`;
     renderWeeklyChart(weeklyLabels, weeklyValues, totalWeeklyTarget);
@@ -766,7 +799,18 @@ function renderCharts(data) {
     renderMonthlyChart(monthlyLabels, monthlyValues, totalMonthlyTarget);
   }
 
-  // Competitor Chart — new format: sheets.competitors = { weekly: [...], daily: [...] }
+  // Yearly Chart — uses yearlyPV data if available, or shows YTD from monthly sums
+  if (sheets.yearlyPV && sheets.yearlyPV.length > 0) {
+    renderYearlyChart(sheets.yearlyPV);
+  } else if (Array.isArray(sheets.monthlyPV) && sheets.monthlyPV.length > 0) {
+    // Calculate YTD from monthly data
+    const ytd = sheets.monthlyPV.reduce((sum, m) => sum + (m.pv || 0), 0);
+    renderYearlyChart([
+      { year: '2026 (YTD)', pv: ytd }
+    ]);
+  }
+
+  // Competitor Chart
   const compWeekly = sheets.competitors && sheets.competitors.weekly
     ? sheets.competitors.weekly
     : (Array.isArray(sheets.competitors) ? sheets.competitors : []);
@@ -774,7 +818,7 @@ function renderCharts(data) {
     renderCompetitorChart(compWeekly);
   }
 
-  // Competitor Yearly Chart (uses same data for now)
+  // Competitor Yearly Chart
   if (compWeekly.length > 0) {
     renderCompetitorYearlyChart(compWeekly);
   }
@@ -798,31 +842,44 @@ function renderCharts(data) {
 // Chart rendering functions
 function renderWeeklyChart(labels, values, target) {
   const ctx = document.getElementById('weeklyChart').getContext('2d');
-
   if (allCharts.weekly) allCharts.weekly.destroy();
+
+  const T = target || 0;
+  const G = values.map(v => Math.max(0, T - v));
+  const P = values.map(v => T > 0 ? (((v - T) / T) * 100).toFixed(1) : '0');
 
   allCharts.weekly = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [{
-        label: 'PV',
-        data: values,
-        backgroundColor: '#EC5F27',
-        borderRadius: 6,
-        barThickness: 'flex'
-      }]
+      datasets: [
+        { label: 'PV', data: values, backgroundColor: O + '0.85)', borderRadius: 6, barPercentage: 0.6 },
+        { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: 0.6 }
+      ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false }
-      },
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1000).toFixed(0) + 'K' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai'; x.fillText(v.toLocaleString(), b.x, b.y - 24);
+            x.fillStyle = '#dc2626'; x.font = 'bold 10px Noto Sans Thai'; x.fillText('Gap: ' + P[i] + '%', b.x, b.y - 10);
+          });
+          if (T > 0) {
+            const yS = c.scales.y, tY = yS.getPixelForValue(T);
+            x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
+            x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
+            x.fillStyle = gold; x.font = 'bold 11px Noto Sans Thai'; x.textAlign = 'right';
+            x.fillText('Target: ' + T.toLocaleString(), c.chartArea.right, tY - 6);
+          }
+          x.restore();
         }
       }
     }
@@ -831,29 +888,101 @@ function renderWeeklyChart(labels, values, target) {
 
 function renderMonthlyChart(labels, values, target) {
   const ctx = document.getElementById('monthlyChart').getContext('2d');
-
   if (allCharts.monthly) allCharts.monthly.destroy();
+
+  const T = target || 0;
+  const G = values.map(v => Math.max(0, T - v));
+  const P = values.map(v => T > 0 ? (((v - T) / T) * 100).toFixed(1) : '0');
+  const bgColors = values.map((v, i) => i === values.length - 1 ? O + '0.55)' : O + '0.85)');
 
   allCharts.monthly = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
-      datasets: [{
-        label: 'PV',
-        data: values,
-        backgroundColor: '#EC5F27',
-        borderRadius: 6,
-        barThickness: 'flex'
-      }]
+      datasets: [
+        { label: 'PV', data: values, backgroundColor: bgColors, borderRadius: 6, barPercentage: 0.5 },
+        { label: 'Gap', data: G, backgroundColor: gapC, borderRadius: 6, barPercentage: 0.5 }
+      ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
+      responsive: true, maintainAspectRatio: false,
       plugins: { legend: { display: false } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1e6).toFixed(1) + 'M' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          c.data.datasets[0].data.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai'; x.fillText(v.toLocaleString(), b.x, b.y - 24);
+            x.fillStyle = '#dc2626'; x.font = 'bold 10px Noto Sans Thai'; x.fillText('Gap: ' + P[i] + '%', b.x, b.y - 10);
+          });
+          if (T > 0) {
+            const yS = c.scales.y, tY = yS.getPixelForValue(T);
+            x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
+            x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
+            x.fillStyle = gold; x.font = 'bold 11px Noto Sans Thai'; x.textAlign = 'right';
+            x.fillText('Target: ' + T.toLocaleString(), c.chartArea.right, tY - 6);
+          }
+          x.restore();
+        }
+      }
+    }
+  });
+}
+
+function renderYearlyChart(yearlyData) {
+  const ctx = document.getElementById('yearlyChart').getContext('2d');
+  if (allCharts.yearly) allCharts.yearly.destroy();
+
+  const T = 15000000; // Annual target
+  const labels = yearlyData.map(d => d.year || 'N/A');
+  const values = yearlyData.map(d => d.pv || 0);
+  const ops = values.map((v, i) => i === values.length - 1 ? 0.9 : 0.5 + (i * 0.1));
+  const YoY = values.map((v, i) => i > 0 ? ((v - values[i - 1]) / values[i - 1] * 100).toFixed(1) : null);
+  const gapData = values.map((v, i) => i === values.length - 1 ? Math.max(0, T - v) : 0);
+
+  allCharts.yearly = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels: labels,
+      datasets: [
+        { label: 'PV', data: values, backgroundColor: ops.map(o => O + o + ')'), borderRadius: 8, barPercentage: 0.55 },
+        { label: 'Gap', data: gapData, backgroundColor: gapC, borderRadius: 8, barPercentage: 0.55 }
+      ]
+    },
+    options: {
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
+      scales: {
+        x: { stacked: true, grid: { display: false } },
+        y: { stacked: true, grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1e6).toFixed(0) + 'M' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          values.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            x.fillStyle = '#2d2a26'; x.font = 'bold 12px Noto Sans Thai';
+            x.fillText(v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : (v / 1e3).toFixed(0) + 'K', b.x, b.y - 22);
+            if (YoY[i] !== null) {
+              const yoyTxt = 'YoY ' + (parseFloat(YoY[i]) >= 0 ? '+' : '') + YoY[i] + '%';
+              x.fillStyle = parseFloat(YoY[i]) >= 0 ? '#16a34a' : '#dc2626'; x.font = 'bold 10px Noto Sans Thai';
+              x.fillText(yoyTxt, b.x, b.y - 8);
+            }
+            if (i === values.length - 1) {
+              const gapPct = T > 0 ? (((v - T) / T) * 100).toFixed(1) : '0';
+              x.fillStyle = '#dc2626'; x.font = 'bold 10px Noto Sans Thai'; x.fillText('Gap: ' + gapPct + '%', b.x, b.y - 8);
+            }
+          });
+          const yS = c.scales.y, tY = yS.getPixelForValue(T);
+          x.strokeStyle = gold; x.lineWidth = 2; x.setLineDash([6, 4]);
+          x.beginPath(); x.moveTo(c.chartArea.left, tY); x.lineTo(c.chartArea.right, tY); x.stroke();
+          x.fillStyle = gold; x.font = 'bold 11px Noto Sans Thai'; x.textAlign = 'right';
+          x.fillText('2026 Target: 15M', c.chartArea.right, tY - 6);
+          x.restore();
         }
       }
     }
@@ -862,18 +991,14 @@ function renderMonthlyChart(labels, values, target) {
 
 function renderCompetitorChart(competitors) {
   const ctx = document.getElementById('competitorChart').getContext('2d');
-
   if (allCharts.competitor) allCharts.competitor.destroy();
 
-  const labels = competitors.map(c => c.name || 'N/A');
-  const values = competitors.map(c => c.weeklyPV || 0);
-  const changes = competitors.map(c => c.change || 0);
-
-  // Highlight TNN in orange, others in gray
-  const colors = competitors.map(c => {
-    const name = (c.name || c.nameKey || '').toLowerCase();
-    return name === 'tnn' ? '#EC5F27' : '#9CA3AF';
-  });
+  // Sort by current PV descending
+  const sorted = [...competitors].sort((a, b) => (b.weeklyPV || 0) - (a.weeklyPV || 0));
+  const labels = sorted.map(c => c.name || 'N/A');
+  const values = sorted.map(c => c.weeklyPV || 0);
+  const pcts = sorted.map(c => c.change || 0);
+  const barColors = sorted.map(c => competitorColorMap[c.name] || 'rgba(180,170,160,0.6)');
 
   allCharts.competitor = new Chart(ctx, {
     type: 'bar',
@@ -882,30 +1007,29 @@ function renderCompetitorChart(competitors) {
       datasets: [{
         label: 'PV สัปดาห์นี้',
         data: values,
-        backgroundColor: colors,
-        borderRadius: 6
+        backgroundColor: barColors,
+        borderRadius: { topLeft: 8, topRight: 8 },
+        barPercentage: 0.7
       }]
     },
     options: {
-      indexAxis: 'y',
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { display: false },
-        tooltip: {
-          callbacks: {
-            afterLabel: function(context) {
-              const idx = context.dataIndex;
-              const pct = changes[idx];
-              return 'เทียบสัปดาห์ก่อน: ' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
-            }
-          }
-        }
-      },
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { display: false } },
       scales: {
-        x: {
-          beginAtZero: true,
-          ticks: { callback: v => v >= 1e6 ? (v/1e6).toFixed(1) + 'M' : v >= 1e3 ? (v/1e3).toFixed(0) + 'K' : v }
+        x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' }, maxRotation: 45, minRotation: 30 } },
+        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : (v / 1e3).toFixed(0) + 'K' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          values.forEach((v, i) => {
+            const b = c.getDatasetMeta(0).data[i];
+            const lbl = v >= 1e6 ? (v / 1e6).toFixed(2) + 'M' : (v / 1e3).toFixed(0) + 'K';
+            const p = pcts[i]; const sign = p >= 0 ? '+' : ''; const pLbl = sign + p.toFixed(1) + '%';
+            x.fillStyle = '#2d2a26'; x.font = 'bold 11px Noto Sans Thai'; x.fillText(lbl, b.x, b.y - 20);
+            x.fillStyle = p >= 0 ? '#16a34a' : '#dc2626'; x.font = 'bold 10px Noto Sans Thai'; x.fillText(pLbl, b.x, b.y - 6);
+          });
+          x.restore();
         }
       }
     }
@@ -914,12 +1038,17 @@ function renderCompetitorChart(competitors) {
 
 function renderCompetitorYearlyChart(competitors) {
   const ctx = document.getElementById('competitorYearlyChart').getContext('2d');
-
   if (allCharts.competitorYearly) allCharts.competitorYearly.destroy();
 
-  const labels = competitors.map(c => c.name || 'N/A');
-  const prevValues = competitors.map(c => c.prevWeeklyPV || c.yearly2025 || 0);
-  const currValues = competitors.map(c => c.weeklyPV || c.yearly2026 || 0);
+  // Use prevWeeklyPV as "สัปดาห์ก่อน" and weeklyPV as "สัปดาห์นี้" with per-competitor colors
+  const sorted = [...competitors].sort((a, b) => (b.prevWeeklyPV || 0) - (a.prevWeeklyPV || 0));
+  const labels = sorted.map(c => c.name || 'N/A');
+  const prevValues = sorted.map(c => c.prevWeeklyPV || 0);
+  const currValues = sorted.map(c => c.weeklyPV || 0);
+  const gaps = currValues.map((v, i) => prevValues[i] > 0 ? ((v - prevValues[i]) / prevValues[i] * 100) : 0);
+
+  const barColorsFull = sorted.map(c => competitorColorMap[c.name] || 'rgba(180,170,160,0.6)');
+  const barColorsFaded = barColorsFull.map(c => c.replace(/[\d.]+\)$/, '0.4)'));
 
   allCharts.competitorYearly = new Chart(ctx, {
     type: 'bar',
@@ -929,25 +1058,42 @@ function renderCompetitorYearlyChart(competitors) {
         {
           label: 'สัปดาห์ก่อน',
           data: prevValues,
-          backgroundColor: '#D1D5DB',
-          borderRadius: 4
+          backgroundColor: barColorsFaded,
+          borderRadius: { topLeft: 6, topRight: 0, bottomLeft: 6, bottomRight: 0 },
+          barPercentage: 0.7, categoryPercentage: 0.8
         },
         {
           label: 'สัปดาห์นี้',
           data: currValues,
-          backgroundColor: '#EC5F27',
-          borderRadius: 4
+          backgroundColor: barColorsFull,
+          borderRadius: { topLeft: 0, topRight: 6, bottomLeft: 0, bottomRight: 6 },
+          barPercentage: 0.7, categoryPercentage: 0.8
         }
       ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { position: 'bottom' } },
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { usePointStyle: true, padding: 12, font: { size: 11, weight: '600' } } } },
       scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
+        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' }, maxRotation: 45, minRotation: 30 } },
+        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => v >= 1e6 ? (v / 1e6).toFixed(1) + 'M' : (v / 1e3).toFixed(0) + 'K' } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          prevValues.forEach((v, i) => {
+            const b25 = c.getDatasetMeta(0).data[i];
+            const lbl = v >= 1e6 ? (v / 1e6).toFixed(0) + 'M' : (v / 1e3).toFixed(0) + 'K';
+            x.fillStyle = 'rgba(0,0,0,0.45)'; x.font = 'bold 9px Noto Sans Thai'; x.fillText(lbl, b25.x, b25.y - 4);
+          });
+          currValues.forEach((v, i) => {
+            const b26 = c.getDatasetMeta(1).data[i];
+            const lbl = v >= 1e6 ? (v / 1e6).toFixed(0) + 'M' : (v / 1e3).toFixed(0) + 'K';
+            x.fillStyle = '#2d2a26'; x.font = 'bold 9px Noto Sans Thai'; x.fillText(lbl, b26.x, b26.y - 16);
+            const gap = gaps[i]; const gapTxt = (gap >= 0 ? '+' : '') + gap.toFixed(0) + '%';
+            x.fillStyle = gap >= 0 ? '#16a34a' : '#dc2626'; x.font = 'bold 9px Noto Sans Thai'; x.fillText(gapTxt, b26.x, b26.y - 4);
+          });
+          x.restore();
         }
       }
     }
@@ -956,27 +1102,51 @@ function renderCompetitorYearlyChart(competitors) {
 
 function renderTrafficChart(ga4) {
   const ctx = document.getElementById('trafficChart').getContext('2d');
-
   if (allCharts.traffic) allCharts.traffic.destroy();
 
-  const channels = ga4.currentWeek?.channels || ga4.currentWeek?.sources || [];
-  const labels = channels.map(s => s.channel || s.source || 'N/A');
-  const values = channels.map(s => s.sessions || 0);
+  const currChannels = ga4.currentWeek?.channels || ga4.currentWeek?.sources || [];
+  const prevChannels = ga4.previousWeek?.channels || ga4.previousWeek?.sources || [];
+  const labels = currChannels.map(s => s.channel || s.source || 'N/A');
+  const currW = currChannels.map(s => s.sessions || 0);
+
+  // Try to match previous week data by channel name
+  const prevW = labels.map(lbl => {
+    const match = prevChannels.find(s => (s.channel || s.source || '') === lbl);
+    return match ? (match.sessions || 0) : 0;
+  });
+  const pcts = currW.map((v, i) => prevW[i] > 0 ? ((v - prevW[i]) / prevW[i] * 100) : 100);
+
+  const prevColors = chColors.slice(0, labels.length).map(c => c.replace(/[\d.]+\)$/, '0.35)'));
+  const currColors = chColors.slice(0, labels.length);
 
   allCharts.traffic = new Chart(ctx, {
-    type: 'doughnut',
+    type: 'bar',
     data: {
       labels: labels,
-      datasets: [{
-        data: values,
-        backgroundColor: ['#EC5F27', '#F97316', '#FBBF24', '#60A5FA', '#8B5CF6']
-      }]
+      datasets: [
+        { label: 'สัปดาห์ก่อน', data: prevW, backgroundColor: prevColors, borderRadius: { topLeft: 6, topRight: 6 }, barPercentage: 0.8, categoryPercentage: 0.65 },
+        { label: 'สัปดาห์นี้', data: currW, backgroundColor: currColors, borderRadius: { topLeft: 6, topRight: 6 }, barPercentage: 0.8, categoryPercentage: 0.65 }
+      ]
     },
     options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: { position: 'bottom' }
+      responsive: true, maintainAspectRatio: false,
+      plugins: { legend: { position: 'top', labels: { usePointStyle: true, pointStyle: 'circle', padding: 16, font: { size: 12, weight: '600' } } } },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { size: 10, weight: '600' }, maxRotation: 35, minRotation: 20 } },
+        y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => v >= 1e3 ? (v / 1e3).toFixed(0) + 'K' : v } }
+      },
+      animation: {
+        onComplete: function() {
+          const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+          currW.forEach((v, i) => {
+            const b = c.getDatasetMeta(1).data[i];
+            const lbl = v >= 1e3 ? (v / 1e3).toFixed(1) + 'K' : v;
+            x.fillStyle = '#2d2a26'; x.font = 'bold 9px Noto Sans Thai'; x.fillText(lbl, b.x, b.y - 18);
+            const p = pcts[i]; const sign = p >= 0 ? '+' : ''; const pLbl = sign + p.toFixed(1) + '%';
+            x.fillStyle = p >= 0 ? '#16a34a' : '#dc2626'; x.font = 'bold 9px Noto Sans Thai'; x.fillText(pLbl, b.x, b.y - 6);
+          });
+          x.restore();
+        }
       }
     }
   });
@@ -985,7 +1155,7 @@ function renderTrafficChart(ga4) {
 function renderCategoryCharts(topCat) {
   if (!topCat) return;
 
-  // Top 5 by PV
+  // Top 5 by PV — colorful horizontal bars with inside labels
   if (topCat.byPV && topCat.byPV.length > 0) {
     const ctx = document.getElementById('catViewsChart').getContext('2d');
     if (allCharts.catViews) allCharts.catViews.destroy();
@@ -997,29 +1167,32 @@ function renderCategoryCharts(topCat) {
       type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'PV',
-          data: values,
-          backgroundColor: '#EC5F27',
-          borderRadius: 6
-        }]
+        datasets: [{ data: values, backgroundColor: catColors.slice(0, values.length), borderRadius: 8, barPercentage: 0.6 }]
       },
       options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: {
-            beginAtZero: true,
-            ticks: { callback: v => v.toLocaleString('th-TH') }
+          x: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: v => (v / 1e3).toFixed(0) + 'K' } },
+          y: { grid: { display: false } }
+        },
+        animation: {
+          onComplete: function() {
+            const c = this, x = c.ctx; x.save(); x.font = 'bold 13px Noto Sans Thai'; x.textBaseline = 'middle';
+            values.forEach((v, i) => {
+              const b = c.getDatasetMeta(0).data[i];
+              const bw = b.x - b.base;
+              if (bw > 80) { x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText(v.toLocaleString(), (b.base + b.x) / 2, b.y); }
+              else { x.fillStyle = '#2d2a26'; x.textAlign = 'left'; x.fillText(v.toLocaleString(), b.x + 8, b.y); }
+            });
+            x.restore();
           }
         }
       }
     });
   }
 
-  // Top 5 by Articles
+  // Top 5 by Articles — colorful with inside labels
   if (topCat.byArticles && topCat.byArticles.length > 0) {
     const ctx = document.getElementById('catArticlesChart').getContext('2d');
     if (allCharts.catArticles) allCharts.catArticles.destroy();
@@ -1031,22 +1204,25 @@ function renderCategoryCharts(topCat) {
       type: 'bar',
       data: {
         labels: labels,
-        datasets: [{
-          label: 'Articles',
-          data: values,
-          backgroundColor: '#EC5F27',
-          borderRadius: 6
-        }]
+        datasets: [{ data: values, backgroundColor: catColors.slice(0, values.length), borderRadius: 8, barPercentage: 0.6 }]
       },
       options: {
-        indexAxis: 'y',
-        responsive: true,
-        maintainAspectRatio: false,
+        indexAxis: 'y', responsive: true, maintainAspectRatio: false,
         plugins: { legend: { display: false } },
         scales: {
-          x: {
-            beginAtZero: true,
-            ticks: { callback: v => v.toLocaleString('th-TH') }
+          x: { grid: { color: 'rgba(0,0,0,.05)' } },
+          y: { grid: { display: false } }
+        },
+        animation: {
+          onComplete: function() {
+            const c = this, x = c.ctx; x.save(); x.font = 'bold 13px Noto Sans Thai'; x.textBaseline = 'middle';
+            values.forEach((v, i) => {
+              const b = c.getDatasetMeta(0).data[i];
+              const bw = b.x - b.base;
+              if (bw > 60) { x.fillStyle = '#fff'; x.textAlign = 'center'; x.fillText(v + ' ข่าว', (b.base + b.x) / 2, b.y); }
+              else { x.fillStyle = '#2d2a26'; x.textAlign = 'left'; x.fillText(v + ' ข่าว', b.x + 8, b.y); }
+            });
+            x.restore();
           }
         }
       }
@@ -1060,86 +1236,70 @@ function renderSearchConsoleCharts(gsc) {
   const current = gsc.currentWeek || {};
   const previous = gsc.previousWeek || {};
 
-  // Clicks Chart
-  const clicksCtx = document.getElementById('searchClicksChart').getContext('2d');
-  if (allCharts.searchClicks) allCharts.searchClicks.destroy();
+  // Helper for GSC comparison charts
+  function makeGSCChart(canvasId, chartKey, prevVal, currVal, color, formatFn, yTickFn) {
+    const ctx = document.getElementById(canvasId).getContext('2d');
+    if (allCharts[chartKey]) allCharts[chartKey].destroy();
+    const gap = prevVal > 0 ? ((currVal - prevVal) / prevVal * 100) : 0;
 
-  allCharts.searchClicks = new Chart(clicksCtx, {
-    type: 'bar',
-    data: {
-      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
-      datasets: [{
-        data: [previous.clicks || 0, current.clicks || 0],
-        backgroundColor: ['#9CA3AF', '#EC5F27'],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
+    allCharts[chartKey] = new Chart(ctx, {
+      type: 'bar',
+      data: {
+        labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
+        datasets: [{
+          data: [prevVal, currVal],
+          backgroundColor: [color.replace(/[\d.]+\)$/, '0.45)'), color],
+          borderRadius: 10, barPercentage: 0.45
+        }]
+      },
+      options: {
+        responsive: true, maintainAspectRatio: false,
+        plugins: { legend: { display: false } },
+        layout: { padding: { bottom: 20 } },
+        scales: {
+          x: { grid: { display: false }, ticks: { font: { size: 11, weight: '600' } } },
+          y: { grid: { color: 'rgba(0,0,0,.05)' }, ticks: { callback: yTickFn } }
+        },
+        animation: {
+          onComplete: function() {
+            const c = this, x = c.ctx; x.save(); x.textAlign = 'center';
+            [prevVal, currVal].forEach((v, i) => {
+              const b = c.getDatasetMeta(0).data[i];
+              x.fillStyle = '#2d2a26'; x.font = 'bold 14px Noto Sans Thai'; x.fillText(formatFn(v), b.x, b.y - 10);
+            });
+            x.fillStyle = gap >= 0 ? '#16a34a' : '#dc2626'; x.font = 'bold 13px Noto Sans Thai';
+            x.fillText((gap >= 0 ? '+' : '') + gap.toFixed(1) + '%',
+              (c.getDatasetMeta(0).data[0].x + c.getDatasetMeta(0).data[1].x) / 2, c.chartArea.bottom + 16);
+            x.restore();
+          }
         }
       }
-    }
-  });
+    });
+  }
 
-  // Impressions Chart
-  const impressionsCtx = document.getElementById('searchImpressionsChart').getContext('2d');
-  if (allCharts.searchImpressions) allCharts.searchImpressions.destroy();
+  // Clicks (blue)
+  makeGSCChart('searchClicksChart', 'searchClicks',
+    previous.clicks || 0, current.clicks || 0,
+    'rgba(59,130,235,0.9)',
+    v => v.toLocaleString(),
+    v => (v / 1000).toFixed(0) + 'K'
+  );
 
-  allCharts.searchImpressions = new Chart(impressionsCtx, {
-    type: 'bar',
-    data: {
-      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
-      datasets: [{
-        data: [previous.impressions || 0, current.impressions || 0],
-        backgroundColor: ['#9CA3AF', '#EC5F27'],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
-        }
-      }
-    }
-  });
+  // Impressions (green)
+  makeGSCChart('searchImpressionsChart', 'searchImpressions',
+    previous.impressions || 0, current.impressions || 0,
+    'rgba(16,185,129,0.9)',
+    v => (v / 1e6).toFixed(2) + 'M',
+    v => (v / 1e6).toFixed(1) + 'M'
+  );
 
-  // CTR Chart
-  const ctrCtx = document.getElementById('searchCTRChart').getContext('2d');
-  if (allCharts.searchCTR) allCharts.searchCTR.destroy();
-
-  allCharts.searchCTR = new Chart(ctrCtx, {
-    type: 'bar',
-    data: {
-      labels: ['สัปดาห์ก่อนหน้า', 'สัปดาห์ปัจจุบัน'],
-      datasets: [{
-        data: [previous.ctr || 0, current.ctr || 0],
-        backgroundColor: ['#9CA3AF', '#EC5F27'],
-        borderRadius: 6
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
-      scales: {
-        y: {
-          beginAtZero: true,
-          ticks: { callback: v => (v * 100).toFixed(2) + '%' }
-        }
-      }
-    }
-  });
+  // CTR (purple)
+  makeGSCChart('searchCTRChart', 'searchCTR',
+    previous.ctr || 0, current.ctr || 0,
+    'rgba(139,92,235,0.9)',
+    v => v.toFixed(1) + '%',
+    v => v.toFixed(1) + '%'
+  );
 }
 
 // Render articles
