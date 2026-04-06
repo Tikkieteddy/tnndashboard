@@ -738,34 +738,45 @@ function renderCharts(data) {
 
   const sheets = data.sheets;
 
+  // Calculate total weekly/monthly targets from team targets
+  let totalWeeklyTarget = 0;
+  let totalMonthlyTarget = 0;
+  if (sheets.targets && typeof sheets.targets === 'object') {
+    Object.values(sheets.targets).forEach(t => {
+      totalWeeklyTarget += (t.weekTarget || 0);
+      totalMonthlyTarget += (t.monthTarget || 0);
+    });
+  }
+
   // Weekly Chart
   if (Array.isArray(sheets.weeklyPV) && sheets.weeklyPV.length > 0) {
     const weeklyLabels = sheets.weeklyPV.map(d => d.weekLabel || 'N/A');
     const weeklyValues = sheets.weeklyPV.map(d => d.pv || 0);
-    const weeklyTarget = sheets.targets?.weeklyPV || 0;
 
-    document.getElementById('weeklyTarget').textContent = `Target ${formatNumber(weeklyTarget)}/สัปดาห์`;
-    renderWeeklyChart(weeklyLabels, weeklyValues, weeklyTarget);
+    document.getElementById('weeklyTarget').textContent = `Target ${formatNumber(totalWeeklyTarget)}/สัปดาห์`;
+    renderWeeklyChart(weeklyLabels, weeklyValues, totalWeeklyTarget);
   }
 
   // Monthly Chart
   if (Array.isArray(sheets.monthlyPV) && sheets.monthlyPV.length > 0) {
     const monthlyLabels = sheets.monthlyPV.map(d => d.monthLabel || 'N/A');
     const monthlyValues = sheets.monthlyPV.map(d => d.pv || 0);
-    const monthlyTarget = sheets.targets?.monthlyPV || 0;
 
-    document.getElementById('monthlyTarget').textContent = `Target ${formatNumber(monthlyTarget)}/เดือน`;
-    renderMonthlyChart(monthlyLabels, monthlyValues, monthlyTarget);
+    document.getElementById('monthlyTarget').textContent = `Target ${formatNumber(totalMonthlyTarget)}/เดือน`;
+    renderMonthlyChart(monthlyLabels, monthlyValues, totalMonthlyTarget);
   }
 
-  // Competitor Chart
-  if (Array.isArray(sheets.competitors) && sheets.competitors.length > 0) {
-    renderCompetitorChart(sheets.competitors);
+  // Competitor Chart — new format: sheets.competitors = { weekly: [...], daily: [...] }
+  const compWeekly = sheets.competitors && sheets.competitors.weekly
+    ? sheets.competitors.weekly
+    : (Array.isArray(sheets.competitors) ? sheets.competitors : []);
+  if (compWeekly.length > 0) {
+    renderCompetitorChart(compWeekly);
   }
 
-  // Competitor Yearly Chart
-  if (Array.isArray(sheets.competitors) && sheets.competitors.length > 0) {
-    renderCompetitorYearlyChart(sheets.competitors);
+  // Competitor Yearly Chart (uses same data for now)
+  if (compWeekly.length > 0) {
+    renderCompetitorYearlyChart(compWeekly);
   }
 
   // Traffic Chart
@@ -856,15 +867,22 @@ function renderCompetitorChart(competitors) {
 
   const labels = competitors.map(c => c.name || 'N/A');
   const values = competitors.map(c => c.weeklyPV || 0);
+  const changes = competitors.map(c => c.change || 0);
+
+  // Highlight TNN in orange, others in gray
+  const colors = competitors.map(c => {
+    const name = (c.name || c.nameKey || '').toLowerCase();
+    return name === 'tnn' ? '#EC5F27' : '#9CA3AF';
+  });
 
   allCharts.competitor = new Chart(ctx, {
     type: 'bar',
     data: {
       labels: labels,
       datasets: [{
-        label: 'PV',
+        label: 'PV สัปดาห์นี้',
         data: values,
-        backgroundColor: values.map((v, i) => i === 0 ? '#EC5F27' : '#9CA3AF'),
+        backgroundColor: colors,
         borderRadius: 6
       }]
     },
@@ -872,11 +890,22 @@ function renderCompetitorChart(competitors) {
       indexAxis: 'y',
       responsive: true,
       maintainAspectRatio: false,
-      plugins: { legend: { display: false } },
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: {
+            afterLabel: function(context) {
+              const idx = context.dataIndex;
+              const pct = changes[idx];
+              return 'เทียบสัปดาห์ก่อน: ' + (pct >= 0 ? '+' : '') + pct.toFixed(1) + '%';
+            }
+          }
+        }
+      },
       scales: {
         x: {
           beginAtZero: true,
-          ticks: { callback: v => v.toLocaleString('th-TH') }
+          ticks: { callback: v => v >= 1e6 ? (v/1e6).toFixed(1) + 'M' : v >= 1e3 ? (v/1e3).toFixed(0) + 'K' : v }
         }
       }
     }
@@ -889,8 +918,8 @@ function renderCompetitorYearlyChart(competitors) {
   if (allCharts.competitorYearly) allCharts.competitorYearly.destroy();
 
   const labels = competitors.map(c => c.name || 'N/A');
-  const values2025 = competitors.map(c => c.yearly2025 || 0);
-  const values2026 = competitors.map(c => c.yearly2026 || 0);
+  const prevValues = competitors.map(c => c.prevWeeklyPV || c.yearly2025 || 0);
+  const currValues = competitors.map(c => c.weeklyPV || c.yearly2026 || 0);
 
   allCharts.competitorYearly = new Chart(ctx, {
     type: 'bar',
@@ -898,14 +927,14 @@ function renderCompetitorYearlyChart(competitors) {
       labels: labels,
       datasets: [
         {
-          label: '2025',
-          data: values2025,
+          label: 'สัปดาห์ก่อน',
+          data: prevValues,
           backgroundColor: '#D1D5DB',
           borderRadius: 4
         },
         {
-          label: '2026 YTD',
-          data: values2026,
+          label: 'สัปดาห์นี้',
+          data: currValues,
           backgroundColor: '#EC5F27',
           borderRadius: 4
         }
@@ -930,9 +959,9 @@ function renderTrafficChart(ga4) {
 
   if (allCharts.traffic) allCharts.traffic.destroy();
 
-  const sources = ga4.currentWeek?.sources || [];
-  const labels = sources.map(s => s.source || 'N/A');
-  const values = sources.map(s => s.sessions || 0);
+  const channels = ga4.currentWeek?.channels || ga4.currentWeek?.sources || [];
+  const labels = channels.map(s => s.channel || s.source || 'N/A');
+  const values = channels.map(s => s.sessions || 0);
 
   allCharts.traffic = new Chart(ctx, {
     type: 'doughnut',
@@ -1150,7 +1179,7 @@ function renderKeywordTables(gsc) {
       <td class="kw-name">${kw.keyword || 'N/A'}</td>
       <td class="kw-num">${formatNumber(kw.impressions)}</td>
       <td class="kw-num">${formatNumber(kw.clicks)}</td>
-      <td class="kw-num">${((kw.ctr || 0) * 100).toFixed(2)}%</td>
+      <td class="kw-num">${(kw.ctr || 0).toFixed(2)}%</td>
     `;
     impBody.appendChild(tr);
   });
@@ -1165,7 +1194,7 @@ function renderKeywordTables(gsc) {
       <td class="kw-name">${kw.keyword || 'N/A'}</td>
       <td class="kw-num">${formatNumber(kw.clicks)}</td>
       <td class="kw-num">${formatNumber(kw.impressions)}</td>
-      <td class="kw-num">${((kw.ctr || 0) * 100).toFixed(2)}%</td>
+      <td class="kw-num">${(kw.ctr || 0).toFixed(2)}%</td>
     `;
     clickBody.appendChild(tr);
   });
