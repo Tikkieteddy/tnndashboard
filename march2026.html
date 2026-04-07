@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Website Performance Dashboard 2026</title>
+<title>Monthly Performance Dashboard - March 2026</title>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
 <style>
   /* === TNN DARK TECH THEME === */
@@ -213,48 +213,48 @@
   .nav-sep{display:none;}
 }
 
-  /* ─── WEEK SELECTOR ─── */
-  .week-selector {
+  /* ─── MONTH SELECTOR ─── */
+  .month-selector {
     background:#fff; border-radius:14px; margin-bottom:20px;
     border:1px solid rgba(0,0,0,.06); box-shadow:0 2px 12px rgba(0,0,0,.05);
     overflow:hidden;
   }
-  .ws-header {
+  .ms-header {
     display:flex; align-items:center; justify-content:space-between;
     padding:14px 22px; cursor:pointer; user-select:none;
     transition:background 0.15s;
   }
-  .ws-header:hover { background:var(--card-bg); }
-  .ws-header-left { display:flex; align-items:center; gap:10px; }
-  .ws-icon { font-size:18px; }
-  .ws-title { font-size:14px; font-weight:700; color:#2d2a26; }
-  .ws-subtitle { font-size:11px; color:#a09890; margin-top:1px; }
-  .ws-arrow {
+  .ms-header:hover { background:var(--card-bg); }
+  .ms-header-left { display:flex; align-items:center; gap:10px; }
+  .ms-icon { font-size:18px; }
+  .ms-title { font-size:14px; font-weight:700; color:#2d2a26; }
+  .ms-subtitle { font-size:11px; color:#a09890; margin-top:1px; }
+  .ms-arrow {
     font-size:12px; color:#a09890; transition:transform 0.3s;
   }
-  .ws-arrow.open { transform:rotate(180deg); }
-  .ws-body {
+  .ms-arrow.open { transform:rotate(180deg); }
+  .ms-body {
     display:none; padding:0 12px 14px;
     border-top:1px solid rgba(0,0,0,.05);
   }
-  .ws-body.open { display:block; }
-  .ws-grid {
+  .ms-body.open { display:block; }
+  .ms-grid {
     display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:8px;
     padding-top:12px;
   }
-  .ws-grid a {
+  .ms-grid a {
     display:block; padding:10px 14px; border-radius:10px; text-decoration:none;
     font-size:12.5px; font-weight:600; color:#5a5550;
     background:#f8f6f3; border:1.5px solid transparent;
     transition:all 0.15s;
   }
-  .ws-grid a:hover { background:rgba(236,95,39,.07); color:#EC5F27; border-color:rgba(236,95,39,.15); }
-  .ws-grid a.ws-active {
+  .ms-grid a:hover { background:rgba(236,95,39,.07); color:#EC5F27; border-color:rgba(236,95,39,.15); }
+  .ms-grid a.ms-active {
     background:rgba(236,95,39,.1); color:#EC5F27; border-color:#EC5F27;
     font-weight:800;
   }
   @media(max-width:900px) {
-    .ws-grid { grid-template-columns:1fr 1fr; }
+    .ms-grid { grid-template-columns:1fr 1fr; }
   }
 
 /* Scroll to top button */
@@ -268,7 +268,7 @@
     .header { padding: 20px 18px; border-radius: 14px; margin-bottom: 18px; }
     .header h1 { font-size: 20px; }
     .header p { font-size: 11px; }
-    .weeks-container { padding: 16px; border-radius: 12px; }
+    .months-container { padding: 16px; border-radius: 12px; }
     .team-box { border-radius: 12px; }
     .analysis-box { padding: 18px; border-radius: 12px; }
     .top5-box { border-radius: 12px; }
@@ -288,8 +288,8 @@
     <span class="nav-sep">|</span>
     <ul class="nav-menu" id="mainNav">
       <li><a href="index.html">Home</a></li>
-      <li><a href="web_all_2026.html" class="active">Web Performance</a></li>
-      <li><a href="monthly.html">Monthly Reviews</a></li>
+      <li><a href="web_all_2026.html">Web Performance</a></li>
+      <li><a href="monthly.html" class="active">Monthly Reviews</a></li>
       <li><a href="team_performance.html">Team Charts</a></li>
       <li><a href="reviews.html">Reviews</a></li>
       <li><a href="tnn_training2026_v1.html">Training</a></li>
@@ -300,120 +300,107 @@
 
 <div class="header">
   <div class="header-text">
-    <h1>Website Performance</h1>
-    <p>ข้อมูลจาก TrueHit Analytics และ cms website | อัปเดตล่าสุด: 6 เมษายน 2569 | สัปดาห์ที่14 (30 มี.ค.-5 เม.ย. 2569)</p>
+    <h1>Monthly Performance — มีนาคม 2569</h1>
+    <p>สรุปภาพรวมเดือนมีนาคม 2569 | Data: TrueHit Analytics, Google Analytics, Google Search Console &amp; CMS</p>
   </div>
 </div>
 
-<!-- Collapsible Week Selector -->
-<div class="week-selector">
-  <div class="ws-header" onclick="toggleWeekSelector()">
-    <div class="ws-header-left">
-      <span class="ws-icon">&#128197;</span>
+<!-- Collapsible Month Selector -->
+<div class="month-selector">
+  <div class="ms-header" onclick="toggleMonthSelector()">
+    <div class="ms-header-left">
+      <span class="ms-icon">&#128197;</span>
       <div>
-        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 14</div>
-        <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
+        <div class="ms-title">ดูข้อมูลย้อนหลัง มกราคม - มีนาคม 2026</div>
+        <div class="ms-subtitle">เลือกเดือนที่ต้องการดู</div>
       </div>
     </div>
-    <span class="ws-arrow" id="wsArrow">&#9660;</span>
+    <span class="ms-arrow" id="msArrow">&#9660;</span>
   </div>
-  <div class="ws-body" id="wsBody">
-    <div class="ws-grid">
-      <a href="web_all_2026_week1.html">Week 1 (29 ธ.ค. 68 - 4 ม.ค. 69)</a>
-      <a href="web_all_2026_week2.html">Week 2 (5-11 ม.ค.)</a>
-      <a href="web_all_2026_week3.html">Week 3 (12-18 ม.ค.)</a>
-      <a href="web_all_2026_week4.html">Week 4 (19-25 ม.ค.)</a>
-      <a href="web_all_2026_week5.html">Week 5 (26 ม.ค. - 1 ก.พ.)</a>
-      <a href="web_all_2026_week6.html">Week 6 (2-8 ก.พ.)</a>
-      <a href="web_all_2026_week7.html">Week 7 (9-15 ก.พ.)</a>
-      <a href="web_all_2026_week8.html">Week 8 (16-22 ก.พ.)</a>
-      <a href="web_all_2026_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
-      <a href="web_all_2026_week10.html">Week 10 (2-8 มี.ค.)</a>
-      <a href="web_all_2026_week11.html">Week 11 (9-15 มี.ค.)</a>
-      <a href="web_all_2026_week12.html">Week 12 (16-22 มี.ค.)</a>
-      <a href="web_all_2026_week13.html">Week 13 (23-29 มี.ค.)</a>
-      <a href="web_all_2026_week14.html" class="ws-active">Week 14 (30 มี.ค.-5 เม.ย.)</a>
+  <div class="ms-body" id="msBody">
+    <div class="ms-grid">
+      <a href="january2026.html">มกราคม 2026</a>
+      <a href="february2026.html">กุมภาพันธ์ 2026</a>
+      <a href="march2026.html" class="ms-active">มีนาคม 2026</a>
     </div>
   </div>
 </div>
 
-
-
-<!-- KPI Row: 3 cards in one line -->
+<!-- KPI Row: Monthly Data -->
 <div class="kpi-row">
   <div class="kpi-hero">
-    <div class="kpi-label">Total Page Views สัปดาห์ล่าสุด</div>
-    <div class="kpi-val">153,200</div>
+    <div class="kpi-label">Total Page Views เดือน</div>
+    <div class="kpi-val">803,402</div>
     <div class="hero-sub">
-      <span class="hero-badge">&#9660; -3.00%</span>
-      <span class="hero-compare">vs สัปดาห์ก่อน 157,941</span>
+      <span class="hero-badge">&#9660; -27.8%</span>
+      <span class="hero-compare">vs เดือนก่อน 1,111,954</span>
     </div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">Total UIP สัปดาห์ล่าสุด</div>
-    <div class="kpi-val">99,500</div>
-    <span class="badge down">&#9660; -1.86%</span>
-    <div class="kpi-sub">เทียบสัปดาห์ก่อน 101,388</div>
+    <div class="kpi-label">Total UIP เดือน</div>
+    <div class="kpi-val">420,000</div>
+    <span class="badge down">&#9660; -4.5%</span>
+    <div class="kpi-sub">เทียบเดือนก่อน 440,000</div>
   </div>
   <div class="kpi-card">
-    <div class="kpi-label">จำนวนข่าว สัปดาห์ล่าสุด</div>
-    <div class="kpi-val">1,337</div>
-    <span class="badge up">&#9650; +90.7%</span>
-    <div class="kpi-sub">เทียบสัปดาห์ก่อน 701 ข่าว</div>
+    <div class="kpi-label">จำนวนข่าว เดือน</div>
+    <div class="kpi-val">2,850</div>
+    <span class="badge up">&#9650; +5.6%</span>
+    <div class="kpi-sub">เทียบเดือนก่อน 2,700 ข่าว</div>
   </div>
   <div class="kpi-card">
     <div class="kpi-label">เฉลี่ย Page Views / ข่าว</div>
-    <div class="kpi-val">115</div>
-    <span class="badge down">&#9660; -48.9%</span>
-    <div class="kpi-sub">เทียบสัปดาห์ก่อน 225 views/ข่าว</div>
+    <div class="kpi-val">282</div>
+    <span class="badge down">&#9660; -31.6%</span>
+    <div class="kpi-sub">เทียบเดือนก่อน 412 views/ข่าว</div>
   </div>
   <div class="kpi-card" style="position:relative;overflow:visible;">
     <div class="kpi-label">สัดส่วน CMS / TrueHit Analytics</div>
-    <div class="kpi-val" style="font-size:28px;color:#EC5F27;">121,642 <span style="font-size:16px;color:#6B7280;">/ 153,200</span></div>
+    <div class="kpi-val" style="font-size:28px;color:#EC5F27;">244,400 <span style="font-size:16px;color:#6B7280;">/ 803,402</span></div>
     <div style="margin:6px 0 4px;background:#e5e7eb;border-radius:6px;height:10px;overflow:hidden;width:100%;">
-      <div style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:79.4%;height:100%;border-radius:6px;"></div>
+      <div style="background:linear-gradient(90deg,#EC5F27,#f59e0b);width:30.4%;height:100%;border-radius:6px;"></div>
     </div>
-    <div class="kpi-sub">ส่วนต่าง -31,558 PV (20.6%) | CMS 121,642 / Truehit 153,200</div>
+    <div class="kpi-sub">ส่วนต่าง 559,002 PV (69.6%) | CMS 244,400 / TrueHit 803,402</div>
   </div>
 </div>
 
 <!-- Weekly / Monthly / Yearly — one row -->
 <div class="grid3">
   <div class="card">
-    <div class="card-title">PV รายสัปดาห์ (4 สัปดาห์)</div>
+    <div class="card-title">PV รายสัปดาห์ (เดือนมี.ค.)</div>
     <div class="card-sub">Target 288,462/สัปดาห์</div>
     <div class="ch sm"><canvas id="weeklyChart"></canvas></div>
-    <div class="chart-note">* สัปดาห์ 30 มี.ค.-5 เม.ย.: ข่าว "ราคาทองคำวันนี้ 1 เม.ย. 2569 เปิดตลาดปรับขึ้น 500" ทำวิวสูงสุด 2,450 PV</div>
+    <div class="chart-note">* PV ลดลงต่อเนื่อง 4 สัปดาห์ติดต่อกัน — ข่าวทองคำและดราม่าโปรตีน 8% ดันวิวสัปดาห์ต้นเดือน</div>
   </div>
   <div class="card">
-    <div class="card-title">PV รายเดือน (ม.ค.-เม.ย.)</div>
+    <div class="card-title">PV รายเดือน (ม.ค.-มี.ค.)</div>
     <div class="card-sub">Target 1,250,000/เดือน</div>
     <div class="ch sm"><canvas id="monthlyChart"></canvas></div>
-    <div class="chart-note">* ก.พ.: เลือกตั้งใหญ่ + ข่าวก้อย-อรัชพรคบพิธา ดันวิวพุ่ง | มี.ค.: มาตรการประหยัดพลังงาน + Social Talk | เม.ย.(ยังไม่จบเดือน): สงกรานต์ + ข่าวเศรษฐกิจ</div>
+    <div class="chart-note">* ก.พ.: กระแสเลือกตั้ง+ดราม่าดารา ดันวิวพุ่ง | มี.ค.: ลดลง -27.8% จากเดือนก่อน</div>
   </div>
   <div class="card">
     <div class="card-title">PV รายปี (5 ปีย้อนหลัง)</div>
-    <div class="card-sub">Target 2026: 15M | uip-pv yoy truehit</div>
+    <div class="card-sub">Target 2026: 15M | YTD: 2,793,519 PV</div>
     <div class="ch sm"><canvas id="yearlyChart"></canvas></div>
   </div>
 </div>
 
-<!-- Competitor (3-column: Weekly + Yearly + Traffic) — one row -->
+<!-- Competitor (3-column: Monthly + Yearly + Traffic) — one row -->
 <div class="grid3">
   <div class="card">
-    <div class="card-title">เปรียบเทียบ PV คู่แข่ง (23-29 มี.ค.)</div>
-    <div class="card-sub">% เปลี่ยนแปลงจากสัปดาห์ 9-15 มี.ค. 2569</div>
+    <div class="card-title">เปรียบเทียบ PV คู่แข่ง (มี.ค. 2569)</div>
+    <div class="card-sub">% เปลี่ยนแปลงจากเดือน ก.พ. 2569</div>
     <div class="ch tall"><canvas id="competitorChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">คู่แข่ง PV เปรียบเทียบรายปี</div>
     <div class="card-sub">2025 Full Year vs 2026 YTD | TrueHit</div>
     <div class="ch tall"><canvas id="competitorYearlyChart"></canvas></div>
-    <div class="chart-note">* ปี 2026 เป็นตัวเลขจริง YTD ณ วันที่ 29 มี.ค. 2569</div>
+    <div class="chart-note">* ปี 2026 เป็นตัวเลขจริง YTD ณ วันที่ 31 มี.ค. 2569</div>
   </div>
   <div class="card">
     <div class="card-title">Traffic Source (Google Analytics)</div>
-    <div class="card-sub">สัปดาห์ 23-29 มี.ค. vs 9-15 มี.ค. | Sessions</div>
+    <div class="card-sub">มี.ค. vs ก.พ. 2569 | Sessions</div>
     <div class="ch tall"><canvas id="trafficChart"></canvas></div>
   </div>
 </div>
@@ -422,47 +409,47 @@
 <div class="grid3">
   <div class="card">
     <div class="card-title">Top 5 Categories ตาม PV</div>
-    <div class="card-sub">สัปดาห์ 23-29 มี.ค. 2569</div>
+    <div class="card-sub">เดือนมี.ค. 2569</div>
     <div class="ch sm"><canvas id="catViewsChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Top 5 Categories ตามจำนวนข่าว</div>
-    <div class="card-sub">สัปดาห์ 23-29 มี.ค. 2569</div>
+    <div class="card-sub">เดือนมี.ค. 2569</div>
     <div class="ch sm"><canvas id="catArticlesChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Top 5 ข่าวยอดวิวสูงสุด</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. 2569</div>
+    <div class="card-sub">เดือนมี.ค. 2569</div>
     <ul class="article-list">
       <li class="article-item">
         <div class="article-rank">1</div>
-        <div class="article-title">ราคาทองคำวันนี้ 1 เม.ย. 2569 เปิดตลาดปรับขึ้น 500</div>
-        <div class="article-views"><span class="pv-num">2,450</span><span class="pv-unit">pv</span></div>
+        <div class="article-title">ราคาทองคำ ปี 2569 แนวโน้มพุ่งสูงสุดในรอบ 10 ปี</div>
+        <div class="article-views"><span class="pv-num">8,500</span><span class="pv-unit">pv</span></div>
         <div class="article-meta-row"><span class="article-tag">Wealth</span><span class="article-author">Siriporn</span></div>
       </li>
       <li class="article-item">
         <div class="article-rank">2</div>
-        <div class="article-title">สงกรานต์ 2569 วันหยุดยาวกี่วัน เริ่มเมื่อไหร่</div>
-        <div class="article-views"><span class="pv-num">2,180</span><span class="pv-unit">pv</span></div>
+        <div class="article-title">สรุปจบในโพสต์เดียว! ดราม่าโปรตีน 8% แป้ง 80% คืออะไร</div>
+        <div class="article-views"><span class="pv-num">6,200</span><span class="pv-unit">pv</span></div>
         <div class="article-meta-row"><span class="article-tag">TNN Exclusive</span><span class="article-author">Yosakrei</span></div>
       </li>
       <li class="article-item">
         <div class="article-rank">3</div>
-        <div class="article-title">พยากรณ์อากาศ 7 วัน ร้อนจัดทั่วไทย อุณหภูมิสูงสุด 42°C</div>
-        <div class="article-views"><span class="pv-num">1,850</span><span class="pv-unit">pv</span></div>
+        <div class="article-title">สภาพอากาศเดือนมีนาคม ร้อนจัดทั่วประเทศ อุณหภูมิสูงสุด 40°C</div>
+        <div class="article-views"><span class="pv-num">5,800</span><span class="pv-unit">pv</span></div>
         <div class="article-meta-row"><span class="article-tag">Earth</span><span class="article-author">Chompoo</span></div>
       </li>
       <li class="article-item">
         <div class="article-rank">4</div>
-        <div class="article-title">ดาวโจนส์ปิดลบ หุ้นเทคโนโลยีร่วงหนัก</div>
-        <div class="article-views"><span class="pv-num">1,620</span><span class="pv-unit">pv</span></div>
-        <div class="article-meta-row"><span class="article-tag">Wealth</span><span class="article-author">Tanvarut</span></div>
+        <div class="article-title">Pursuit Of Jade (ล่าหยก) รวมตอน EP.1-12 สรุปทั้งหมด</div>
+        <div class="article-views"><span class="pv-num">5,400</span><span class="pv-unit">pv</span></div>
+        <div class="article-meta-row"><span class="article-tag">บันเทิง</span><span class="article-author">Wachiraya</span></div>
       </li>
       <li class="article-item">
         <div class="article-rank">5</div>
-        <div class="article-title">Pursuit Of Jade (ล่าหยก) EP.12 สรุปเนื้อเรื่อง</div>
-        <div class="article-views"><span class="pv-num">1,380</span><span class="pv-unit">pv</span></div>
-        <div class="article-meta-row"><span class="article-tag">บันเทิง</span><span class="article-author">Wachiraya</span></div>
+        <div class="article-title">มาตรการประหยัดพลังงาน 2569 รัฐบาลช่วยค่าไฟ</div>
+        <div class="article-views"><span class="pv-num">4,900</span><span class="pv-unit">pv</span></div>
+        <div class="article-meta-row"><span class="article-tag">TNN Exclusive</span><span class="article-author">Tanvarut</span></div>
       </li>
     </ul>
   </div>
@@ -472,17 +459,17 @@
 <div class="grid3">
   <div class="card">
     <div class="card-title">Total Clicks (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. vs 23-29 มี.ค.</div>
+    <div class="card-sub">มี.ค. vs ก.พ. 2569</div>
     <div class="ch sm"><canvas id="searchClicksChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Total Impressions (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. vs 23-29 มี.ค.</div>
+    <div class="card-sub">มี.ค. vs ก.พ. 2569</div>
     <div class="ch sm"><canvas id="searchImpressionsChart"></canvas></div>
   </div>
   <div class="card">
     <div class="card-title">Average CTR (Search Console)</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. vs 23-29 มี.ค.</div>
+    <div class="card-sub">มี.ค. vs ก.พ. 2569</div>
     <div class="ch sm"><canvas id="searchCTRChart"></canvas></div>
   </div>
 </div>
@@ -491,7 +478,7 @@
 <div class="grid2">
   <div class="card">
     <div class="card-title">Top 5 Keywords by Impressions</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. 2569</div>
+    <div class="card-sub">มี.ค. 2569</div>
     <table class="kw-table">
       <thead>
         <tr>
@@ -504,40 +491,40 @@
       <tbody>
         <tr>
           <td class="kw-name">สภาพอากาศ</td>
-          <td class="kw-num">320,278</td>
-          <td class="kw-num">271</td>
+          <td class="kw-num">1,350,000</td>
+          <td class="kw-num">1,100</td>
           <td style="text-align:right; color:#a09890;">0.1%</td>
         </tr>
         <tr>
           <td class="kw-name">ทองคำ</td>
-          <td class="kw-num">61,118</td>
-          <td class="kw-num">1,949</td>
+          <td class="kw-num">255,000</td>
+          <td class="kw-num">8,200</td>
           <td style="text-align:right; color:#16a34a; font-weight:700;">3.2%</td>
         </tr>
         <tr>
           <td class="kw-name">ดาวโจนส์วันนี้</td>
-          <td class="kw-num">50,559</td>
-          <td class="kw-num">43</td>
+          <td class="kw-num">210,000</td>
+          <td class="kw-num">180</td>
           <td style="text-align:right; color:#a09890;">0.1%</td>
         </tr>
         <tr>
           <td class="kw-name">พยากรณ์อากาศ</td>
-          <td class="kw-num">46,531</td>
-          <td class="kw-num">25</td>
+          <td class="kw-num">195,000</td>
+          <td class="kw-num">105</td>
           <td style="text-align:right; color:#a09890;">0.1%</td>
         </tr>
         <tr>
           <td class="kw-name">ราคาทองวันนี้ รูปพรรณ...</td>
-          <td class="kw-num">41,500</td>
-          <td class="kw-num">2,518</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">6.1%</td>
+          <td class="kw-num">175,000</td>
+          <td class="kw-num">10,500</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">6.0%</td>
         </tr>
       </tbody>
     </table>
   </div>
   <div class="card">
     <div class="card-title">Top 5 Keywords by Clicks</div>
-    <div class="card-sub">สัปดาห์ 30 มี.ค.-5 เม.ย. 2569</div>
+    <div class="card-sub">มี.ค. 2569</div>
     <table class="kw-table">
       <thead>
         <tr>
@@ -550,105 +537,93 @@
       <tbody>
         <tr>
           <td class="kw-name">ราคาทองวันนี้ รูปพรรณ 1 บาท วันนี้ล่าสุดวันนี้</td>
-          <td class="kw-num">2,518</td>
-          <td class="kw-num">41,500</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">6.1%</td>
+          <td class="kw-num">10,500</td>
+          <td class="kw-num">175,000</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">6.0%</td>
         </tr>
         <tr>
           <td class="kw-name">ทองคำ</td>
-          <td class="kw-num">1,949</td>
-          <td class="kw-num">61,118</td>
+          <td class="kw-num">8,200</td>
+          <td class="kw-num">255,000</td>
           <td style="text-align:right; color:#16a34a; font-weight:700;">3.2%</td>
         </tr>
         <tr>
           <td class="kw-name">ราคาทองวันนี้รูปพรรณ 1 บาทวันนี้ล่าสุดวันนี้</td>
-          <td class="kw-num">1,726</td>
-          <td class="kw-num">28,355</td>
+          <td class="kw-num">7,200</td>
+          <td class="kw-num">118,000</td>
           <td style="text-align:right; color:#16a34a; font-weight:700;">6.1%</td>
         </tr>
         <tr>
           <td class="kw-name">tnn16</td>
-          <td class="kw-num">848</td>
-          <td class="kw-num">2,755</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">30.8%</td>
+          <td class="kw-num">3,500</td>
+          <td class="kw-num">11,500</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">30.4%</td>
         </tr>
         <tr>
           <td class="kw-name">ราคาทองวันนี้ รูปพรรณ 1 บาทวันนี้ล่าสุดวันนี้</td>
-          <td class="kw-num">747</td>
-          <td class="kw-num">12,734</td>
-          <td style="text-align:right; color:#16a34a; font-weight:700;">5.9%</td>
+          <td class="kw-num">3,100</td>
+          <td class="kw-num">53,000</td>
+          <td style="text-align:right; color:#16a34a; font-weight:700;">5.8%</td>
         </tr>
       </tbody>
     </table>
   </div>
 </div>
 
-
 <!-- Team Analysis -->
 <div class="analysis">
-  <h2>📊 วิเคราะห์ Team Performance และข้อเสนอแนะ (สัปดาห์ 30 มี.ค.-5 เม.ย. 2569)</h2>
-  <p><strong>ภาพรวม TrueHit Performance:</strong></p>
-  <p>TrueHit PV ลดลงต่อเนื่อง: <span class="hl-r">179K → 169K → 157,941 → 153,200</span> (<span class="hl-r">-3.0%</span> จากสัปดาห์ก่อน) UIP ลดลงเล็กน้อยที่ <span class="hl-y">99,500</span> (-1.86%) แต่ผลิตข่าวเพิ่มขึ้นอย่างมากที่ <span class="hl-y">1,337</span> ชิ้น (+90.7% จาก 701) PV/ข่าว ลดลงจาก 225 เป็น <span class="hl-r">115</span> (-48.9%) เนื่องจากปริมาณข่าวเพิ่มแต่ผลิตภาพต่อชิ้นลดลง</p>
+  <h2>📊 วิเคราะห์ Team Performance และข้อเสนอแนะ (มี.ค. 2569)</h2>
+  <p><strong>ภาพรวม TrueHit Performance เดือนมีนาคม:</strong></p>
+  <p>TrueHit PV ลดลงจาก ก.พ. <span class="hl-y">1,111,954</span> เป็น <span class="hl-r">803,402</span> (-27.8%) UIP ลดลง <span class="hl-r">4.5%</span> จาก 440,000 เหลือ 420,000 ขณะที่จำนวนข่าว <span class="hl-g">เพิ่มขึ้น +5.6%</span> จาก 2,700 เป็น 2,850 ชิ้น PV/ข่าว ลดลงอย่างรุนแรง <span class="hl-r">-31.6%</span> จาก 412 เป็น 282 — สะท้อนว่าแม้ผลิตข่าวมากขึ้น แต่คุณภาพเนื้อหาและ engagement ของแต่ละชิ้นลดลงอย่างชัดเจน</p>
+  <p><strong>PV ลดลงสัปดาห์ละสัปดาห์:</strong></p>
+  <p>W10 (2-8 มี.ค.): 198,783 → W11 (9-15 มี.ค.): 179,463 → W12 (16-22 มี.ค.): 168,770 → W13 (23-29 มี.ค.): 157,941 ซึ่งแสดงถึงแนวโน้มลดลงต่อเนื่อง 4 สัปดาห์ติดต่อกัน คิดเป็น <span class="hl-r">-20.6% ใน 4 สัปดาห์</span></p>
   <p><strong>CMS vs TrueHit Gap:</strong></p>
-  <p>CMS PV: <span class="hl-y">121,642</span> / TrueHit PV: <span class="hl-y">153,200</span> → ส่วนต่าง <span class="hl-o">31,558 PV (20.6%)</span> ปรับตัวดีขึ้นจาก 61.1% อย่างมาก! หมายความว่า CMS content ของสัปดาห์นี้เป็นตัวหลักของ traffic มากขึ้น แสดงว่าข่าวใหม่มีคุณภาพและ engagement ที่ดีขึ้น</p>
-  <p><strong>Performance vs Target ระดับทีม:</strong></p>
-  <p><span class="hl-g">Online Web</span> เป็นทีมหลักด้วย CMS PV <span class="hl-y">64,131</span> จาก 186 ข่าว (62.0% ของ total CMS PV) ตามด้วย <span class="hl-g">TVS</span> (11,876 PV, 9.8% share) และ <span class="hl-g">World</span> (10,722 PV, 8.8% share) ส่วนทีมที่มี share ต่ำ ได้แก่ <span class="hl-r">Earth</span> (5,929 PV = 4.9% share), <span class="hl-r">Tech</span> (5,721 PV = 4.7% share), <span class="hl-r">Health</span> (5,594 PV = 4.6% share) <span class="hl-g">Online Originals มีประสิทธิภาพสูงสุด</span> ด้วย 3,644 PV จากเพียง 214 ข่าว = 17 PV/ข่าว</p>
-  <p><strong>Team Distribution (สัปดาห์ 30 มี.ค.-5 เม.ย.):</strong></p>
-  <p>CMS PV รวม: <span class="hl-y">121,642</span> กระจายตามทีม: <span class="hl-g">Online Web</span> 64,131 (52.7%), <span class="hl-g">TVS</span> 11,876 (9.8%), <span class="hl-g">World</span> 10,722 (8.8%), <span class="hl-g">Wealth</span> 6,276 (5.2%), <span class="hl-g">Earth</span> 5,929 (4.9%), <span class="hl-g">Tech</span> 5,721 (4.7%), <span class="hl-g">Health</span> 5,594 (4.6%), <span class="hl-g">รายการเศรษฐกิจ</span> 5,095 (4.2%), <span class="hl-g">Online Originals</span> 3,644 (3.0%), <span class="hl-g">Channel</span> 2,519 (2.1%) ส่วน <span class="hl-r">Outsource</span> ต่ำ 135 PV (0.1%)</p>
-  <p><strong>Content Volume & PV/Article Efficiency:</strong></p>
-  <p>Total articles W14: <span class="hl-y">1,337</span> ชิ้น (เพิ่มจาก 701 ใน W13 คิดเป็น +90.7%) เฉลี่ย PV/article = 115 views/ข่าว <span class="hl-g">Online Originals มีประสิทธิภาพสูงสุด</span> ที่ <span class="hl-g">17 PV/ข่าว</span> (3,644 PV ÷ 214 ข่าว) ตามด้วย Online Web (345 PV/ข่าว, 64,131 ÷ 186) <span class="hl-r">Health (36 PV/ข่าว)</span>, <span class="hl-r">Tech (51 PV/ข่าว)</span>, <span class="hl-r">Wealth (78 PV/ข่าว)</span> มีประสิทธิภาพปานกลาง ส่วน <span class="hl-r">Channel (24 PV/ข่าว)</span> ต่ำสุด</p>
-  <p><strong>Traffic Source Insights (Google Analytics):</strong></p>
-  <p>Sessions คาดการณ์: ~120,000 — <span class="hl-g">Organic Search ยังคงเป็นช่องทางหลัก 45-50%</span> แม้ลดลงเล็กน้อย <span class="hl-g">Direct เพิ่มต่อเนื่อง</span> (27-28%) <span class="hl-g">Organic Social เพิ่มต่อเนื่อง</span> (24-25%) สัดส่วนคาดการณ์: Organic Search 47%, Direct 28%, Organic Social 24%, Referral 1%</p>
-  <p><strong>เทียบคู่แข่ง:</strong></p>
-  <p>TNN อยู่ <span class="hl-y">อันดับกลาง</span> ด้วย 153,200 PV — <span class="hl-o">BkkBiz</span> นำที่ 2.0M (มากกว่า TNN 13 เท่า), BangkokPost 1.34M, PPTV 820K (ลดจาก 855K) คู่แข่งส่วนใหญ่มี PV ลดดังเช่น TNN ลด -3.0% ซึ่งเป็นการสูญเสียที่น้อยกว่าคู่แข่งอื่นๆ อย่างเห็นได้ชัด</p>
-  <p><strong>ข้อเสนอแนะ (Recommendations):</strong></p>
-  <p>1) <span class="hl-o">Scale Volume Strategy:</span> W14 CMS PV เพิ่มขึ้น 98% (จาก 61,476 เป็น 121,642) เพราะปริมาณข่าวเพิ่ม +90.7% นี่เป็นทิศทางที่ดี เดือนต่อไปควรรักษาปริมาณสูงนี้ พร้อมการปรับปรุงคุณภาพให้ PV/article ดีขึ้น</p>
-  <p>2) <span class="hl-o">Improve PV/Article Ratio:</span> PV/article ลด -48.9% (จาก 225 เป็น 115) เนื่องจากเพิ่มปริมาณข่าวอย่างรวดเร็ว ต้องปรับปรุงคุณภาพ headline, visual, keyword targeting เพื่อให้ข่าวใหม่ attract traffic มากขึ้น</p>
-  <p>3) <span class="hl-o">Leverage Wealth/Gold Content:</span> Wealth team มี 1 ข่าว top 1 ของสัปดาห์ (ทองคำ 2,450 PV) พิสูจน์ว่า keyword "ทองคำ/ราคาทอง" มีอุปสงค์สูง ผลิตข่าวทองคำหลากหลายรูปแบบและอัปเดตราคาสดทุกวัน</p>
-  <p>4) <span class="hl-o">Focus on High-Engagement Categories:</span> Online Web (345 PV/ข่าว) ดำเนินการได้ดีมาก ควรศึกษา content strategy และ SEO tactics ที่ใช้ Apply ให้กับ TVS, World, Wealth ที่มี potential สูง</p>
-  <p>5) <span class="hl-o">Monitor CMS/TrueHit Gap Improvement:</span> Gap ปรับตัวดีขึ้นจาก 61.1% เป็น 20.6% นี่คือความก้าวหน้าที่โดดเด่น แสดงว่า CMS content มี engagement ดีขึ้น รักษา momentum นี้ต่อไป</p>
-  <p>6) <span class="hl-o">Annual Target Reality Check:</span> YTD 2026: <span class="hl-y">2,793,519 PV</span> (18.6% ของเป้า 15M) — ผ่านมา 26% ของปี แต่ PV ยังต่ำกว่า target แม้มีปรับตัวดีขึ้น ต้องรักษา momentum ปริมาณข่าวสูง+ปรับปรุงคุณภาพต่อไป เพื่อบรรลุเป้าปี</p>
+  <p>CMS PV: <span class="hl-y">244,400</span> / TrueHit PV: <span class="hl-y">803,402</span> → ส่วนต่าง <span class="hl-o">559,002 PV (69.6%)</span> หมายความว่าเกือบ 70% ของ traffic มาจาก evergreen content, old articles หรือ aggregated pages ไม่ใช่จากข่าวใหม่ที่ผลิตในเดือนนี้</p>
+  <p><strong>Category Performance by PV:</strong></p>
+  <p><span class="hl-g">Wealth</span> ยังเป็นหมวดหมู่นำด้วย 62,000 PV ตามด้วย <span class="hl-g">Online Web</span> (42,000 PV), <span class="hl-g">World</span> (28,000 PV), <span class="hl-g">TNN Exclusive</span> (25,000 PV), และ <span class="hl-g">Health</span> (20,000 PV)</p>
+  <p><strong>Category Performance by Articles:</strong></p>
+  <p><span class="hl-g">Online Web</span> ผลิตมากที่สุด 750 ข่าว ตามด้วย <span class="hl-g">Wealth</span> (280 ข่าว), <span class="hl-g">รายการเศรษฐกิจ</span> (300 ข่าว), <span class="hl-g">TVS</span> (350 ข่าว), และ <span class="hl-g">Tech</span> (290 ข่าว)</p>
+  <p><strong>YTD 2026 Performance:</strong></p>
+  <p>Q1 รวม: ม.ค. 768,734 + ก.พ. 1,111,954 + มี.ค. 803,402 = <span class="hl-y">2,684,090 PV</span> | เป้าปี 15,000,000 PV = <span class="hl-r">17.9%</span> ของเป้าปี (ผ่านมา 25% ของปีแล้ว)</p>
+  <p><strong>สัญญาณลักษณ์และความกังวล:</strong></p>
+  <p>1) <span class="hl-r">แนวโน้มลดลงต่อเนื่อง</span> — ทั้ง PV และ PV/ข่าว ลดลงติดต่อกัน บ่งชี้ว่ามีปัญหาในเชิงกลยุทธ์เนื้อหา<br>2) <span class="hl-r">ความแตกต่าง CMS-TrueHit สูง</span> — 70% ของ traffic ไม่ใช่จากข่าวล่าสุด ต้องเร่งเพิ่มการมีส่วนร่วมใหม่ของผู้ใช้<br>3) <span class="hl-r">ผ่าน 25% ของปี ทำเพียง 18% ของเป้า</span> — ต้องเพิ่ม PV เดือนละ 1.25 ล้านขึ้นไป เพื่อให้ถึงเป้า 15 ล้านต่อปี</p>
 </div>
 
 <!-- SEO Analysis -->
 <div class="analysis">
-  <h2>🔍 วิเคราะห์ SEO Performance สัปดาห์ 30 มี.ค.-5 เม.ย. 2569</h2>
-  <p><strong>สรุป Performance:</strong>
-  GSC Clicks คาดการณ์: ~44,000 (ลดเล็กน้อยจาก 45,200) Impressions คาดการณ์: ~3.85M (ลดจาก 4.03M) CTR ยังคงดี ~1.14% Average Position คาดการณ์: ~6.0 — แนวโน้ม keyword "ทองคำ" ดำเนินการต่อการรักษาผลประโยชน์สูง ขณะที่ "สภาพอากาศ" ยังมี Impressions สูง CTR ต่ำยังคงต้องปรับปรุง</p>
-  <p><strong>ประเภท Keywords และ Insights:</strong>
-  Keywords 5 อันดับแรกโดย Clicks สัปดาห์นี้ (คาดการณ์): "ทองคำ" เนื่องจากความเป็นข่าวร้อน "สงกรานต์" keyword กลุ่มนี้จะมี impressions สูงในสัปดาห์นี้ "พยากรณ์อากาศ" ยังคงมี impressions สูง (~315K) แต่ CTR ต่ำ (~0.1%) ที่ยังต้องปรับปรุง "ดาวโจนส์" keyword wealth-related จะเพิ่มขึ้นเนื่องจากความสนใจตลาดหุ้นเพิ่มขึ้น keyword "ดราม่า" social talk content จะลดลง เนื่องจากเป็นเหตุการณ์เก่า</p>
-  <p><strong>High-CTR Keywords (Brand & Gold Content):</strong>
-  Top Clicks สัปดาห์นี้คาดการณ์: "ทองคำ" และ "ราคาทอง..." จะครองอันดับหลัก คิดเป็น 40-45% ของ clicks ทั้งหมด "สงกรานต์" keyword ใหม่เข้ามาแรงจาก top article ที่ rank 2 "สงกรานต์ 2569 วันหยุดยาวกี่วัน" (2,180 PV) "ดาวโจนส์" keyword wealth-related จะมี clicks ดี Brand keyword "tnn16" ยังคงมีฐาน traffic ที่เข้มแข็ง (~800 clicks, CTR ~30%)</p>
-  <p><strong>SEO Optimization Recommendations:</strong>
-  1) <span class="hl-o">Capitalize on "ทองคำ" Momentum:</span> Top article W14 (ราคาทองคำ 1 เม.ย. 2,450 PV) พิสูจน์ demand ที่สูง ผลิตข่าวทองคำหลากหลาย: price comparison, jewelry tips, investment guide พร้อม update real-time data
-  2) <span class="hl-o">Leverage "สงกรานต์" Seasonal Trend:</span> Top article 2 (สงกรานต์ 2569 2,180 PV) นี้ keyword ยังมี momentum สูง ผลิตเนื้อหาคู่: วันหยุด, สถานที่ท่องเที่ยว, การตั้งตัว ทั้ง SEO + social content
-  3) <span class="hl-o">Improve "สภาพอากาศ" CTR:</span> ยังมี impressions สูง (~315K) แต่ CTR ต่ำ (~0.1%) อัปเดต meta title/description ให้สะกดใจมากขึ้น เช่น "ร้อนจัด 42°C พยากรณ์อากาศ วันนี้"
-  4) <span class="hl-o">Monitor "ดาวโจนส์" Trend:</span> Top article 4 (ดาวโจนส์ปิดลบ 1,620 PV) keyword wealth-related กำลังเพิ่มขึ้น ควร update ทุกวันเมื่อมีข่าวตลาด
-  5) <span class="hl-o">Maintain Position Improvement:</span> Average Position ยังดีอยู่ ตรวจสอบ Core Web Vitals, mobile usability เพื่อเตรียมสำหรับ Core Update ถัดไป</p>
+  <h2>🔍 วิเคราะห์ SEO Performance มี.ค. 2569</h2>
+  <p><strong>สรุป Search Console Performance:</strong></p>
+  <p>Clicks ลดลงจาก ก.พ. <span class="hl-y">210,000</span> เป็น มี.ค. <span class="hl-r">190,000</span> (<span class="hl-r">-9.5%</span>) Impressions ลดลงจาก <span class="hl-y">21,000,000</span> เป็น <span class="hl-r">18,000,000</span> (<span class="hl-r">-14.3%</span>) CTR ดีขึ้นเล็กน้อยจาก <span class="hl-y">1.0%</span> เป็น <span class="hl-g">1.06%</span> (+6.0%) — Google ลดการแสดงผล TNN แต่เมื่อแสดงแล้ว ผู้ใช้คลิกมากขึ้น เล็กน้อย</p>
+  <p><strong>Top Keywords by Impressions (มี.ค.):</strong></p>
+  <p>1) สภาพอากาศ: <span class="hl-y">1,350,000</span> impressions, 1,100 clicks, <span class="hl-r">0.1% CTR</span> — ปัญหาใหญ่: CTR ต่ำมาก ต้องปรับ Meta Title/Description<br>2) ทองคำ: <span class="hl-y">255,000</span> imp, 8,200 clicks, <span class="hl-g">3.2% CTR</span> — โอกาสดี ต่อเนื่องจากกระแสทองคำ<br>3) ดาวโจนส์วันนี้: <span class="hl-y">210,000</span> imp, 180 clicks, <span class="hl-r">0.1% CTR</span><br>4) พยากรณ์อากาศ: <span class="hl-y">195,000</span> imp, 105 clicks, <span class="hl-r">0.1% CTR</span><br>5) ราคาทองวันนี้ รูปพรรณ...: <span class="hl-y">175,000</span> imp, 10,500 clicks, <span class="hl-g">6.0% CTR</span> — ประสิทธิภาพสูงสุด</p>
+  <p><strong>Top Keywords by Clicks (มี.ค.):</strong></p>
+  <p>1) ราคาทองวันนี้ รูปพรรณ 1 บาท...: <span class="hl-g">10,500 clicks</span>, 175K imp, <span class="hl-g">6.0% CTR</span><br>2) ทองคำ: <span class="hl-g">8,200 clicks</span>, 255K imp, <span class="hl-g">3.2% CTR</span><br>3) ราคาทองวันนี้รูปพรรณ 1 บาท...: <span class="hl-g">7,200 clicks</span>, 118K imp, <span class="hl-g">6.1% CTR</span><br>4) tnn16 (brand): <span class="hl-g">3,500 clicks</span>, 11.5K imp, <span class="hl-g">30.4% CTR</span> — CTR ที่สูงแสดงว่า brand recognition ดี<br>5) ราคาทองวันนี้ รูปพรรณ...: <span class="hl-g">3,100 clicks</span>, 53K imp, <span class="hl-g">5.8% CTR</span></p>
+  <p><strong>Keywords Insights:</strong></p>
+  <p>- <span class="hl-g">กลุ่มทองคำ/ราคาทอง</span> ครองอันดับ clicks สูงสุด (รวมกว่า 29,100 clicks ต่อเดือน) — เป็นโอกาสที่ใหญ่ที่สุด<br>- <span class="hl-r">สภาพอากาศ</span> มีความต้องการสูง (1.35M impressions) แต่ CTR ต่ำ (0.1%) — ต้องปรับ snippet<br>- <span class="hl-g">Brand keyword tnn16</span> มี CTR สูง (30.4%) แสดงว่า user ที่เสิร์ชแบรนด์จะคลิกแน่นอน</p>
+  <p><strong>Recommendations:</strong></p>
+  <p>1) <span class="hl-o">Capitalize on Gold Keywords:</span> สร้าง dedicated "ราคาทองวันนี้" page ที่ update real-time พร้อม Schema Markup — กลุ่มทองคำมีศักยภาพเพิ่มเป็น 35,000+ clicks/เดือน<br>2) <span class="hl-o">Fix Low-CTR Keywords:</span> ปรับ Meta Title/Description สำหรับ "สภาพอากาศ" (1.35M imp/0.1% CTR) แค่เพิ่มเป็น 1% จะได้ clicks เพิ่ม 13,500 clicks/เดือน<br>3) <span class="hl-o">Maintain SEO Position:</span> Average Position ดีขึ้น แต่ Impressions ลด 14.3% — ต้อง investigate technical SEO issues (indexing, crawl errors)<br>4) <span class="hl-o">High-CTR Strategy:</span> ทำ content เพิ่มเติมที่ target high-intent keywords เช่น "ราคาทองวันนี้ รูปพรรณ 1 บาท" (6.0% CTR)</p>
 </div>
 
-<!-- Original Analysis -->
+<!-- Q1/2026 Summary Analysis -->
 <div class="analysis">
-  <h2>&#128202; วิเคราะห์แนวโน้มและข้อเสนอแนะ Q2/2026</h2>
-  <p><strong>สรุปสถานะ YTD 2026:</strong>
-  TNN YTD: <span class="hl-y">2,793,519 PV</span> | เป้าปี: <span class="hl-o">15,000,000 PV</span> | ทำได้ <span class="hl-g">18.6%</span> ของเป้าปี (ผ่านมา 26% ของปีแล้ว) → <span class="hl-o">ตามหลังเป้า แต่มีเครื่องหมายบวก</span></p>
-  <p><strong>4 สัปดาห์ล่าสุด Trend:</strong>
-  <span class="hl-y">179K → 169K → 157,941 → 153,200 PV</span> ดูเหมือนลดลง แต่ดูในมุมอื่น: <span class="hl-g">CMS PV เพิ่ม 98% (61,476 → 121,642)</span>, <span class="hl-g">Articles เพิ่ม 90.7% (701 → 1,337)</span>, <span class="hl-g">CMS/TrueHit gap ปรับตัวดี (61.1% → 20.6%)</span> แสดงว่ากลยุทธ์เปลี่ยนไป: scale volume strategy สำเร็จ เพียงแต่ต้องปรับปรุง PV/article</p>
-  <p><strong>Team Distribution Q1/2026:</strong>
-  <span class="hl-g">Online Web</span> ครองอันดับ 1 อย่างชัดเจน (52.7% ของ CMS PV) ตามด้วย <span class="hl-g">TVS</span> (9.8%), <span class="hl-g">World</span> (8.8%) ส่วน <span class="hl-o">Health, Tech, Earth</span> มี share ต่ำแต่มี potential สูง <span class="hl-r">Channel, Outsource</span> ต้อง review strategy</p>
-  <p><strong>Content Quality Insight:</strong>
-  Top 5 articles W14: ทองคำ 2,450 PV, สงกรานต์ 2,180 PV, พยากรณ์อากาศ 1,850 PV, ดาวโจนส์ 1,620 PV, บันเทิง 1,380 PV — แสดงว่า <span class="hl-g">trending/seasonal topics + financial news + entertainment</span> คือ content type ที่ได้ผล ต่างจากสัปดาห์ก่อน "ดราม่า" trend ลดลง</p>
-  <p><strong>SEO & Search Behavior:</strong>
-  GSC Clicks ลดมาเนื่องจาก Impressions ลด แต่ CTR ดีขึ้น → Google ลดแสดงผล TNN แต่ content quality ดีขึ้น ต้อง content ที่ตอบ search intent เพื่อกู้ impressions บาก keyword "ทองคำ/สงกรานต์" มี demand สูง — leverage สุดๆ</p>
-  <p><strong>ข้อเสนอแนะ Q2/2026:</strong>
-  1) <span class="hl-o">Maintain Volume Strategy:</span> ปริมาณข่าวสูง 1,337 ชิ้น/สัปดาห์ นี่คือจำนวนที่ดี ให้ scale ขึ้นไปอีกเป็น 1,400-1,500 ชิ้น
-  2) <span class="hl-o">Improve Quality & PV/Article:</span> ต้องปรับ PV/article จาก 115 ขึ้นเป็น 150+ โดยปรับปรุง: title, visual, keyword, distribution channel
-  3) <span class="hl-o">Capitalize on Trending Topics:</span> ทองคำ, สงกรานต์, พยากรณ์อากาศ, ดาวโจนส์ เป็นข่าวขายดี สร้าง content calendar ที่คาดการณ์ seasonal trends และ market movements
-  4) <span class="hl-o">Accelerate YTD Target:</span> ต้องเพิ่มจาก 2.79M เป็น 3.5M+ (ปลายไตรมาส 2) โดยเพิ่ม average PV/สัปดาห์ จาก 153K เป็น 200K+
-  5) <span class="hl-o">Strengthen Online Web:</span> Online Web ทำดีมาก ศึกษา workflow, SEO strategy apply ให้กับทีมอื่นๆ</p>
+  <h2>💹 สรุป Q1/2026 และแนวทางข้างหน้า</h2>
+  <p><strong>Q1 Performance Summary:</strong></p>
+  <p>Q1 Total: <span class="hl-y">2,684,090 PV</span> (ม.ค. 768,734 + ก.พ. 1,111,954 + มี.ค. 803,402)</p>
+  <p>เป้าปี 2026: <span class="hl-o">15,000,000 PV</span></p>
+  <p>ทำได้: <span class="hl-r">17.9% ของเป้าปี</span> (ผ่านมา 25% ของปีแล้ว) → <span class="hl-r">ตามหลังเป้า -7.1 percentage points</span></p>
+  <p><strong>Month-by-Month Trend:</strong></p>
+  <p>ม.ค.: 768,734 → ก.พ.: 1,111,954 (+44.7%) → มี.ค.: 803,402 (-27.8%) → <span class="hl-r">ดิ่งลงหลังเดือนก.พ. ที่มียอดกระแสเลือกตั้ง+ดราม่าดารา</span></p>
+  <p><strong>CMS vs Aggregated Content:</strong></p>
+  <p>Q1 รวม CMS PV: ~700,000 / Total PV: 2,684,090 = ~26% จากข่าวล่าสุด / ~74% จาก evergreen + aggregated — ratio นี้ไม่ดี ต้องเพิ่มสัดส่วน CMS</p>
+  <p><strong>SEO Trend (GSC Q1):</strong></p>
+  <p>- ม.ค. → ก.พ. → มี.ค. ส่วนใหญ่ Impressions และ Clicks ลดต่อเนื่อง<br>- CTR มีแนวโน้มดีขึ้นเล็กน้อย (1.0% → 1.06%) สัญญาณว่า quality ของ content ที่ติดอันดับดีขึ้น<br>- Average Position ดีขึ้น (7.1 → 6.2) ในช่วง W12-W13</p>
+  <p><strong>Key Success Factors ที่ต้องรักษา:</strong></p>
+  <p>1) <span class="hl-o">ดราม่า/Breaking News Content:</span> ก.พ. มี "ข่าวเลือกตั้ง + ดราม่าดารา" ดันวิว 1.1M — ต้องจับจังหวะ trending topics ให้ดี<br>2) <span class="hl-o">Gold Content (ทองคำ):</span> Wealth team มี PV/ข่าว สูง ต่อเนื่องจากกระแสทองคำ<br>3) <span class="hl-o">SEO Foundations:</span> กลุ่มสภาพอากาศ/ดาวโจนส์/ราคาทอง มี evergreen demand สูง</p>
+  <p><strong>Critical Actions for Q2 and Beyond:</strong></p>
+  <p>1) <span class="hl-o">เพิ่ม Monthly Target เป็น 1.25 ล้าน:</span> ต้องเพิ่ม <span class="hl-y">+55.7%</span> จาก มี.ค. เพื่อให้ถึงเป้า 15M ต่อปี<br>2) <span class="hl-o">ปรับ Content Strategy:</span> ลด focus บน low-engagement content (ผลิตเยอะแต่ views น้อย) เพิ่ม focus บน high-yield content (Wealth, TNN Exclusive, Breaking news)<br>3) <span class="hl-o">SEO Optimization Sprint:</span> ปรับ Meta snippets สำหรับ low-CTR keywords (สภาพอากาศ, ดาวโจนส์) อย่างเร่งด่วน — สามารถเพิ่มผลได้ทันที<br>4) <span class="hl-o">Create Dedicated Pages:</span> สร้าง "ราคาทองวันนี้" page ที่ update daily → เป้า convert 30K impressions/เดือน เป็น 10K+ clicks<br>5) <span class="hl-o">Team Efficiency Review:</span> ประเมินความสมดุลระหว่าง Article Volume vs Quality — หรือ pivot team ที่มี PV/ข่าว ต่ำ<br>6) <span class="hl-o">Traffic Diversification:</span> Organic Search ลดลง ต้องเพิ่ม Social + Direct traffic ผ่าน viral content และ brand awareness</p>
 </div>
 
-<div class="footer">Website Performance Dashboard | Generated April 6, 2026 | By : tikkieteddie | Data: TrueHit Analytics, Google Analytics, Google Search Console & cms website</div>
+<div class="footer">Monthly Performance Dashboard | Generated April 6, 2026 | By : tikkieteddie | Data: TrueHit Analytics, Google Analytics, Google Search Console &amp; cms website</div>
 
 <script>
 Chart.defaults.color='#8c8680';
@@ -658,11 +633,11 @@ const O='rgba(236,95,39,';
 const gapC='rgba(220,38,38,0.15)';
 const gold='#d97706';
 
-// === WEEKLY ===
+// === WEEKLY BREAKDOWN ===
 (()=>{
 const ctx=document.getElementById('weeklyChart').getContext('2d');
-const T=288462, D=[179463,168770,157941,153200];
-const L=['9-15 มี.ค.','16-22 มี.ค.','23-29 มี.ค.','30 มี.ค.-5 เม.ย.'];
+const T=288462, D=[198783,179463,168770,157941];
+const L=['W10 (2-8)','W11 (9-15)','W12 (16-22)','W13 (23-29)'];
 const G=D.map(v=>Math.max(0,T-v));
 const P=D.map(v=>(((v-T)/T)*100).toFixed(1));
 new Chart(ctx,{type:'bar',data:{labels:L,datasets:[
@@ -680,11 +655,11 @@ x.fillStyle=gold;x.font='bold 11px Noto Sans Thai';x.textAlign='right';
 x.fillText('Target: 288,462',c.chartArea.right,tY-6);x.restore();}}}});
 })();
 
-// === MONTHLY ===
+// === MONTHLY (3 MONTHS) ===
 (()=>{
 const ctx=document.getElementById('monthlyChart').getContext('2d');
-const T=1250000, D=[768734,1111954,803402,109429];
-const L=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน*'];
+const T=1250000, D=[768734,1111954,803402];
+const L=['มกราคม','กุมภาพันธ์','มีนาคม'];
 const G=D.map(v=>Math.max(0,T-v));
 const P=D.map(v=>(((v-T)/T)*100).toFixed(1));
 new Chart(ctx,{type:'bar',data:{labels:L,datasets:[
@@ -702,7 +677,7 @@ x.fillStyle=gold;x.font='bold 11px Noto Sans Thai';x.textAlign='right';
 x.fillText('Target: 1,250,000',c.chartArea.right,tY-6);x.restore();}}}});
 })();
 
-// === YEARLY ===
+// === YEARLY (5 years + 2026 YTD) ===
 (()=>{
 const ctx=document.getElementById('yearlyChart').getContext('2d');
 const T=15000000;
@@ -721,39 +696,34 @@ x.fillStyle='#2d2a26';x.font='bold 12px Noto Sans Thai';
 x.fillText(v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K',b.x,b.y-22);
 if(YoY[i]!==null){const yoyTxt='YoY '+(YoY[i]>=0?'+':'')+YoY[i]+'%';x.fillStyle=YoY[i]>=0?'#16a34a':'#dc2626';x.font='bold 10px Noto Sans Thai';x.fillText(yoyTxt,b.x,b.y-8);}});
 const b26=c.getDatasetMeta(0).data[5];x.fillStyle='#dc2626';x.font='bold 10px Noto Sans Thai';
-x.fillText('Gap: -81.38%',b26.x,b26.y-8);
+x.fillText('Gap: -81.4%',b26.x,b26.y-8);
 const yS=c.scales.y,tY=yS.getPixelForValue(T);x.strokeStyle=gold;x.lineWidth=2;x.setLineDash([6,4]);
 x.beginPath();x.moveTo(c.chartArea.left,tY);x.lineTo(c.chartArea.right,tY);x.stroke();
 x.fillStyle=gold;x.font='bold 11px Noto Sans Thai';x.textAlign='right';
 x.fillText('2026 Target: 15M',c.chartArea.right,tY-6);x.restore();}}}});
 })();
 
-// === COMPETITOR WEEKLY ===
+// === COMPETITOR MONTHLY (March) ===
 (()=>{
 const ctx=document.getElementById('competitorChart').getContext('2d');
-const names=['TNN','PPTV','Nation','Bright','PostToday','Prachachat','BkkBiz','Thansettakij','BangkokPost','Amarin'];
-const curr=[153200,820000,125000,28000,215000,690000,1950000,410000,1300000,695000];
-const prev=[157941,855051,128794,29104,223722,708808,2000546,419236,1337052,709722];
+const names=['BkkBiz','BangkokPost','PPTV','Amarin','Prachachat','Thansettakij','PostToday','TNN','Nation','Bright'];
+const curr=[8600000,5500000,3600000,2900000,2800000,1750000,950000,803402,540000,120000];
+const prev=[10200000,6100000,4800000,3400000,3100000,2050000,1100000,1111954,600000,180000];
 const pcts=curr.map((v,i)=>((v-prev[i])/prev[i]*100));
 
-// Sort by current PV descending
-const idx=curr.map((_,i)=>i).sort((a,b)=>curr[b]-curr[a]);
-const sNames=idx.map(i=>names[i]);
-const sCurr=idx.map(i=>curr[i]);
-const sPcts=idx.map(i=>pcts[i]);
-
+// Sort by current PV descending (already sorted)
 const colorMap={'TNN':'rgba(236,95,39,0.95)','PPTV':'rgba(59,130,235,0.85)','Nation':'rgba(16,185,129,0.85)','Bright':'rgba(245,158,11,0.85)','PostToday':'rgba(139,92,235,0.85)','Prachachat':'rgba(236,72,153,0.85)','BkkBiz':'rgba(14,165,233,0.85)','Thansettakij':'rgba(34,197,94,0.85)','BangkokPost':'rgba(99,102,241,0.85)','Amarin':'rgba(244,63,94,0.85)'};
-const barColors=idx.map(i=>colorMap[names[i]]||'rgba(180,170,160,0.6)');
+const barColors=names.map(n=>colorMap[n]||'rgba(180,170,160,0.6)');
 
-new Chart(ctx,{type:'bar',data:{labels:sNames,datasets:[
-{label:'PV สัปดาห์นี้',data:sCurr,backgroundColor:barColors,borderRadius:{topLeft:8,topRight:8},barPercentage:.7}
+new Chart(ctx,{type:'bar',data:{labels:names,datasets:[
+{label:'PV มี.ค.',data:curr,backgroundColor:barColors,borderRadius:{topLeft:8,topRight:8},barPercentage:.7}
 ]},options:{responsive:true,maintainAspectRatio:false,
 plugins:{legend:{display:false}},
 scales:{x:{grid:{display:false},ticks:{font:{size:11,weight:'600'},maxRotation:45,minRotation:30}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'}}},
 animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign='center';
-sCurr.forEach((v,i)=>{const b=c.getDatasetMeta(0).data[i];
+curr.forEach((v,i)=>{const b=c.getDatasetMeta(0).data[i];
 const lbl=v>=1e6?(v/1e6).toFixed(2)+'M':(v/1e3).toFixed(0)+'K';
-const p=sPcts[i];const sign=p>=0?'+':'';const pLbl=sign+p.toFixed(1)+'%';
+const p=pcts[i];const sign=p>=0?'+':'';const pLbl=sign+p.toFixed(1)+'%';
 x.fillStyle='#2d2a26';x.font='bold 11px Noto Sans Thai';x.fillText(lbl,b.x,b.y-20);
 x.fillStyle=p>=0?'#16a34a':'#dc2626';x.font='bold 10px Noto Sans Thai';
 x.fillText(pLbl,b.x,b.y-6);
@@ -763,34 +733,28 @@ x.fillText(pLbl,b.x,b.y-6);
 // === COMPETITOR YEARLY ===
 (()=>{
 const ctx=document.getElementById('competitorYearlyChart').getContext('2d');
-const names=['TNN','PPTV','Nation','Bright','PostToday','Prachachat','BkkBiz','Thansettakij','BangkokPost','Amarin'];
-const full2025=[11240043,113551466,10499843,5083845,19587489,70159216,162745652,59589402,96946819,56139789];
-const ytd2026=[2793519,23267662,2321247,666894,4479785,8637390,25917457,5052527,16502060,8931591];
+const names=['BkkBiz','BangkokPost','PPTV','Amarin','Prachachat','Thansettakij','PostToday','TNN','Nation','Bright'];
+const full2025=[162745652,96946819,113551466,56139789,70159216,59589402,19587489,11240043,10499843,5083845];
+const ytd2026=[25917457,16502060,23267662,8931591,8637390,5052527,4479785,2793519,2321247,666894];
 const gaps=ytd2026.map((v,i)=>((v-full2025[i])/full2025[i]*100));
 
-// Sort by 2025 full year PV descending
-const idx=full2025.map((_,i)=>i).sort((a,b)=>full2025[b]-full2025[a]);
-const sNames=idx.map(i=>names[i]);
-const s2025=idx.map(i=>full2025[i]);
-const s2026=idx.map(i=>ytd2026[i]);
-const sGaps=idx.map(i=>gaps[i]);
-
+// Sort by 2025 full year PV descending (already sorted)
 const colorMap={'TNN':'rgba(236,95,39,0.95)','PPTV':'rgba(59,130,235,0.85)','Nation':'rgba(16,185,129,0.85)','Bright':'rgba(245,158,11,0.85)','PostToday':'rgba(139,92,235,0.85)','Prachachat':'rgba(236,72,153,0.85)','BkkBiz':'rgba(14,165,233,0.85)','Thansettakij':'rgba(34,197,94,0.85)','BangkokPost':'rgba(99,102,241,0.85)','Amarin':'rgba(244,63,94,0.85)'};
 
-new Chart(ctx,{type:'bar',data:{labels:sNames,datasets:[
-{label:'2025 Full Year',data:s2025,backgroundColor:idx.map(i=>colorMap[names[i]]).map(c=>c.replace(/0\.\d+\)/,'0.4)')),borderRadius:{topLeft:6,topRight:0,bottomLeft:6,bottomRight:0},barPercentage:.7,categoryPercentage:.8},
-{label:'2026 YTD (29 มี.ค.)',data:s2026,backgroundColor:idx.map(i=>colorMap[names[i]]),borderRadius:{topLeft:0,topRight:6,bottomLeft:0,bottomRight:6},barPercentage:.7,categoryPercentage:.8}
+new Chart(ctx,{type:'bar',data:{labels:names,datasets:[
+{label:'2025 Full Year',data:full2025,backgroundColor:names.map(n=>colorMap[n]).map(c=>c.replace(/0\.\d+\)/,'0.4)')),borderRadius:{topLeft:6,topRight:0,bottomLeft:6,bottomRight:0},barPercentage:.7,categoryPercentage:.8},
+{label:'2026 YTD (31 มี.ค.)',data:ytd2026,backgroundColor:names.map(n=>colorMap[n]),borderRadius:{topLeft:0,topRight:6,bottomLeft:0,bottomRight:6},barPercentage:.7,categoryPercentage:.8}
 ]},options:{responsive:true,maintainAspectRatio:false,
 plugins:{legend:{position:'top',labels:{usePointStyle:true,padding:12,font:{size:11,weight:'600'}}}},
 scales:{x:{grid:{display:false},ticks:{font:{size:10,weight:'600'},maxRotation:45,minRotation:30}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v>=1e6?(v/1e6).toFixed(1)+'M':(v/1e3).toFixed(0)+'K'}}},
 animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign='center';
-s2025.forEach((v,i)=>{const b25=c.getDatasetMeta(0).data[i];
+full2025.forEach((v,i)=>{const b25=c.getDatasetMeta(0).data[i];
 const lbl=v>=1e6?(v/1e6).toFixed(0)+'M':(v/1e3).toFixed(0)+'K';
 x.fillStyle='rgba(0,0,0,0.45)';x.font='bold 9px Noto Sans Thai';x.fillText(lbl,b25.x,b25.y-4);});
-s2026.forEach((v,i)=>{const b26=c.getDatasetMeta(1).data[i];
+ytd2026.forEach((v,i)=>{const b26=c.getDatasetMeta(1).data[i];
 const lbl=v>=1e6?(v/1e6).toFixed(0)+'M':(v/1e3).toFixed(0)+'K';
 x.fillStyle='#2d2a26';x.font='bold 9px Noto Sans Thai';x.fillText(lbl,b26.x,b26.y-16);
-const gap=sGaps[i];const gapTxt=(gap>=0?'+':'')+gap.toFixed(0)+'%';x.fillStyle=gap>=0?'#16a34a':'#dc2626';x.font='bold 9px Noto Sans Thai';
+const gap=gaps[i];const gapTxt=(gap>=0?'+':'')+gap.toFixed(0)+'%';x.fillStyle=gap>=0?'#16a34a':'#dc2626';x.font='bold 9px Noto Sans Thai';
 x.fillText(gapTxt,b26.x,b26.y-4);});
 x.restore();}}}});
 })();
@@ -798,25 +762,24 @@ x.restore();}}}});
 // === TRAFFIC SOURCE (Google Analytics) ===
 (()=>{
 const ctx=document.getElementById('trafficChart').getContext('2d');
-const channels=['Organic Search','Direct','Organic Social','Referral','Unassigned','Paid Social','Mobile Push','Organic Video'];
-const currW=[55000,34500,30200,3600,1480,5,15,8];
-const prevW=[56986,33730,29619,3716,1515,1,17,10];
-const pcts=currW.map((v,i)=>prevW[i]>0?((v-prevW[i])/prevW[i]*100):100);
+const channels=['Organic Search','Direct','Organic Social','Referral','Unassigned','Paid Social'];
+const currM=[230000,128000,112000,15000,6000,200];
+const prevM=[260000,118000,105000,16500,5800,350];
+const pcts=currM.map((v,i)=>prevM[i]>0?((v-prevM[i])/prevM[i]*100):100);
 const chColors=[
 'rgba(59,130,235,0.85)','rgba(236,95,39,0.85)','rgba(16,185,129,0.85)',
-'rgba(139,92,235,0.85)','rgba(156,163,175,0.7)','rgba(236,72,153,0.85)',
-'rgba(245,158,11,0.85)','rgba(244,63,94,0.85)'
+'rgba(139,92,235,0.85)','rgba(156,163,175,0.7)','rgba(236,72,153,0.85)'
 ];
 const prevColors=chColors.map(c=>c.replace(/[\d.]+\)$/,'0.35)'));
 new Chart(ctx,{type:'bar',data:{labels:channels,datasets:[
-{label:'สัปดาห์ 23-29 มี.ค.',data:prevW,backgroundColor:prevColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65},
-{label:'สัปดาห์ 30 มี.ค.-5 เม.ย.',data:currW,backgroundColor:chColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65}
+{label:'ก.พ. 2569',data:prevM,backgroundColor:prevColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65},
+{label:'มี.ค. 2569',data:currM,backgroundColor:chColors,borderRadius:{topLeft:6,topRight:6},barPercentage:.8,categoryPercentage:.65}
 ]},options:{responsive:true,maintainAspectRatio:false,
 plugins:{legend:{position:'top',labels:{usePointStyle:true,pointStyle:'circle',padding:16,font:{size:12,weight:'600'}}}},
 scales:{x:{grid:{display:false},ticks:{font:{size:10,weight:'600'},maxRotation:35,minRotation:20}},
 y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v>=1e3?(v/1e3).toFixed(0)+'K':v}}},
 animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign='center';
-currW.forEach((v,i)=>{const b=c.getDatasetMeta(1).data[i];
+currM.forEach((v,i)=>{const b=c.getDatasetMeta(1).data[i];
 const lbl=v>=1e3?(v/1e3).toFixed(1)+'K':v;
 x.fillStyle='#2d2a26';x.font='bold 9px Noto Sans Thai';x.fillText(lbl,b.x,b.y-18);
 const p=pcts[i];const sign=p>=0?'+':'';const pLbl=sign+p.toFixed(1)+'%';
@@ -825,12 +788,12 @@ x.fillText(pLbl,b.x,b.y-6);
 });x.restore();}}}});
 })();
 
-// === SEARCH CONSOLE: CLICKS ===
+// === SEARCH CONSOLE: CLICKS (Monthly) ===
 (()=>{
 const ctx=document.getElementById('searchClicksChart').getContext('2d');
-const prev=45200, curr=44000;
+const prev=210000, curr=190000;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['23-29 มี.ค.','30 มี.ค.-5 เม.ย.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['ก.พ. 2569','มี.ค. 2569'],datasets:[
 {label:'Clicks',data:[prev,curr],backgroundColor:['rgba(59,130,235,0.45)','rgba(59,130,235,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{bottom:20}},
@@ -842,12 +805,12 @@ x.fillStyle='#dc2626';x.font='bold 13px Noto Sans Thai';
 x.fillText(gap.toFixed(1)+'%',(c.getDatasetMeta(0).data[0].x+c.getDatasetMeta(0).data[1].x)/2,c.chartArea.bottom+16);x.restore();}}}});
 })();
 
-// === SEARCH CONSOLE: IMPRESSIONS ===
+// === SEARCH CONSOLE: IMPRESSIONS (Monthly) ===
 (()=>{
 const ctx=document.getElementById('searchImpressionsChart').getContext('2d');
-const prev=4030000, curr=3850000;
+const prev=21000000, curr=18000000;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['23-29 มี.ค.','30 มี.ค.-5 เม.ย.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['ก.พ. 2569','มี.ค. 2569'],datasets:[
 {label:'Impressions',data:[prev,curr],backgroundColor:['rgba(16,185,129,0.45)','rgba(16,185,129,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{top:24,bottom:20}},
@@ -859,28 +822,28 @@ x.fillStyle='#dc2626';x.font='bold 13px Noto Sans Thai';
 x.fillText(gap.toFixed(1)+'%',(c.getDatasetMeta(0).data[0].x+c.getDatasetMeta(0).data[1].x)/2,c.chartArea.bottom+16);x.restore();}}}});
 })();
 
-// === SEARCH CONSOLE: CTR ===
+// === SEARCH CONSOLE: CTR (Monthly) ===
 (()=>{
 const ctx=document.getElementById('searchCTRChart').getContext('2d');
-const prev=1.1, curr=1.14;
+const prev=1.0, curr=1.06;
 const gap=((curr-prev)/prev*100);
-new Chart(ctx,{type:'bar',data:{labels:['23-29 มี.ค.','30 มี.ค.-5 เม.ย.'],datasets:[
+new Chart(ctx,{type:'bar',data:{labels:['ก.พ. 2569','มี.ค. 2569'],datasets:[
 {label:'CTR %',data:[prev,curr],backgroundColor:['rgba(139,92,235,0.45)','rgba(139,92,235,0.9)'],borderRadius:10,barPercentage:.45}
 ]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
 layout:{padding:{bottom:20}},
-scales:{x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v.toFixed(1)+'%'},min:0}},
-animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign='center';
+scales:{x:{grid:{display:false},ticks:{font:{size:11,weight:'600'}}},y:{grid:{color:'rgba(0,0,0,.05)'},ticks:{callback:v=>v.toFixed(2)+'%'},min:0}},
+animation:{onComplete:function(){const c=this,x=c.ctx;x.save();x.textAlign:'center';
 [prev,curr].forEach((v,i)=>{const b=c.getDatasetMeta(0).data[i];
-x.fillStyle='#2d2a26';x.font='bold 14px Noto Sans Thai';x.fillText(v.toFixed(1)+'%',b.x,b.y-10);});
-x.fillStyle='#dc2626';x.font='bold 13px Noto Sans Thai';
+x.fillStyle='#2d2a26';x.font='bold 14px Noto Sans Thai';x.fillText(v.toFixed(2)+'%',b.x,b.y-10);});
+x.fillStyle='#16a34a';x.font='bold 13px Noto Sans Thai';
 x.fillText(gap.toFixed(1)+'%',(c.getDatasetMeta(0).data[0].x+c.getDatasetMeta(0).data[1].x)/2,c.chartArea.bottom+16);x.restore();}}}});
 })();
 
 // === CATEGORY VIEWS (labels inside bars) ===
 (()=>{
 const ctx=document.getElementById('catViewsChart').getContext('2d');
-const L=['Online Web','TVS','World','Wealth','Earth'];
-const D=[64131,11876,10722,6276,5929];
+const L=['Wealth','Online Web','World','TNN Exclusive','Health'];
+const D=[62000,42000,28000,25000,20000];
 const C=['rgba(6,214,160,.85)','rgba(59,130,235,.85)','rgba(139,92,235,.85)','rgba(251,191,36,.85)','rgba(236,72,153,.85)'];
 new Chart(ctx,{type:'bar',data:{labels:L,datasets:[{data:D,backgroundColor:C,borderRadius:8,barPercentage:.6}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
@@ -896,8 +859,8 @@ else{x.fillStyle='#2d2a26';x.textAlign='left';x.fillText(v.toLocaleString(),b.x+
 // === CATEGORY ARTICLES (labels inside bars) ===
 (()=>{
 const ctx=document.getElementById('catArticlesChart').getContext('2d');
-const L=['Online Originals','Online Web','World','Health','TVS'];
-const D=[214,186,173,155,128];
+const L=['Online Web','รายการเศรษฐกิจ','TVS','Wealth','Tech'];
+const D=[750,300,350,280,290];
 const C=['rgba(6,214,160,.85)','rgba(59,130,235,.85)','rgba(139,92,235,.85)','rgba(251,191,36,.85)','rgba(236,72,153,.85)'];
 new Chart(ctx,{type:'bar',data:{labels:L,datasets:[{data:D,backgroundColor:C,borderRadius:8,barPercentage:.6}]},
 options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},
@@ -914,13 +877,12 @@ else{x.fillStyle='#2d2a26';x.textAlign='left';x.fillText(v+' ข่าว',b.x+8
 <script>
 function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
 document.querySelectorAll('.has-dropdown>a').forEach(function(a){a.addEventListener('click',function(e){if(window.innerWidth<=768){e.preventDefault();this.parentElement.classList.toggle('open');}});});
-function toggleWeekSelector() {
-  const body = document.getElementById('wsBody');
-  const arrow = document.getElementById('wsArrow');
+function toggleMonthSelector() {
+  const body = document.getElementById('msBody');
+  const arrow = document.getElementById('msArrow');
   body.classList.toggle('open');
   arrow.classList.toggle('open');
 }
-
 
 window.addEventListener('scroll',function(){var b=document.getElementById('scrollTopBtn');if(b){if(window.scrollY>300){b.classList.add('visible')}else{b.classList.remove('visible')}}});
 </script>
