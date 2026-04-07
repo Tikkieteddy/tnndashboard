@@ -1,0 +1,1310 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Monthly Team Performance — มีนาคม 2569</title>
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.min.js"></script>
+    <style>
+        :root {
+            --bg-primary: #111827;
+            --bg-secondary: #1F2937;
+            --brand-orange: #EC5F27;
+            --text-primary: #F3F4F6;
+            --text-secondary: #D1D5DB;
+            --border-color: #374151;
+            --chart-grid: #2D3748;
+            --gap-color: rgba(220, 38, 38, 0.15);
+            --target-color: #FCD34D;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Noto Sans Thai', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        /* Navigation */
+        .topnav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--bg-secondary);
+            padding: 15px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            border: 1px solid var(--border-color);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .nav-logo {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--brand-orange);
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            gap: 30px;
+        }
+
+        .nav-links a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            font-size: 14px;
+            transition: color 0.3s;
+        }
+
+        .nav-links a:hover {
+            color: var(--brand-orange);
+        }
+
+        .nav-links a.active {
+            color: var(--brand-orange);
+            font-weight: 600;
+        }
+
+        .hamburger {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+        }
+
+        .hamburger span {
+            width: 25px;
+            height: 3px;
+            background-color: var(--brand-orange);
+            margin: 5px 0;
+            transition: 0.3s;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .header h1 {
+            font-size: 32px;
+            font-weight: 700;
+            margin-bottom: 10px;
+            color: var(--text-primary);
+        }
+
+        .header .subtitle {
+            font-size: 16px;
+            color: var(--text-secondary);
+            margin-bottom: 5px;
+        }
+
+        .header .data-source {
+            font-size: 12px;
+            color: var(--text-secondary);
+            opacity: 0.7;
+        }
+
+        /* Month Selector */
+        .month-selector {
+            background-color: var(--bg-secondary);
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            border: 1px solid var(--border-color);
+        }
+
+        .month-selector-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .month-selector-header h3 {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--text-primary);
+        }
+
+        .toggle-icon {
+            font-size: 16px;
+            transition: transform 0.3s;
+        }
+
+        .toggle-icon.rotated {
+            transform: rotate(180deg);
+        }
+
+        .month-links {
+            display: flex;
+            gap: 20px;
+            margin-top: 15px;
+            flex-wrap: wrap;
+        }
+
+        .month-links a {
+            padding: 8px 16px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-size: 13px;
+            transition: all 0.3s;
+            border: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .month-links a:hover {
+            background-color: var(--bg-primary);
+            border-color: var(--brand-orange);
+            color: var(--brand-orange);
+        }
+
+        .month-links a.active {
+            background-color: var(--brand-orange);
+            border-color: var(--brand-orange);
+            color: white;
+        }
+
+        /* Teams Grid */
+        .teams-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(800px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .team-box {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+            transition: border-color 0.3s;
+        }
+
+        .team-box:hover {
+            border-color: var(--brand-orange);
+        }
+
+        .team-header {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .team-color-dot {
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            flex-shrink: 0;
+        }
+
+        .team-header h2 {
+            font-size: 18px;
+            font-weight: 600;
+            color: var(--text-primary);
+            flex: 1;
+        }
+
+        .team-targets {
+            display: flex;
+            gap: 20px;
+            font-size: 12px;
+        }
+
+        .target-item {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .target-label {
+            color: var(--text-secondary);
+            opacity: 0.8;
+        }
+
+        .target-value {
+            color: var(--brand-orange);
+            font-weight: 600;
+        }
+
+        .team-charts {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
+            background-color: var(--bg-primary);
+            border-radius: 6px;
+            padding: 15px;
+            border: 1px solid var(--border-color);
+        }
+
+        .chart-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 10px;
+            text-align: center;
+        }
+
+        .chart-container {
+            position: relative;
+            height: 240px;
+            width: 100%;
+        }
+
+        /* Top 5 Section */
+        .top5-section {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            margin-bottom: 40px;
+        }
+
+        .top5-box {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 20px;
+        }
+
+        .top5-box h3 {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            color: var(--text-primary);
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--brand-orange);
+        }
+
+        .top5-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 0;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .top5-item:last-child {
+            border-bottom: none;
+        }
+
+        .top5-rank {
+            display: inline-block;
+            min-width: 24px;
+            height: 24px;
+            background-color: var(--brand-orange);
+            color: white;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 24px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-right: 12px;
+        }
+
+        .top5-name {
+            flex: 1;
+            font-size: 14px;
+        }
+
+        .top5-value {
+            font-size: 14px;
+            font-weight: 600;
+            color: var(--brand-orange);
+        }
+
+        /* Summary Stats Table */
+        .summary-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 13px;
+        }
+
+        .summary-table th {
+            background-color: var(--bg-primary);
+            padding: 10px;
+            text-align: left;
+            border-bottom: 2px solid var(--brand-orange);
+            color: var(--text-primary);
+            font-weight: 600;
+        }
+
+        .summary-table td {
+            padding: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-secondary);
+        }
+
+        .summary-table tr:last-child td {
+            border-bottom: none;
+        }
+
+        .summary-table .stat-name {
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+
+        .summary-table .stat-value {
+            color: var(--brand-orange);
+            font-weight: 600;
+            text-align: right;
+        }
+
+        /* Analysis Section */
+        .analysis-section {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            padding: 30px;
+            margin-bottom: 40px;
+        }
+
+        .analysis-section h2 {
+            font-size: 20px;
+            font-weight: 700;
+            color: var(--text-primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--brand-orange);
+        }
+
+        .analysis-subsection {
+            margin-bottom: 25px;
+        }
+
+        .analysis-subsection h3 {
+            font-size: 15px;
+            font-weight: 600;
+            color: var(--brand-orange);
+            margin-bottom: 10px;
+        }
+
+        .analysis-text {
+            font-size: 14px;
+            color: var(--text-secondary);
+            line-height: 1.8;
+        }
+
+        .analysis-list {
+            list-style: none;
+            margin-left: 0;
+        }
+
+        .analysis-list li {
+            padding: 8px 0;
+            padding-left: 20px;
+            position: relative;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+
+        .analysis-list li:before {
+            content: "▸";
+            position: absolute;
+            left: 0;
+            color: var(--brand-orange);
+            font-weight: bold;
+        }
+
+        /* Footer */
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
+            border-top: 1px solid var(--border-color);
+            margin-top: 40px;
+        }
+
+        /* Scroll to Top Button */
+        .scroll-to-top {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            width: 50px;
+            height: 50px;
+            background-color: var(--brand-orange);
+            color: white;
+            border: none;
+            border-radius: 50%;
+            font-size: 20px;
+            cursor: pointer;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 99;
+            transition: all 0.3s;
+            box-shadow: 0 4px 12px rgba(236, 95, 39, 0.4);
+        }
+
+        .scroll-to-top:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 16px rgba(236, 95, 39, 0.6);
+        }
+
+        .scroll-to-top.show {
+            display: flex;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 1200px) {
+            .teams-container {
+                grid-template-columns: 1fr;
+            }
+
+            .team-charts {
+                grid-template-columns: 1fr;
+            }
+
+            .top5-section {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .nav-links {
+                display: none;
+                position: absolute;
+                top: 60px;
+                left: 0;
+                right: 0;
+                flex-direction: column;
+                background-color: var(--bg-secondary);
+                padding: 20px;
+                gap: 15px;
+                border: 1px solid var(--border-color);
+                border-top: none;
+                border-radius: 0 0 8px 8px;
+            }
+
+            .nav-links.show {
+                display: flex;
+            }
+
+            .hamburger {
+                display: flex;
+            }
+
+            .topnav {
+                position: relative;
+            }
+
+            .header h1 {
+                font-size: 24px;
+            }
+
+            .month-links {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .month-links a {
+                display: block;
+                text-align: center;
+            }
+
+            .scroll-to-top {
+                bottom: 20px;
+                right: 20px;
+                width: 45px;
+                height: 45px;
+            }
+        }
+
+        /* Chart.js Custom Styling */
+        canvas {
+            max-width: 100% !important;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <div class="topnav">
+        <div class="nav-logo">TNN Dashboard</div>
+        <div class="hamburger" id="hamburger">
+            <span></span>
+            <span></span>
+            <span></span>
+        </div>
+        <ul class="nav-links" id="navLinks">
+            <li><a href="index.html">Home</a></li>
+            <li><a href="web_performance.html">Web Performance</a></li>
+            <li><a href="#" class="active">Monthly Reviews</a></li>
+            <li><a href="team_charts.html">Team Charts</a></li>
+            <li><a href="reviews.html">Reviews</a></li>
+            <li><a href="training.html">Training</a></li>
+        </ul>
+    </div>
+
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <h1>Monthly Team Performance — มีนาคม 2569</h1>
+            <div class="subtitle">สรุป Performance รายทีมเดือนมีนาคม 2569 | Data: CMS Website</div>
+            <div class="data-source">ประเมินจากข้อมูลของทีมสำเร็จ | แสดงเป้าหมายรายเดือนและรายสัปดาห์</div>
+        </div>
+
+        <!-- Month Selector -->
+        <div class="month-selector">
+            <div class="month-selector-header" id="monthSelectorToggle">
+                <h3>เลือกเดือน:</h3>
+                <span class="toggle-icon" id="toggleIcon">▼</span>
+            </div>
+            <div class="month-links" id="monthLinks" style="display: none;">
+                <a href="monthly_january2026.html">มกราคม 2569</a>
+                <a href="monthly_february2026.html">กุมภาพันธ์ 2569</a>
+                <a href="#" class="active">มีนาคม 2569</a>
+            </div>
+        </div>
+
+        <!-- Teams Container -->
+        <div class="teams-container" id="teamsContainer"></div>
+
+        <!-- Top 5 Section -->
+        <div class="top5-section">
+            <!-- Top 5 by PV -->
+            <div class="top5-box">
+                <h3>Top 5 ทีม (PV มีนาคม)</h3>
+                <div id="top5PVList"></div>
+            </div>
+
+            <!-- Top 5 by Articles -->
+            <div class="top5-box">
+                <h3>Top 5 ทีม (จำนวนข่าว มีนาคม)</h3>
+                <div id="top5ArticlesList"></div>
+            </div>
+
+            <!-- Summary Stats -->
+            <div class="top5-box">
+                <h3>สรุปสถิติรวม</h3>
+                <table class="summary-table">
+                    <tr>
+                        <td class="stat-name">รวม PV (มีนาคม)</td>
+                        <td class="stat-value" id="totalPVMarch">-</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-name">รวม ข่าว (มีนาคม)</td>
+                        <td class="stat-value" id="totalArticlesMarch">-</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-name">เฉลี่ย PV/ข่าว</td>
+                        <td class="stat-value" id="avgPVPerArticle">-</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-name">เปลี่ยนแปลง PV (Feb)</td>
+                        <td class="stat-value" id="pvChange">-</td>
+                    </tr>
+                    <tr>
+                        <td class="stat-name">เปลี่ยนแปลง ข่าว (Feb)</td>
+                        <td class="stat-value" id="articlesChange">-</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <!-- Analysis Section -->
+        <div class="analysis-section">
+            <h2>การวิเคราะห์ Performance มีนาคม 2569</h2>
+
+            <div class="analysis-subsection">
+                <h3>📊 ภาพรวม Performance เดือนมีนาคม 2569</h3>
+                <div class="analysis-text">
+                    <p>CMS Website รวบรวม PV ทั้งสิ้น <strong>309,996 PV</strong> จากจำนวนข่าว <strong>2,854 บทความ</strong> โดยเฉลี่ยข่าวละ <strong>108.6 PV</strong> เมื่อเปรียบเทียบกับเดือนกุมภาพันธ์ที่มี <strong>564,019 PV</strong> จากจำนวนข่าว <strong>2,769 บทความ</strong> พบว่า PV ลดลง <strong>-45.1%</strong> แต่จำนวนข่าวเพิ่มขึ้น <strong>+3.1%</strong></p>
+                    <p style="margin-top: 10px;"><strong>ข้อสังเกตสำคัญ:</strong> ไม่มีทีมใดสามารถถึงเป้าหมาย KPI รายเดือนได้ ซึ่งบ่งชี้ถึงปัญหาในการวางแผน หรือการจัดสรรทรัพยากร</p>
+                </div>
+            </div>
+
+            <div class="analysis-subsection">
+                <h3>🏆 อันดับทีมตามการสร้าง PV (มีนาคม)</h3>
+                <ul class="analysis-list">
+                    <li><strong>Online Web:</strong> 164,361 PV (36.5% ของเป้า 450K) — ทีมหลักสร้าง PV สูงสุด แต่ยังห่างจากเป้าหมายอย่างมาก</li>
+                    <li><strong>World:</strong> 23,140 PV (23.1% ของเป้า 100K) — ทีมที่สองเรียงลำดับหลังจากการสนับสนุน</li>
+                    <li><strong>Health:</strong> 19,820 PV (22.7% ของเป้า 87.5K) — สร้าง PV แต่ต่ำกว่าความคาดหวัง</li>
+                    <li><strong>Earth:</strong> 19,549 PV (22.3% ของเป้า 87.5K) — สร้าง PV เท่าเทียมกับ Health</li>
+                    <li><strong>Tech:</strong> 17,562 PV (17.6% ของเป้า 100K) — ลดประสิทธิภาพจากเดือนก่อนหน้า</li>
+                    <li><strong>Wealth:</strong> 16,693 PV (19.1% ของเป้า 87.5K) — แม้ PV ต่ำแต่ category Wealth มี PV รวมสูง จากการเขียนบทความ evergreen</li>
+                    <li><strong>รายการเศรษฐกิจ:</strong> 12,866 PV (14.7% ของเป้า 87.5K) — ต่ำกว่าเป้าหมายมาก</li>
+                    <li><strong>Channel:</strong> 6,197 PV (7.1% ของเป้า 87.5K) — ประสิทธิภาพต่อต้น</li>
+                    <li><strong>Online Originals:</strong> 4,774 PV (4.8% ของเป้า 100K) — ทีมต่อต้นที่สุดในสร้าง PV</li>
+                </ul>
+            </div>
+
+            <div class="analysis-subsection">
+                <h3>📈 แนวโน้มรายสัปดาห์ (มีนาคม)</h3>
+                <div class="analysis-text">
+                    <p>ข้อมูลรายสัปดาห์สำหรับเดือนมีนาคมแบ่งเป็น 4 สัปดาห์ (W10 ถึง W13) โดยอันดับแรกคือสัปดาห์ที่ 10 (W10) ซึ่งมี PV สูงสุด โดยเฉพาะทีม Online Web ที่สร้าง 77,236 PV แต่ลดลงเรื่อย ๆ ในสัปดาห์ถัด ๆ ไป ที่ W11 W12 และ W13 ตามลำดับ ซึ่งแสดงให้เห็นว่า</p>
+                    <p style="margin-top: 10px;"><strong>แนวโน้มลดลงต่อเนื่อง:</strong> Online Web ครอบครองตำแหน่ง PV สูงสุดในทุกสัปดาห์ของมีนาคม แต่มีแนวโน้มลดลงต่อเนื่องจาก W10 ถึง W13 ซึ่งอาจเนื่องมาจากการลดลงของข้อมูล seasonal หรือการเปลี่ยนแปลงความสนใจของผู้อ่าน</p>
+                </div>
+            </div>
+
+            <div class="analysis-subsection">
+                <h3>💡 ข้อเสนอแนะและแนวทางปรับปรุง</h3>
+                <ul class="analysis-list">
+                    <li><strong>ปรับเป้า KPI ให้สมจริง:</strong> เป้าหมายปัจจุบันสูงเกินไป ทำให้ทีมไม่สามารถถึงเป้าหมายได้ ควรปรับลดเป้าหรือเพิ่มทรัพยากรให้เพียงพอ</li>
+                    <li><strong>Focus บน Quality over Quantity:</strong> แม้ว่าจำนวนข่าวเพิ่มขึ้น แต่ PV/ข่าว ลดลง (จาก 203.8 เป็น 108.6) จึงควรเพิ่มคุณภาพการเขียนและการเลือกหัวข่าว</li>
+                    <li><strong>Reallocate Resources:</strong> ทีมที่มี PV ต่ำต้องได้รับความช่วยเหลือเพิ่มเติม หรือพิจารณาการจัดรูปแบบทีมใหม่</li>
+                    <li><strong>จับจังหวะ Trending Content:</strong> W10 มี PV สูงที่สุด ควรศึกษาว่าอะไรสาเหตุของความสำเร็จในสัปดาห์นั้น และนำมาปรับใช้</li>
+                    <li><strong>ติดตามและวิเคราะห์ SEO:</strong> ลดลงของ PV อาจเกี่ยวข้องกับการจัดอันดับใน Search Engines ควรตรวจสอบและปรับปรุง SEO strategy</li>
+                    <li><strong>เพิ่ม Engagement Strategy:</strong> ควรดูว่าข่าวของเดือนที่แล้ว (Feb) มี PV สูงกว่า ควรศึกษาเนื้อหาและประเภท</li>
+                </ul>
+            </div>
+
+            <div class="analysis-subsection">
+                <h3>🎯 สรุปการปฏิบัติตามตัวชี้วัด</h3>
+                <div class="analysis-text">
+                    <p><strong>Overall Assessment:</strong> มีนาคม 2569 ถือว่าเป็นเดือนที่ท้าทายสำหรับ CMS Website ทีมหลักกำลังดำเนินการแต่ต้องได้รับการสนับสนุนเพิ่มเติม ควรดำเนินการประชุมทีมเพื่อวิจารณ์ปัญหา และกำหนดแผนการปรับปรุง KPI ให้เป็นไปตามความเป็นไปได้ของแต่ละทีม</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="footer">
+            Monthly Team Performance — มีนาคม 2569 | Generated April 7, 2026 | By : tikkieteddie | Data: CMS Website
+        </div>
+    </div>
+
+    <!-- Scroll to Top Button -->
+    <button class="scroll-to-top" id="scrollToTopBtn">↑</button>
+
+    <script>
+        // Team Configuration
+        const TEAM_CONFIG = [
+            {id:'OnlineWeb', name:'Online Web', color:'rgba(236,95,39,0.85)', moPvT:450000, wkPvT:103600},
+            {id:'OnlineOrig', name:'Online Originals', color:'rgba(236,140,39,0.75)', moPvT:100000, wkPvT:23100},
+            {id:'Channel', name:'Channel', color:'rgba(236,95,39,0.85)', moPvT:87500, wkPvT:20300},
+            {id:'Economy', name:'รายการเศรษฐกิจ', color:'rgba(236,95,39,0.64)', moPvT:87500, wkPvT:20300},
+            {id:'World', name:'World', color:'rgba(203,44,48,0.85)', moPvT:100000, wkPvT:23100},
+            {id:'Wealth', name:'Wealth', color:'rgba(14,65,116,0.85)', moPvT:87500, wkPvT:20300},
+            {id:'Health', name:'Health', color:'rgba(232,28,155,0.85)', moPvT:87500, wkPvT:20300},
+            {id:'Tech', name:'Tech', color:'rgba(34,211,202,0.85)', moPvT:100000, wkPvT:23100},
+            {id:'Earth', name:'Earth', color:'rgba(34,147,62,0.85)', moPvT:87500, wkPvT:20300}
+        ];
+
+        // Monthly Data (Jan, Feb, Mar)
+        const MONTHLY_DATA = {
+            'OnlineWeb': {Jan:{pv:85027,articles:388}, Feb:{pv:253253,articles:693}, Mar:{pv:164361,articles:727}},
+            'OnlineOrig': {Jan:{pv:5151,articles:26}, Feb:{pv:8383,articles:70}, Mar:{pv:4774,articles:51}},
+            'Channel': {Jan:{pv:9696,articles:88}, Feb:{pv:13516,articles:159}, Mar:{pv:6197,articles:163}},
+            'Economy': {Jan:{pv:6891,articles:150}, Feb:{pv:14825,articles:339}, Mar:{pv:12866,articles:381}},
+            'World': {Jan:{pv:18114,articles:130}, Feb:{pv:25583,articles:227}, Mar:{pv:23140,articles:231}},
+            'Wealth': {Jan:{pv:10124,articles:147}, Feb:{pv:23167,articles:291}, Mar:{pv:16693,articles:270}},
+            'Health': {Jan:{pv:15067,articles:67}, Feb:{pv:28005,articles:135}, Mar:{pv:19820,articles:129}},
+            'Tech': {Jan:{pv:14597,articles:115}, Feb:{pv:47721,articles:246}, Mar:{pv:17562,articles:273}},
+            'Earth': {Jan:{pv:11856,articles:135}, Feb:{pv:27708,articles:241}, Mar:{pv:19549,articles:259}}
+        };
+
+        // Weekly Data (March: W10, W11, W12, W13)
+        const WEEKLY_DATA = {
+            'OnlineWeb': {10:{pv:77236,articles:327}, 11:{pv:42238,articles:194}, 12:{pv:18634,articles:164}, 13:{pv:25573,articles:188}},
+            'OnlineOrig': {10:{pv:2202,articles:25}, 11:{pv:1016,articles:10}, 12:{pv:713,articles:9}, 13:{pv:1122,articles:14}},
+            'Channel': {10:{pv:1850,articles:71}, 11:{pv:2435,articles:48}, 12:{pv:999,articles:45}, 13:{pv:1787,articles:42}},
+            'Economy': {10:{pv:6776,articles:207}, 11:{pv:2954,articles:99}, 12:{pv:3500,articles:111}, 13:{pv:3136,articles:75}},
+            'World': {10:{pv:12963,articles:118}, 11:{pv:4187,articles:59}, 12:{pv:7057,articles:60}, 13:{pv:5527,articles:50}},
+            'Wealth': {10:{pv:8262,articles:131}, 11:{pv:4397,articles:63}, 12:{pv:4494,articles:70}, 13:{pv:3701,articles:70}},
+            'Health': {10:{pv:8279,articles:58}, 11:{pv:6205,articles:33}, 12:{pv:4653,articles:28}, 13:{pv:5069,articles:34}},
+            'Tech': {10:{pv:9247,articles:123}, 11:{pv:3576,articles:72}, 12:{pv:2457,articles:62}, 13:{pv:4418,articles:74}},
+            'Earth': {10:{pv:9776,articles:127}, 11:{pv:3990,articles:62}, 12:{pv:3085,articles:65}, 13:{pv:4748,articles:62}}
+        };
+
+        // Chart instances storage
+        const chartInstances = {};
+
+        // Format number utility
+        function formatNumber(num) {
+            if (num >= 1000000) {
+                return (num / 1000000).toFixed(1) + 'M';
+            } else if (num >= 1000) {
+                return (num / 1000).toFixed(1) + 'K';
+            }
+            return num.toString();
+        }
+
+        // Format number with comma
+        function formatNumberComma(num) {
+            return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',');
+        }
+
+        // Create team box and charts
+        function createTeamBox(team) {
+            const monthData = MONTHLY_DATA[team.id];
+            const weekData = WEEKLY_DATA[team.id];
+
+            const totalPvMarch = monthData.Mar.pv;
+            const totalArticlesMarch = monthData.Mar.articles;
+            const percentageTarget = ((totalPvMarch / team.moPvT) * 100).toFixed(1);
+
+            const teamBox = document.createElement('div');
+            teamBox.className = 'team-box';
+
+            teamBox.innerHTML = `
+                <div class="team-header">
+                    <div class="team-color-dot" style="background-color: ${team.color}"></div>
+                    <h2>${team.name}</h2>
+                    <div class="team-targets">
+                        <div class="target-item">
+                            <span class="target-label">Monthly Target</span>
+                            <span class="target-value">${formatNumberComma(team.moPvT)}</span>
+                        </div>
+                        <div class="target-item">
+                            <span class="target-label">Weekly Target</span>
+                            <span class="target-value">${formatNumberComma(team.wkPvT)}</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="team-charts">
+                    <div class="chart-wrapper">
+                        <div class="chart-title">PV รายสัปดาห์</div>
+                        <div class="chart-container">
+                            <canvas id="weeklyPV-${team.id}"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">PV รายเดือน</div>
+                        <div class="chart-container">
+                            <canvas id="monthlyPV-${team.id}"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">จำนวนข่าวรายสัปดาห์</div>
+                        <div class="chart-container">
+                            <canvas id="weeklyArticles-${team.id}"></canvas>
+                        </div>
+                    </div>
+                    <div class="chart-wrapper">
+                        <div class="chart-title">จำนวนข่าวรายเดือน</div>
+                        <div class="chart-container">
+                            <canvas id="monthlyArticles-${team.id}"></canvas>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            document.getElementById('teamsContainer').appendChild(teamBox);
+
+            // Create charts after DOM insertion
+            createWeeklyPVChart(team, weekData);
+            createMonthlyPVChart(team, monthData);
+            createWeeklyArticlesChart(team, weekData);
+            createMonthlyArticlesChart(team, monthData);
+        }
+
+        // Weekly PV Chart
+        function createWeeklyPVChart(team, weekData) {
+            const ctx = document.getElementById(`weeklyPV-${team.id}`).getContext('2d');
+            const weeks = [10, 11, 12, 13];
+            const pvValues = weeks.map(w => weekData[w].pv);
+            const gaps = weeks.map(w => Math.max(0, team.wkPvT - weekData[w].pv));
+
+            chartInstances[`weeklyPV-${team.id}`] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: weeks.map(w => `W${w}`),
+                    datasets: [
+                        {
+                            label: 'PV',
+                            data: pvValues,
+                            backgroundColor: team.color,
+                            borderRadius: 6,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.8,
+                        },
+                        {
+                            label: 'Gap to Target',
+                            data: gaps,
+                            backgroundColor: 'rgba(220, 38, 38, 0.15)',
+                            borderRadius: 6,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.8,
+                            stack: 'pv'
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {display: false},
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8,
+                            titleFont: {size: 12},
+                            bodyFont: {size: 11},
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const pv = pvValues[context.dataIndex];
+                                        const percent = ((pv / team.wkPvT) * 100).toFixed(1);
+                                        return `PV: ${formatNumberComma(pv)} (${percent}%)`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {display: false},
+                            ticks: {color: '#D1D5DB', font: {size: 12}},
+                            border: {display: false}
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: {color: '#2D3748'},
+                            ticks: {
+                                color: '#D1D5DB',
+                                font: {size: 11},
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            },
+                            border: {display: false}
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'valueLabels',
+                    afterDatasetsDraw(chart) {
+                        const {ctx, data, chartArea: {left, top, width, height}} = chart;
+                        ctx.font = '11px Noto Sans Thai';
+                        ctx.fillStyle = '#F3F4F6';
+                        ctx.textAlign = 'center';
+
+                        data.datasets[0].data.forEach((value, i) => {
+                            if (value) {
+                                const meta = chart.getDatasetMeta(0);
+                                const bar = meta.data[i];
+                                const percent = ((value / team.wkPvT) * 100).toFixed(0);
+                                ctx.fillText(`${formatNumber(value)}`, bar.x, bar.y - 5);
+                                ctx.fillStyle = '#EF4444';
+                                ctx.font = 'bold 10px Noto Sans Thai';
+                                ctx.fillText(`${percent}%`, bar.x, bar.y + height - top + 18);
+                                ctx.fillStyle = '#F3F4F6';
+                                ctx.font = '11px Noto Sans Thai';
+                            }
+                        });
+                    }
+                }]
+            });
+        }
+
+        // Monthly PV Chart
+        function createMonthlyPVChart(team, monthData) {
+            const ctx = document.getElementById(`monthlyPV-${team.id}`).getContext('2d');
+            const months = ['Jan', 'Feb', 'Mar'];
+            const pvValues = [monthData.Jan.pv, monthData.Feb.pv, monthData.Mar.pv];
+            const gaps = pvValues.map(pv => Math.max(0, team.moPvT - pv));
+
+            chartInstances[`monthlyPV-${team.id}`] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [
+                        {
+                            label: 'PV',
+                            data: pvValues,
+                            backgroundColor: (context) => {
+                                if (context.dataIndex === 2) { // March (last month)
+                                    return team.color.replace('0.85', '0.55').replace('0.75', '0.55').replace('0.64', '0.55');
+                                }
+                                return team.color;
+                            },
+                            borderRadius: 6,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.8,
+                        },
+                        {
+                            label: 'Gap to Target',
+                            data: gaps,
+                            backgroundColor: 'rgba(220, 38, 38, 0.15)',
+                            borderRadius: 6,
+                            barPercentage: 0.7,
+                            categoryPercentage: 0.8,
+                            stack: 'pv'
+                        }
+                    ]
+                },
+                options: {
+                    indexAxis: 'x',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {display: false},
+                        tooltip: {
+                            enabled: true,
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    if (context.datasetIndex === 0) {
+                                        const pv = pvValues[context.dataIndex];
+                                        const percent = ((pv / team.moPvT) * 100).toFixed(1);
+                                        return `PV: ${formatNumberComma(pv)} (${percent}%)`;
+                                    }
+                                    return '';
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            stacked: true,
+                            grid: {display: false},
+                            ticks: {color: '#D1D5DB', font: {size: 12}},
+                            border: {display: false}
+                        },
+                        y: {
+                            stacked: true,
+                            beginAtZero: true,
+                            grid: {color: '#2D3748'},
+                            ticks: {
+                                color: '#D1D5DB',
+                                font: {size: 11},
+                                callback: function(value) {
+                                    return formatNumber(value);
+                                }
+                            },
+                            border: {display: false}
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'valueLabels',
+                    afterDatasetsDraw(chart) {
+                        const {ctx, data, chartArea: {left, top, width, height}} = chart;
+                        ctx.font = '11px Noto Sans Thai';
+                        ctx.fillStyle = '#F3F4F6';
+                        ctx.textAlign = 'center';
+
+                        data.datasets[0].data.forEach((value, i) => {
+                            if (value) {
+                                const meta = chart.getDatasetMeta(0);
+                                const bar = meta.data[i];
+                                const percent = ((value / team.moPvT) * 100).toFixed(0);
+                                ctx.fillText(`${formatNumber(value)}`, bar.x, bar.y - 5);
+                                ctx.fillStyle = '#EF4444';
+                                ctx.font = 'bold 10px Noto Sans Thai';
+                                ctx.fillText(`${percent}%`, bar.x, bar.y + height - top + 18);
+                                ctx.fillStyle = '#F3F4F6';
+                                ctx.font = '11px Noto Sans Thai';
+                            }
+                        });
+                    }
+                }]
+            });
+        }
+
+        // Weekly Articles Chart
+        function createWeeklyArticlesChart(team, weekData) {
+            const ctx = document.getElementById(`weeklyArticles-${team.id}`).getContext('2d');
+            const weeks = [10, 11, 12, 13];
+            const articleValues = weeks.map(w => weekData[w].articles);
+
+            chartInstances[`weeklyArticles-${team.id}`] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: weeks.map(w => `W${w}`),
+                    datasets: [{
+                        label: 'Articles',
+                        data: articleValues,
+                        backgroundColor: team.color,
+                        borderRadius: 6,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {display: false},
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y} articles`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {display: false},
+                            ticks: {color: '#D1D5DB', font: {size: 12}},
+                            border: {display: false}
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {color: '#2D3748'},
+                            ticks: {
+                                color: '#D1D5DB',
+                                font: {size: 11}
+                            },
+                            border: {display: false}
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'valueLabels',
+                    afterDatasetsDraw(chart) {
+                        const {ctx} = chart;
+                        ctx.font = 'bold 11px Noto Sans Thai';
+                        ctx.fillStyle = '#F3F4F6';
+                        ctx.textAlign = 'center';
+
+                        chart.getDatasetMeta(0).data.forEach((datapoint, i) => {
+                            const value = articleValues[i];
+                            ctx.fillText(value, datapoint.x, datapoint.y - 5);
+                        });
+                    }
+                }]
+            });
+        }
+
+        // Monthly Articles Chart
+        function createMonthlyArticlesChart(team, monthData) {
+            const ctx = document.getElementById(`monthlyArticles-${team.id}`).getContext('2d');
+            const months = ['Jan', 'Feb', 'Mar'];
+            const articleValues = [monthData.Jan.articles, monthData.Feb.articles, monthData.Mar.articles];
+
+            chartInstances[`monthlyArticles-${team.id}`] = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: months,
+                    datasets: [{
+                        label: 'Articles',
+                        data: articleValues,
+                        backgroundColor: (context) => {
+                            if (context.dataIndex === 2) { // March (last month)
+                                return team.color.replace('0.85', '0.55').replace('0.75', '0.55').replace('0.64', '0.55');
+                            }
+                            return team.color;
+                        },
+                        borderRadius: 6,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8,
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {display: false},
+                        tooltip: {
+                            backgroundColor: 'rgba(0, 0, 0, 0.8)',
+                            padding: 8,
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.parsed.y} articles`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            grid: {display: false},
+                            ticks: {color: '#D1D5DB', font: {size: 12}},
+                            border: {display: false}
+                        },
+                        y: {
+                            beginAtZero: true,
+                            grid: {color: '#2D3748'},
+                            ticks: {
+                                color: '#D1D5DB',
+                                font: {size: 11}
+                            },
+                            border: {display: false}
+                        }
+                    }
+                },
+                plugins: [{
+                    id: 'valueLabels',
+                    afterDatasetsDraw(chart) {
+                        const {ctx} = chart;
+                        ctx.font = 'bold 11px Noto Sans Thai';
+                        ctx.fillStyle = '#F3F4F6';
+                        ctx.textAlign = 'center';
+
+                        chart.getDatasetMeta(0).data.forEach((datapoint, i) => {
+                            const value = articleValues[i];
+                            ctx.fillText(value, datapoint.x, datapoint.y - 5);
+                        });
+                    }
+                }]
+            });
+        }
+
+        // Initialize all team boxes
+        function initializeTeams() {
+            TEAM_CONFIG.forEach(team => {
+                createTeamBox(team);
+            });
+        }
+
+        // Calculate and display top 5 PV
+        function displayTop5PV() {
+            const pvData = TEAM_CONFIG.map(team => ({
+                name: team.name,
+                pv: MONTHLY_DATA[team.id].Mar.pv,
+                id: team.id
+            })).sort((a, b) => b.pv - a.pv);
+
+            const container = document.getElementById('top5PVList');
+            pvData.slice(0, 5).forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'top5-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <span class="top5-rank">${index + 1}</span>
+                        <span class="top5-name">${item.name}</span>
+                    </div>
+                    <span class="top5-value">${formatNumberComma(item.pv)} PV</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Calculate and display top 5 Articles
+        function displayTop5Articles() {
+            const articlesData = TEAM_CONFIG.map(team => ({
+                name: team.name,
+                articles: MONTHLY_DATA[team.id].Mar.articles,
+                id: team.id
+            })).sort((a, b) => b.articles - a.articles);
+
+            const container = document.getElementById('top5ArticlesList');
+            articlesData.slice(0, 5).forEach((item, index) => {
+                const div = document.createElement('div');
+                div.className = 'top5-item';
+                div.innerHTML = `
+                    <div style="display: flex; align-items: center; flex: 1;">
+                        <span class="top5-rank">${index + 1}</span>
+                        <span class="top5-name">${item.name}</span>
+                    </div>
+                    <span class="top5-value">${formatNumberComma(item.articles)} บทความ</span>
+                `;
+                container.appendChild(div);
+            });
+        }
+
+        // Calculate and display summary stats
+        function displaySummaryStats() {
+            const marchData = TEAM_CONFIG.map(team => ({
+                pv: MONTHLY_DATA[team.id].Mar.pv,
+                articles: MONTHLY_DATA[team.id].Mar.articles
+            }));
+
+            const febData = TEAM_CONFIG.map(team => ({
+                pv: MONTHLY_DATA[team.id].Feb.pv,
+                articles: MONTHLY_DATA[team.id].Feb.articles
+            }));
+
+            const totalPVMarch = marchData.reduce((sum, item) => sum + item.pv, 0);
+            const totalArticlesMarch = marchData.reduce((sum, item) => sum + item.articles, 0);
+            const totalPVFeb = febData.reduce((sum, item) => sum + item.pv, 0);
+            const totalArticlesFeb = febData.reduce((sum, item) => sum + item.articles, 0);
+
+            const avgPVPerArticle = (totalPVMarch / totalArticlesMarch).toFixed(1);
+            const pvChange = (((totalPVMarch - totalPVFeb) / totalPVFeb) * 100).toFixed(1);
+            const articlesChange = (((totalArticlesMarch - totalArticlesFeb) / totalArticlesFeb) * 100).toFixed(1);
+
+            document.getElementById('totalPVMarch').textContent = formatNumberComma(totalPVMarch);
+            document.getElementById('totalArticlesMarch').textContent = formatNumberComma(totalArticlesMarch);
+            document.getElementById('avgPVPerArticle').textContent = avgPVPerArticle;
+            document.getElementById('pvChange').textContent = `${pvChange > 0 ? '+' : ''}${pvChange}%`;
+            document.getElementById('articlesChange').textContent = `${articlesChange > 0 ? '+' : ''}${articlesChange}%`;
+
+            // Color the change stats
+            if (parseFloat(pvChange) < 0) {
+                document.getElementById('pvChange').style.color = '#EF4444';
+            }
+            if (parseFloat(articlesChange) > 0) {
+                document.getElementById('articlesChange').style.color = '#10B981';
+            }
+        }
+
+        // Mobile navigation toggle
+        document.getElementById('hamburger').addEventListener('click', function() {
+            const navLinks = document.getElementById('navLinks');
+            navLinks.classList.toggle('show');
+        });
+
+        // Month selector toggle
+        document.getElementById('monthSelectorToggle').addEventListener('click', function() {
+            const monthLinks = document.getElementById('monthLinks');
+            const toggleIcon = document.getElementById('toggleIcon');
+            if (monthLinks.style.display === 'none' || !monthLinks.style.display) {
+                monthLinks.style.display = 'flex';
+                toggleIcon.classList.add('rotated');
+            } else {
+                monthLinks.style.display = 'none';
+                toggleIcon.classList.remove('rotated');
+            }
+        });
+
+        // Scroll to top button
+        const scrollToTopBtn = document.getElementById('scrollToTopBtn');
+        window.addEventListener('scroll', function() {
+            if (window.scrollY > 300) {
+                scrollToTopBtn.classList.add('show');
+            } else {
+                scrollToTopBtn.classList.remove('show');
+            }
+        });
+
+        scrollToTopBtn.addEventListener('click', function() {
+            window.scrollTo({top: 0, behavior: 'smooth'});
+        });
+
+        // Initialize everything
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeTeams();
+            displayTop5PV();
+            displayTop5Articles();
+            displaySummaryStats();
+        });
+    </script>
+
+    <script>
+    function toggleNav(){document.getElementById('mainNav').classList.toggle('open');}
+    function toggleMonthSelector(){
+      var b=document.getElementById('msBody'),a=document.getElementById('msArrow');
+      b.classList.toggle('open');a.classList.toggle('open');
+    }
+    window.addEventListener('scroll',function(){
+      var b=document.getElementById('scrollTopBtn');
+      if(b){if(window.scrollY>300){b.classList.add('visible')}else{b.classList.remove('visible')}}
+    });
+    </script>
+    <button class="scroll-top-btn" id="scrollTopBtn" onclick="window.scrollTo({top:0,behavior:'smooth'})" title="กลับด้านบน" style="position:fixed;bottom:28px;right:28px;width:44px;height:44px;border-radius:50%;background:#EC5F27;color:#fff;border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 16px rgba(236,95,39,0.35);opacity:0;visibility:hidden;transition:all 0.3s ease;z-index:9999;font-size:20px;">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M18 15l-6-6-6 6"/></svg>
+    </button>
+</body>
+</html>
