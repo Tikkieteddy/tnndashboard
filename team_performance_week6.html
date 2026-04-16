@@ -256,7 +256,7 @@
     <div class="ws-header-left">
       <span class="ws-icon">&#128197;</span>
       <div>
-        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 11</div>
+        <div class="ws-title">ดูข้อมูลย้อนหลัง Week 1 - 15</div>
         <div class="ws-subtitle">เลือก Week ที่ต้องการดู</div>
       </div>
     </div>
@@ -274,7 +274,11 @@
         <a href="team_performance_week8.html">Week 8 (16-22 ก.พ.)</a>
         <a href="team_performance_week9.html">Week 9 (23 ก.พ. - 1 มี.ค.)</a>
         <a href="team_performance_week10.html">Week 10 (2-8 มี.ค.)</a>
-        <a href="team_performance_week12.html">Week 11 (9-15 มี.ค.)</a>
+        <a href="team_performance_week11.html">Week 11 (9-15 มี.ค.)</a>
+        <a href="team_performance_week12.html">Week 12 (16-22 มี.ค.)</a>
+        <a href="team_performance_week13.html">Week 13 (23-29 มี.ค.)</a>
+        <a href="team_performance_week14.html">Week 14 (30 มี.ค. - 5 เม.ย.)</a>
+        <a href="team_performance_week15.html">Week 15 (6-12 เม.ย.)</a>
     </div>
   </div>
 </div>
@@ -289,22 +293,22 @@
 
 <!-- Performance Analysis -->
 <div class="analysis-box">
-  <div class="analysis-title">📊 วิเคราะห์ Performance Week 6 (2-8 ก.พ.)</div>
+  <div class="analysis-title">📊 วิเคราะห์ Performance Week 11 (9-15 มี.ค.)</div>
   <div class="analysis-content">
     <div class="analysis-section">
       <div class="analysis-label">ภาพรวม</div>
       <div class="analysis-text">
-        รวม Page Views ทุกทีม: <strong>111,291</strong> PV (เป้าหมายรวม 288,462 PV/สัปดาห์ = <strong>38.6%</strong> ของเป้า)<br>
-        รวมบทความ: <strong>619</strong> บทความ<br>
-        เทียบกับสัปดาห์ก่อน (Week 5): เพิ่มขึ้น 1963.2%
+        รวม Page Views ทุกทีม: <strong>70,998</strong> PV (เป้าหมายรวม 288,462 PV/สัปดาห์ = <strong>24.6%</strong> ของเป้า)<br>
+        รวมบทความ: <strong>640</strong> บทความ<br>
+        เทียบกับสัปดาห์ก่อน (Week 10): ลดลง 22.0%
       </div>
     </div>
     <div class="analysis-section">
       <div class="analysis-label">🏆 Top 3 ทีมที่มี PV สูงสุด</div>
       <div class="analysis-text">
-        1. <strong>Online Web</strong> — 72,899 PV (70% ของเป้า 103,600)<br>
-        2. <strong>Health</strong> — 7,701 PV (38% ของเป้า 20,300)<br>
-        3. <strong>Wealth</strong> — 6,715 PV (33% ของเป้า 20,300)
+        1. <strong>Online Web</strong> — 42,238 PV (41% ของเป้า 103,600)<br>
+        2. <strong>Health</strong> — 6,205 PV (31% ของเป้า 20,300)<br>
+        3. <strong>Wealth</strong> — 4,397 PV (22% ของเป้า 20,300)
       </div>
     </div>
     <div class="analysis-section">
@@ -313,16 +317,16 @@
     </div>
     <div class="analysis-section">
       <div class="analysis-label">📉 ทีมที่ต่ำกว่าเป้ามาก (&lt;50%)</div>
-      <div class="analysis-text">Online Original (10%), Channel (14%), รายการเศรษฐกิจ (14%), World (24%), Wealth (33%), Health (38%), Tech (26%), Earth (21%)</div>
+      <div class="analysis-text">Online Web (41%), Online Original (4%), Channel (12%), รายการเศรษฐกิจ (15%), World (18%), Wealth (22%), Health (31%), Tech (15%), Earth (20%)</div>
     </div>
     <div class="analysis-section">
       <div class="analysis-label">📝 ทีมที่ผลิตบทความมากที่สุด</div>
-      <div class="analysis-text"><strong>Online Web</strong> — 190 บทความ</div>
+      <div class="analysis-text"><strong>Online Web</strong> — 194 บทความ</div>
     </div>
   </div>
 </div>
 
-<div class="footer">Team Performance Dashboard Week 6 | 2-8 ก.พ. | By : tikkieteddie | Data: Google Sheet All Performance 2026</div>
+<div class="footer">Team Performance Dashboard Week 6 | 2-8 ก.พ. | Data: Google Sheet All Performance 2026</div>
 
 <script>
 Chart.defaults.color='#8c8680';
@@ -345,7 +349,11 @@ const ALL_WEEKS = [
   {n:8, thai:'16-22 ก.พ.', start:'2026-02-16'},
   {n:9, thai:'23 ก.พ. - 1 มี.ค.', start:'2026-02-23'},
   {n:10, thai:'2-8 มี.ค.', start:'2026-03-02'},
-  {n:11, thai:'9-15 มี.ค.', start:'2026-03-09'}
+  {n:11, thai:'9-15 มี.ค.', start:'2026-03-09'},
+  {n:12, thai:'16-22 มี.ค.', start:'2026-03-16'},
+  {n:13, thai:'23-29 มี.ค.', start:'2026-03-23'},
+  {n:14, thai:'30 มี.ค. - 5 เม.ย.', start:'2026-03-30'},
+  {n:15, thai:'6-12 เม.ย.', start:'2026-04-06'},
 ];
 
 const NUM_DISPLAY = Math.min(WEEK_NUM, 4);
@@ -353,8 +361,8 @@ const WEEK_START = WEEK_NUM - NUM_DISPLAY + 1;
 const DISPLAY_WEEKS = ALL_WEEKS.filter(w => w.n >= WEEK_START && w.n <= WEEK_NUM);
 const WEEKLY_LABELS = DISPLAY_WEEKS.map(w => w.thai);
 
-const MONTHS_TO_SHOW = ["Jan", "Feb"];
-const MONTHLY_LABELS = ["มกราคม", "กุมภาพันธ์*"];
+const MONTHS_TO_SHOW = ['Jan', 'Feb'];
+const MONTHLY_LABELS = ['มกราคม', 'กุมภาพันธ์*'];
 
 const TEAM_CONFIG = [
   {id:'OnlineWeb',   match:['online web','onlineweb'],                 name:'Online Web',       color:'rgba(236,95,39,0.85)',  wkPvT:103600, moPvT:450000},
@@ -370,26 +378,26 @@ const TEAM_CONFIG = [
 
 const CSV_FALLBACK = {
   weekly: {
-    'OnlineWeb':  {3:{pv:26841,articles:147}, 4:{pv:0,articles:0}, 5:{pv:1927,articles:14}, 6:{pv:72899,articles:190}},
-    'OnlineOrig':  {3:{pv:1886,articles:9}, 4:{pv:0,articles:0}, 5:{pv:0,articles:0}, 6:{pv:2356,articles:23}},
-    'Channel':  {3:{pv:1798,articles:32}, 4:{pv:0,articles:0}, 5:{pv:188,articles:4}, 6:{pv:2797,articles:51}},
-    'Economy':  {3:{pv:2931,articles:67}, 4:{pv:0,articles:0}, 5:{pv:0,articles:0}, 6:{pv:2821,articles:79}},
-    'World':  {3:{pv:4883,articles:45}, 4:{pv:0,articles:0}, 5:{pv:643,articles:7}, 6:{pv:5632,articles:60}},
-    'Wealth':  {3:{pv:3924,articles:71}, 4:{pv:0,articles:0}, 5:{pv:0,articles:0}, 6:{pv:6715,articles:61}},
-    'Health':  {3:{pv:4385,articles:29}, 4:{pv:0,articles:0}, 5:{pv:0,articles:0}, 6:{pv:7701,articles:33}},
-    'Tech':  {3:{pv:3687,articles:47}, 4:{pv:0,articles:0}, 5:{pv:173,articles:5}, 6:{pv:6035,articles:63}},
-    'Earth':  {3:{pv:4603,articles:43}, 4:{pv:0,articles:0}, 5:{pv:2463,articles:8}, 6:{pv:4335,articles:59}}
+    'OnlineWeb':  {8:{pv:33883,articles:160}, 9:{pv:59271,articles:171}, 10:{pv:58602,articles:163}, 11:{pv:42238,articles:194}},
+    'OnlineOrig':  {8:{pv:1851,articles:9}, 9:{pv:1909,articles:19}, 10:{pv:1489,articles:16}, 11:{pv:1016,articles:10}},
+    'Channel':  {8:{pv:3034,articles:25}, 9:{pv:2256,articles:40}, 10:{pv:851,articles:26}, 11:{pv:2435,articles:48}},
+    'Economy':  {8:{pv:3682,articles:77}, 9:{pv:3465,articles:82}, 10:{pv:3276,articles:96}, 11:{pv:2954,articles:99}},
+    'World':  {8:{pv:7135,articles:59}, 9:{pv:7357,articles:53}, 10:{pv:5906,articles:58}, 11:{pv:4187,articles:59}},
+    'Wealth':  {8:{pv:7032,articles:82}, 9:{pv:4305,articles:82}, 10:{pv:3768,articles:61}, 11:{pv:4397,articles:63}},
+    'Health':  {8:{pv:11972,articles:38}, 9:{pv:4567,articles:33}, 10:{pv:3626,articles:30}, 11:{pv:6205,articles:33}},
+    'Tech':  {8:{pv:4409,articles:59}, 9:{pv:4704,articles:55}, 10:{pv:6790,articles:61}, 11:{pv:3576,articles:72}},
+    'Earth':  {8:{pv:5698,articles:57}, 9:{pv:4954,articles:62}, 10:{pv:6691,articles:62}, 11:{pv:3990,articles:62}}
   },
   monthly: {
-    'OnlineWeb':  {'Jan':{pv:94519,articles:455}, 'Feb':{pv:74826,articles:204}},
-    'OnlineOrig':  {'Jan':{pv:6055,articles:32}, 'Feb':{pv:2356,articles:23}},
-    'Channel':  {'Jan':{pv:10101,articles:100}, 'Feb':{pv:2985,articles:55}},
-    'Economy':  {'Jan':{pv:7980,articles:206}, 'Feb':{pv:2821,articles:79}},
-    'World':  {'Jan':{pv:19603,articles:151}, 'Feb':{pv:6275,articles:67}},
-    'Wealth':  {'Jan':{pv:10534,articles:157}, 'Feb':{pv:6715,articles:61}},
-    'Health':  {'Jan':{pv:16593,articles:84}, 'Feb':{pv:7701,articles:33}},
-    'Tech':  {'Jan':{pv:27385,articles:147}, 'Feb':{pv:6208,articles:68}},
-    'Earth':  {'Jan':{pv:13396,articles:160}, 'Feb':{pv:6798,articles:67}}
+    'OnlineWeb':  {'Jan':{pv:94519,articles:455}, 'Feb':{pv:253253,articles:693}, 'Mar':{pv:120154,articles:375}},
+    'OnlineOrig':  {'Jan':{pv:6055,articles:32}, 'Feb':{pv:8383,articles:70}, 'Mar':{pv:2939,articles:28}},
+    'Channel':  {'Jan':{pv:10101,articles:100}, 'Feb':{pv:13516,articles:159}, 'Mar':{pv:3411,articles:76}},
+    'Economy':  {'Jan':{pv:7980,articles:206}, 'Feb':{pv:14825,articles:339}, 'Mar':{pv:6230,articles:195}},
+    'World':  {'Jan':{pv:19603,articles:151}, 'Feb':{pv:25583,articles:227}, 'Mar':{pv:10556,articles:121}},
+    'Wealth':  {'Jan':{pv:10534,articles:157}, 'Feb':{pv:23167,articles:291}, 'Mar':{pv:8498,articles:130}},
+    'Health':  {'Jan':{pv:16593,articles:84}, 'Feb':{pv:28005,articles:135}, 'Mar':{pv:10098,articles:67}},
+    'Tech':  {'Jan':{pv:27385,articles:147}, 'Feb':{pv:47721,articles:246}, 'Mar':{pv:10687,articles:137}},
+    'Earth':  {'Jan':{pv:13396,articles:160}, 'Feb':{pv:27708,articles:241}, 'Mar':{pv:11716,articles:132}}
   }
 };
 
